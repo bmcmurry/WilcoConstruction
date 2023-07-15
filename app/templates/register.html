@@ -1,0 +1,85 @@
+{% extends 'home.html' %} {% block content %}
+<div class="container">
+  <div class="card">
+    <div class="card_body">
+      <h3 class="form_title">REGISTER</h3>
+      <br />
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form_field">
+          <i class="fas fa-user"></i>
+          <input
+            type="text"
+            name="username"
+            placeholder="Username..."
+            class="form_input"
+          />
+        </div>
+        <div class="form_field">
+          <i class="fas fa-user"></i>
+          <input
+            type="text"
+            name="firstname"
+            placeholder="First name..."
+            class="form_input"
+          />
+        </div>
+        <div class="form_field">
+          <i class="fas fa-user"></i>
+          <input
+            type="text"
+            name="lastname"
+            placeholder="Last name..."
+            class="form_input"
+          />
+        </div>
+        <div class="form_field">
+          <i class="fa fa-envelope"></i>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email..."
+            class="form_input"
+          />
+        </div>
+        <div class="form_field">
+          <i class="fas fa-lock"></i>
+          <input
+            type="password"
+            name="password1"
+            placeholder="Password..."
+            class="form_input"
+          />
+        </div>
+        <div class="form_field">
+          <i class="fas fa-key"></i>
+          <input
+            type="password"
+            name="password2"
+            placeholder="Confirm Password..."
+            class="form_input"
+          />
+        </div>
+        <button class="med_link" type="submit">Register</button>
+      </form>
+      <br />
+
+      {% if error_messages %}
+      <ul>
+        {% for field, messages in error_messages.items %}
+        <! ignore prettier ->
+        {% for message in messages %}
+        <li class="message">{{ field.label }}: {{ message }}</li>
+        {% endfor %}{% endfor %}
+      </ul>
+      {% endif %}
+      <div class="card_text">
+        <p>
+          Have an Account?
+          <a class="small_link" href="{% url 'login' %}">Login</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

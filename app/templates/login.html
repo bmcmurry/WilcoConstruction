@@ -1,0 +1,38 @@
+{% extends 'home.html' %} {% load static %} {% block content %}
+<div class="container">
+  <div class="card">
+    <h3 class="form_title">LOGIN</h3>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="form_field">
+        <i class="fas fa-user"></i>
+        <input
+          type="text"
+          name="username"
+          placeholder="Username..."
+          class="form_input"
+        />
+      </div>
+
+      <div class="form_field">
+        <i class="fas fa-key"></i>
+        <input
+          type="password"
+          name="password"
+          placeholder="Password..."
+          class="form_input"
+        />
+      </div>
+      <button class="med_link" type="submit">Login</button>
+    </form>
+    <p>
+      Don't have an Account?
+      <a class="small_link" href="{% url 'register' %}">Sign Up</a>
+    </p>
+
+    {% for message in messages %} {{ message }} {% endfor %}
+  </div>
+</div>
+{% endblock content %}

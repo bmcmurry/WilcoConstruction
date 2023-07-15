@@ -1,0 +1,95 @@
+body {
+    background-color: #E5E4E2; 
+    width: 100%;
+    margin: auto;
+    height: 100%;
+}
+
+#header {
+    margin-top: 0%;
+    background-color: #010101;
+    width: 100%;
+    height: fit-content;
+    color: #E5E4E2;
+    text-align: center;
+}
+
+.Welcome {
+    margin-top: 0%;
+    text-align: center;
+    font-size: x-large;
+    height: 5em;
+}
+
+
+.get_started {
+    background-color: #E2A425;
+    padding: 1.5em;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: medium;
+    color: dimgrey;
+}
+
+.get_started a {
+    color: black;
+}
+
+.get_started a:hover {
+    color: #414141;
+}
+
+.home {
+    background-color: #E2A425;
+    padding: 1.5em;
+    font-size: medium;
+    color: dimgrey;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.home a {
+    color: black;
+}
+
+.home a:hover {
+    color: #414141;
+}
+
+.rentals {
+    background-color: #E2A425;
+    padding: 1.5em;
+    font-size: medium;
+    color: dimgrey;
+    position: absolute;
+    top: 10px;
+    left: 110px;
+}
+.rentals a {
+    color: black;
+}
+
+.rentals a:hover {
+    color: #414141;
+}
+
+.construction {
+    background-color: #E2A425;
+    padding: 1.5em;
+    font-size: medium;
+    color: dimgrey;
+    position: absolute;
+    top: 10px;
+    left: 220px;
+}
+
+.construction a {
+    color: black;
+}
+
+.construction a:hover {
+    color: #414141;
+}
+
