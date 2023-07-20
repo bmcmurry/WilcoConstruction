@@ -12,7 +12,7 @@ from django.contrib.auth.forms import AuthenticationForm
 
 def homeView(request):
     context = {}
-    return render(request, "home.html", context)
+    return render(request, "home2.html", context)
 
 
 @unauthenticated_user
