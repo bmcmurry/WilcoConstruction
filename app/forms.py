@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from .models import *
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
 
 
 class CreateUserForm(UserCreationForm):
@@ -17,8 +18,15 @@ class CreateUserForm(UserCreationForm):
         ]
 
 
-class ProfileForm(ModelForm):
+class TenantForm(ModelForm):
     class Meta:
-        model = Profile
+        model = Tenant
         fields = "__all__"
         exclude = ["person", "dateCreated", "currentBalance"]
+
+
+class CreateRentalPropertyForm(ModelForm):
+    class Meta:
+        model = RentalProperty
+        fields = "__all__"
+        exclude = ["linkToTenant", "isRented"]
