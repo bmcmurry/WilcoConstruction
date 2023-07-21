@@ -1,16 +1,19 @@
 from django.shortcuts import render, redirect
 from django.forms import inlineformset_factory
+from django.views.generic.base import TemplateView, DetailView, UpdateView
+from django.utils.decorators import method_decorator
+
 from django.contrib.auth.forms import UserCreationForm
-from .forms import *
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+
+from .forms import *
 from .models import *
-from django.contrib.auth.models import Group
 from .decorators import *
+
+from django.contrib.auth.models import Group
 from django.contrib.auth.forms import AuthenticationForm
-from django.views.generic.base import TemplateView, DetailView, UpdateView
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 
 
 class HomePageView(TemplateView):
