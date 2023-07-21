@@ -9,6 +9,8 @@ from django.contrib.auth.models import Group
 from .decorators import *
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic.base import TemplateView, DetailView, UpdateView
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 
 class HomePageView(TemplateView):
@@ -25,12 +27,14 @@ class HomePageView(TemplateView):
 #     return render(request, "home2.html", context)
 
 
+@method_decorator(login_required, name="dispatch")
 class UserProfileDetailView(DetailView):
     model = Tenant
     template_name = "user_profile_detail.html"
     context_object_name = "user_profile"
 
 
+@method_decorator(login_required, name="dispatch")
 class UserProfileUpdateView(UpdateView):
     model = Tenant
     fields = [
