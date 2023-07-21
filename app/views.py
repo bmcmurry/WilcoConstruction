@@ -8,11 +8,38 @@ from .models import *
 from django.contrib.auth.models import Group
 from .decorators import *
 from django.contrib.auth.forms import AuthenticationForm
+from django.views.generic.base import TemplateView, DetailView, UpdateView
 
 
-def homeView(request):
-    context = {}
-    return render(request, "home2.html", context)
+class HomePageView(TemplateView):
+    template_name = "home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["latest_properties"] = RentalProperty.objects.all()[:5]
+        return context
+
+
+# def homeView(request):
+#     context = {}
+#     return render(request, "home2.html", context)
+
+
+class UserProfileDetailView(DetailView):
+    model = Tenant
+    template_name = "user_profile_detail.html"
+    context_object_name = "user_profile"
+
+
+class UserProfileUpdateView(UpdateView):
+    model = Tenant
+    fields = [
+        "first_name",
+        "last_name",
+        "phone",
+        "userEmail",
+    ]
+    template_name = "user_profile_update.html"
 
 
 def rentView(request):
