@@ -17,7 +17,9 @@ class Tenant(models.Model):
 
 
 class RentalProperty(models.Model):
-    linkToTenant = models.OneToOneField("Tenant", on_delete=models.PROTECT, null=True)
+    linkToTenant = models.OneToOneField(
+        "Tenant", on_delete=models.PROTECT, null=True, blank=True
+    )
     address = models.CharField(max_length=50)
     city = models.TextField
     isRented = models.BooleanField(default=False)
@@ -28,3 +30,6 @@ class RentalProperty(models.Model):
     isPetFriendly = models.BooleanField()
     picture = models.ImageField(upload_to="images/")
     description = models.TextField()
+
+    def __str__(self):
+        return self.address

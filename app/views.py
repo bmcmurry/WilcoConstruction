@@ -8,16 +8,26 @@ from .models import *
 from django.contrib.auth.models import Group
 from .decorators import *
 from django.contrib.auth.forms import AuthenticationForm
+from django.views import View
+from django.views.generic.edit import UpdateView
 
 
 def homeView(request):
     context = {}
-    return render(request, "home2.html", context)
+    return render(request, "home.html", context)
 
 
 def rentView(request):
     context = {}
     return render(request, "payRent.html", context)
+
+
+# Manager Page
+class MangerView(UpdateView):
+    model = RentalProperty
+
+    def post(self, request):
+        RentalProperty.objects.update()
 
 
 @unauthenticated_user
@@ -30,13 +40,9 @@ def registerPage(request):
             user = form.save(
                 commit=False
             )  # Create a user instance without saving to the database yet
-            user.first_name = form.cleaned_data.get(
-                "first_name"
-            )  # Access first name from the form data
-            user.last_name = form.cleaned_data.get(
-                "last_name"
-            )  # Access last name from the form data
-            user.save()  # Save the user with updated first name and last name
+            user.first_name = form.cleaned_data.get("first_name")
+            user.last_name = form.cleaned_data.get("last_name")
+            user.save()
 
             group = Group.objects.get(name="tenants")
             user.groups.add(group)
