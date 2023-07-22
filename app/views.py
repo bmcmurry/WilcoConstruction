@@ -1,20 +1,52 @@
 from django.shortcuts import render, redirect
 from django.forms import inlineformset_factory
+from django.views.generic.base import TemplateView, DetailView, UpdateView
+from django.utils.decorators import method_decorator
+
 from django.contrib.auth.forms import UserCreationForm
-from .forms import *
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+
+from .forms import *
 from .models import *
-from django.contrib.auth.models import Group
 from .decorators import *
+
+from django.contrib.auth.models import Group
 from django.contrib.auth.forms import AuthenticationForm
-from django.views import View
-from django.views.generic.edit import UpdateView
+from django.contrib.auth.decorators import login_required
 
 
-def homeView(request):
-    context = {}
-    return render(request, "home.html", context)
+class HomePageView(TemplateView):
+    template_name = "home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["latest_properties"] = RentalProperty.objects.all()[:5]
+        return context
+
+
+# def homeView(request):
+#     context = {}
+#     return render(request, "home2.html", context)
+
+
+@method_decorator(login_required, name="dispatch")
+class UserProfileDetailView(DetailView):
+    model = Tenant
+    template_name = "user_profile_detail.html"
+    context_object_name = "user_profile"
+
+
+@method_decorator(login_required, name="dispatch")
+class UserProfileUpdateView(UpdateView):
+    model = Tenant
+    fields = [
+        "first_name",
+        "last_name",
+        "phone",
+        "userEmail",
+    ]
+    template_name = "user_profile_update.html"
 
 
 def rentView(request):
