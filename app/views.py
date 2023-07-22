@@ -16,6 +16,7 @@ from .decorators import *
 from django.contrib.auth.models import Group
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.views import View
 
 
 class HomePageView(TemplateView):
@@ -29,14 +30,43 @@ class HomePageView(TemplateView):
 
 # def homeView(request):
 #     context = {}
-#     return render(request, "home2.html", context)
+#     return render(request, "home.html", context)
+
+
+class PropertiesView(TemplateView):
+    template_name = "properties.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["properties"] = RentalProperty.objects.all()
+        context["property_images"] = PropertyPhoto.objects.all()
+        # print(context["property_images"].values())
+        return context
 
 
 @method_decorator(login_required, name="dispatch")
-class UserProfileDetailView(DetailView):
-    model = Tenant
+class UserProfileDetailView(View):
     template_name = "user_profile_detail.html"
-    context_object_name = "user_profile"
+
+    def get(self, request, *args, **kwargs):
+        tenant = request.user.tenant
+        tenant_form = TenantForm(instance=tenant)
+        context = {
+            "tenant_form": tenant_form,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        tenant = request.user.tenant
+        tenant_form = TenantForm(request.POST, request.FILES, instance=tenant)
+
+        if tenant_form.is_valid():
+            tenant_form.save()
+
+        context = {
+            "tenant_form": tenant_form,
+        }
+        return render(request, self.template_name, context)
 
 
 @method_decorator(login_required, name="dispatch")
@@ -51,9 +81,9 @@ class UserProfileUpdateView(UpdateView):
     template_name = "user_profile_update.html"
 
 
-def rentView(request):
+def PaymentPortal(request):
     context = {}
-    return render(request, "payRent.html", context)
+    return render(request, "payment_portal.html", context)
 
 
 # Manager Page
@@ -116,13 +146,23 @@ def loginPage(request):
             if user is not None:
                 messages.success(request, "Welcome" + username)
                 login(request, user)
-                return redirect("rent")
+                return redirect("payment_portal")
 
             else:
                 messages.info(request, "Username OR Password is Incorrect")
 
     context = {"form": form}
     return render(request, "login.html", context)
+
+
+def contractView(request):
+    context = {}
+    return render(request, "contract.html", context)
+
+
+def contactView(request):
+    context = {}
+    return render(request, "contact.html", context)
 
 
 def logoutUser(request):

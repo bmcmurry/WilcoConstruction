@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", HomePageView.as_view(), name="home"),
+    path("properties/", PropertiesView.as_view(), name="properties"),
     path(
         "profile/<int:pk>/", UserProfileDetailView.as_view(), name="user_profile_detail"
     ),
@@ -18,7 +19,9 @@ urlpatterns = [
     path("register/", registerPage, name="register"),
     path("login/", loginPage, name="login"),
     path("logout/", logoutUser, name="logout"),
-    path("rent/", rentView, name="rent"),
+    path("contract/", contractView, name="contract"),
+    path("contact/", contactView, name="contact"),
+    path("payment-portal/", PaymentPortal, name="payment_portal"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

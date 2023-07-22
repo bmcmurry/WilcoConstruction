@@ -1,0 +1,104 @@
+{% load static %}
+<nav class="navbar bg-gradient fixed-top mb-5 bg-warning">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <img src="{% static "images/wilcologotransp.png" %}"alt="Wilco"
+      width="200" />
+    </a>
+    {% if user.is_authenticated %}
+    <p class="text-center d-xs display-6 d-s display-4">
+      Welcome, {{ user.username }}!
+    </p>
+    {% endif %}
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasNavbar"
+      aria-controls="offcanvasNavbar"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div
+      class="offcanvas offcanvas-end"
+      tabindex="-1"
+      id="offcanvasNavbar"
+      aria-labelledby="offcanvasNavbarLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url 'contract' %}">Contract</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link active dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Rentals
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="{% url 'properties' %}"
+                  >View Properties</a
+                >
+              </li>
+              <hr class="dropdown-divider" />
+              <li>
+                <a class="dropdown-item" href="{% url 'payment_portal' %}"
+                  >Pay Rent</a
+                >
+              </li>
+              <li></li>
+            </ul>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'contact' %}">Contact Us</a>
+          </li>
+          {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a
+              class="nav-link active"
+              href="{% url 'user_profile_detail' pk=request.user.pk %}"
+              >Account</a
+            >
+            <a class="nav-link active" href="{% url 'logout' %}">Logout</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url 'login' %}">Login</a>
+          </li>
+          {% endif %}
+        </ul>
+        <form class="d-flex mt-3" role="search">
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+          />
+          <button class="btn btn-outline-warning" type="submit">Search</button>
+        </form>
+        <a href="https://www.facebook.com/mississippilicensedcontractors"
+          ><i class="bi bi-facebook" style="font-size: 2rem"></i
+        ></a>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,38 +1,50 @@
-{% extends 'home.html' %} {% load static %} {% block content %}
-<div class="container">
-  <div class="card">
-    <h3 class="form_title">LOGIN</h3>
+{% extends 'base.html' %} {% load static %} {% block content %}
 
-    <form method="POST">
-      {% csrf_token %}
+<section class="container-fluid" id="main">
+  <div class="container-fluid w-75 p-3">
+    <div class="card p-2 bg-warning-subtle">
+      <form class="bg-warning-subtle" method="POST">
+        <h3 class="card-title mt-2 display-6">LOGIN</h3>
+        {% csrf_token %}
 
-      <div class="form_field">
-        <i class="fas fa-user"></i>
-        <input
-          type="text"
-          name="username"
-          placeholder="Username..."
-          class="form_input"
-        />
-      </div>
+        <div class="mb-2">
+          <label for="exampleFormControlInput1" class="form-label"
+            ><i class="bi bi-person-circle m-2"></i> Username</label
+          >
+          <input
+            type="text"
+            name="username"
+            placeholder="Username..."
+            class="form-control"
+          />
+        </div>
 
-      <div class="form_field">
-        <i class="fas fa-key"></i>
-        <input
-          type="password"
-          name="password"
-          placeholder="Password..."
-          class="form_input"
-        />
-      </div>
-      <button class="med_link" type="submit">Login</button>
-    </form>
-    <p>
-      Don't have an Account?
-      <a class="small_link" href="{% url 'register' %}">Sign Up</a>
-    </p>
+        <div>
+          <label for="exampleFormControlInput1" class="form-label"
+            ><i class="bi bi-key-fill"></i> Password</label
+          >
 
-    {% for message in messages %} {{ message }} {% endfor %}
+          <input
+            type="password"
+            name="password"
+            placeholder="Password..."
+            class="form-control"
+          />
+        </div>
+        <button class="btn btn-warning ms-3 mt-3 mb-3 me-1" type="submit">
+          Login
+        </button>
+        <button class="btn btn-warning">
+          <a
+            href="{% url 'register' %}"
+            class="btn-warning link-body-emphasis link-offset-2 link-underline link-underline-opacity-0"
+            >Register</a
+          >
+        </button>
+      </form>
+
+      {% for message in messages %} {{ message }} {% endfor %}
+    </div>
   </div>
-</div>
+</section>
 {% endblock content %}

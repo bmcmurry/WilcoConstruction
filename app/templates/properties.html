@@ -1,7 +1,7 @@
-{% extends 'base.html' %}{% load static %}{% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 <section class="container-fluid" id="main">
   <!-- about company text -->
-  <p class="text-center display-2">Contracts</p>
+  <p class="text-center display-2">Rentals</p>
   <p class="lh-base text-center ms-5 me-5">
     Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, omnis
     perspiciatis sint voluptatum tempore sunt iusto ab at aspernatur illo!
@@ -11,10 +11,35 @@
     praesentium voluptatum error aspernatur odio tempora corporis perferendis
     quasi iure non assumenda repellat!
   </p>
-  <!-- contract cards -->
+  <!-- rental cards -->
+
+  {% for property in properties %}
+  <div class="card w-75 mb-3 mx-auto">
+    {% for property_photo in property.propertyphoto_set.all %}
+    <img
+      src="{{ property_photo.picture.url }}"
+      class="card-img-top"
+      alt="{{ property.address }}"
+    />
+    {% endfor %}
+    <div class="card-body">
+      <h5 class="card-title">{{ property.address }}</h5>
+      <p class="card-text">Bedrooms: {{ property.numOfBedrooms }}</p>
+      <p class="card-text">Bathrooms: {{ property.numOfBathrooms }}</p>
+      <p class="card-text">{{ property.description }}</p>
+      <p class="card-text">
+        <a href="#rentalform"
+          ><button type="button" class="btn btn-warning">Contact Us</button></a
+        >
+      </p>
+    </div>
+  </div>
+  {% endfor %}
+
+  <!-- placeholder properties -->
 
   <div class="card w-75 mb-3 mx-auto">
-    <img src="{% static "images/const1.jpg" %}" class="card-img-top" alt="..."
+    <img src="{% static "images/house1.jpg" %}" class="card-img-top" alt="..."
     />
     <div class="card-body">
       <h5 class="card-title">Card title</h5>
@@ -23,18 +48,15 @@
         additional content. This content is a little bit longer.
       </p>
       <p class="card-text">
-        <a href="contact.html"
+        <a href="#rentalform"
           ><button type="button" class="btn btn-warning">Contact Us</button></a
-        >
-        <a href="#quoteform"
-          ><button type="button" class="btn btn-warning">Get a Quote</button></a
         >
       </p>
     </div>
   </div>
 
   <div class="card w-75 mb-3 mx-auto">
-    <img src="{% static "images/const2.jpg" %}" class="card-img-top" alt="..."
+    <img src="{% static "images/house2.jpg" %}" class="card-img-top" alt="..."
     />
     <div class="card-body">
       <h5 class="card-title">Card title</h5>
@@ -43,18 +65,15 @@
         additional content. This content is a little bit longer.
       </p>
       <p class="card-text">
-        <a href="contact.html"
+        <a href="#rentalform"
           ><button type="button" class="btn btn-warning">Contact Us</button></a
-        >
-        <a href="#quoteform"
-          ><button type="button" class="btn btn-warning">Get a Quote</button></a
         >
       </p>
     </div>
   </div>
 
   <div class="card w-75 mb-3 mx-auto">
-    <img src="{% static "images/const3.jpg" %}" class="card-img-top" alt="..."
+    <img src="{% static "images/house3.jpg" %}" class="card-img-top" alt="..."
     />
     <div class="card-body">
       <h5 class="card-title">Card title</h5>
@@ -63,19 +82,16 @@
         additional content. This content is a little bit longer.
       </p>
       <p class="card-text">
-        <a href="contact.html"
+        <a href="#rentalform"
           ><button type="button" class="btn btn-warning">Contact Us</button></a
-        >
-        <a href="#quoteform"
-          ><button type="button" class="btn btn-warning">Get a Quote</button></a
         >
       </p>
     </div>
   </div>
-  <!-- quotes -->
-  <form class="bg-warning-subtle" action="" id="quoteform">
+  <!-- rental inquires -->
+  <form class="bg-warning-subtle" action="" id="rentalform">
     <div class="container-fluid w-75 p-3">
-      <p class="text-center display-2">Get a Quote</p>
+      <p class="text-center display-2">Inquire about a Rental</p>
       <p class="lh-base text-center ms-5 me-5">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, omnis
         perspiciatis sint voluptatum tempore sunt iusto ab at aspernatur illo!
@@ -136,18 +152,22 @@
           </div>
         </div>
       </div>
-      <label for="exampleFormControlInput1" class="form-label"
-        >Catagories</label
-      >
+      <label for="exampleFormControlInput1" class="form-label">Location</label>
       <select class="form-select mb-2" aria-label="Default select example">
-        <option selected>Please select an area we can help you with</option>
-        <option value="1">Residential</option>
-        <option value="2">Commercial</option>
-        <option value="3">Other</option>
+        <option selected>Please select an area you'd like to rent in:</option>
+        <option value="1">Oxford</option>
+        <option value="2">Tupelo</option>
+        <option value="3">Saltillo</option>
+        <option value="1">Baldwyn</option>
+        <option value="2">West Point</option>
+        <option value="3">Booneville</option>
+        <option value="1">Guntown</option>
+        <option value="2">Amory</option>
+        <option value="3">New Albany</option>
       </select>
       <div class="mb-3">
         <label for="exampleFormControlTextarea1" class="form-label"
-          >Explain the work needed in as much detail as possible.</label
+          >Please give us some details of what you are looking for:</label
         >
         <textarea
           class="form-control"
@@ -159,4 +179,5 @@
     </div>
   </form>
 </section>
+
 {% endblock content %}

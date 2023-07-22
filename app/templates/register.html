@@ -1,69 +1,28 @@
-{% extends 'home.html' %} {% block content %}
-<div class="container">
-  <div class="card">
-    <div class="card_body">
-      <h3 class="form_title">REGISTER</h3>
-      <br />
-      <form method="POST">
-        {% csrf_token %}
-        <div class="form_field">
-          <i class="fas fa-user"></i>
-          <input
-            type="text"
-            name="username"
-            placeholder="Username..."
-            class="form_input"
-          />
-        </div>
-        <div class="form_field">
-          <i class="fas fa-user"></i>
-          <input
-            type="text"
-            name="first_name"
-            placeholder="First name..."
-            class="form_input"
-          />
-        </div>
-        <div class="form_field">
-          <i class="fas fa-user"></i>
-          <input
-            type="text"
-            name="last_name"
-            placeholder="Last name..."
-            class="form_input"
-          />
-        </div>
-        <div class="form_field">
-          <i class="fa fa-envelope"></i>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email..."
-            class="form_input"
-          />
-        </div>
-        <div class="form_field">
-          <i class="fas fa-lock"></i>
-          <input
-            type="password"
-            name="password1"
-            placeholder="Password..."
-            class="form_input"
-          />
-        </div>
-        <div class="form_field">
-          <i class="fas fa-key"></i>
-          <input
-            type="password"
-            name="password2"
-            placeholder="Confirm Password..."
-            class="form_input"
-          />
-        </div>
-        <button class="med_link" type="submit">Register</button>
-      </form>
-      <br />
+{% extends 'base.html' %} {% load static %} {% block content %}
 
+<section class="container-fluid" id="main">
+  <div class="container-fluid w-75 p-3">
+    <div class="card p-2 bg-warning-subtle">
+      <form class="bg-warning-subtle" method="POST">
+        {% csrf_token %}
+        <h3 class="card-title mt-2 display-6">REGISTER</h3>
+        {% for field in form %}
+        <div class="mb-2">
+          <label for="id_{{field.name}}" class="form-label"
+            >{{field.label}}</label
+          >
+          <input
+            type="text"
+            id="id_{{field.name}}"
+            name="{{field.name}}"
+            placeholder="{{field.label}}"
+            class="form-control"
+          />
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-warning">Register</button>
+        <p>{{form.errors}}</p>
+      </form>
       {% if error_messages %}
       <ul>
         {% for field, messages in error_messages.items %}
@@ -73,13 +32,7 @@
         {% endfor %}{% endfor %}
       </ul>
       {% endif %}
-      <div class="card_text">
-        <p>
-          Have an Account?
-          <a class="small_link" href="{% url 'login' %}">Login</a>
-        </p>
-      </div>
     </div>
   </div>
-</div>
+</section>
 {% endblock content %}
