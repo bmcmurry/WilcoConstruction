@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.forms import inlineformset_factory
-from django.views.generic.base import TemplateView, DetailView, UpdateView
+from django.views.generic.base import TemplateView
+from django.views.generic.edit import UpdateView
+from django.views.generic.detail import DetailView
 from django.utils.decorators import method_decorator
 
 from django.contrib.auth.forms import UserCreationForm
