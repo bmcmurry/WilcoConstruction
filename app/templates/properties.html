@@ -13,111 +13,78 @@
   </p>
   <!-- rental cards -->
 
-  {% for property in properties %}
-  <div class="card w-75 mb-3 mx-auto">
-    {% for property_photo in property.propertyphoto_set.all %}
-    <img
-      src="{{ property_photo.picture.url }}"
-      class="card-img-top"
-      alt="{{ property.address }}"
-    />
+  <div class="row mb-3">
+    {% for property in properties %}
+    {% if property.isRented == False %}
+    <div class="col-sm-4 col-md-3 mb-3 mb-sm-0">
+      <div class="card mt-3">
+        {% with property_photo=property.propertyphoto_set.first %}
+        <! ignore prettier ->
+        {% if property_photo %}
+        <img
+          src="{{ property_photo.picture.url }}"
+          class="card-img-top"
+          alt="{{ property.address }}"
+        />
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ property.address }}</h5>
+          <p class="card-text">Bedrooms: {{ property.numOfBedrooms }}</p>
+          <p class="card-text">Bathrooms: {{ property.numOfBathrooms }}</p>
+          <p class="card-text">{{ property.description }}</p>
+          <p class="card-text">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#{{ property.id }}">
+              Info
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade modal-lg" id="{{ property.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                 
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">{{ property.address }}</h1>
+                 
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+              
+                    <img src="{{ property_photo.picture.url }}" alt="{{ property.address }}" class="card-img-top"/><br>
+                   
+                    
+
+                    
+                    <p class="card-text">Bedrooms: {{ property.numOfBedrooms }}</p>
+                    <p class="card-text">Bathrooms: {{ property.numOfBathrooms }}</p>
+                    <p class="card-text">{{ property.description }}</p>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    
+                  </div>
+                </div>
+              </div>
+            </div> 
+
+<!--end modal-->
+            {% if user.is_staff %}
+
+            <a href="#"
+              ><button type="button" class="btn btn-warning">
+                Edit Property
+              </button></a
+            >
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div> {% endwith %}
+    {% endif %}
     {% endfor %}
-    <div class="card-body">
-      <h5 class="card-title">{{ property.address }}</h5>
-      <p class="card-text">Bedrooms: {{ property.numOfBedrooms }}</p>
-      <p class="card-text">Bathrooms: {{ property.numOfBathrooms }}</p>
-      <p class="card-text">{{ property.description }}</p>
-      <p class="card-text">
-        <a href="#rentalform"
-          ><button type="button" class="btn btn-warning">Contact Us</button></a
-        >
-      </p>
-    </div>
-  </div>
-  {% endfor %}
-
-  <!-- placeholder properties -->
-  <div class="row">
-    <div class="col-sm-6 mb-3 mb-sm-0">
-      <div class="card">
-        <img src="{% static "images/house1.jpg" %}" class="card-img-top"
-        alt="..." />
-        <div class="card-body">
-          <h5 class="card-title">Special title treatment</h5>
-          <p class="card-text">
-            With supporting text below as a natural lead-in to additional
-            content.
-          </p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-6">
-      <div class="card">
-        <img src="{% static "images/house1.jpg" %}" class="card-img-top"
-        alt="..." />
-        <div class="card-body">
-          <h5 class="card-title">Special title treatment</h5>
-          <p class="card-text">
-            With supporting text below as a natural lead-in to additional
-            content.
-          </p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
-      </div>
-    </div>
   </div>
 
-  <div class="card w-75 mb-3 mx-auto">
-    <img src="{% static "images/house1.jpg" %}" class="card-img-top" alt="..."
-    />
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <p class="card-text">
-        This is a wider card with supporting text below as a natural lead-in to
-        additional content. This content is a little bit longer.
-      </p>
-      <p class="card-text">
-        <a href="#rentalform"
-          ><button type="button" class="btn btn-warning">Contact Us</button></a
-        >
-      </p>
-    </div>
-  </div>
-
-  <div class="card w-75 mb-3 mx-auto">
-    <img src="{% static "images/house2.jpg" %}" class="card-img-top" alt="..."
-    />
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <p class="card-text">
-        This is a wider card with supporting text below as a natural lead-in to
-        additional content. This content is a little bit longer.
-      </p>
-      <p class="card-text">
-        <a href="#rentalform"
-          ><button type="button" class="btn btn-warning">Contact Us</button></a
-        >
-      </p>
-    </div>
-  </div>
-
-  <div class="card w-75 mb-3 mx-auto">
-    <img src="{% static "images/house3.jpg" %}" class="card-img-top" alt="..."
-    />
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <p class="card-text">
-        This is a wider card with supporting text below as a natural lead-in to
-        additional content. This content is a little bit longer.
-      </p>
-      <p class="card-text">
-        <a href="#rentalform"
-          ><button type="button" class="btn btn-warning">Contact Us</button></a
-        >
-      </p>
-    </div>
-  </div>
   <!-- rental inquires -->
   <form class="bg-warning-subtle" action="" id="rentalform">
     <div class="container-fluid w-75 p-3">

@@ -11,6 +11,19 @@
           <label for="id_{{field.name}}" class="form-label"
             >{{field.label}}</label
           >
+          {% if field.name == 'password1' or field.name == 'password2' %}
+          <!-- Use type="password" for password fields to hide the characters -->
+          <input
+            type="password"
+            id="id_{{field.name}}"
+            name="{{field.name}}"
+            placeholder="{{field.label}}"
+            class="form-control"
+          />
+          <i class="bi bi-eye-slash" id="togglePassword"></i>
+
+          {% else %}
+          <!-- For other fields, use type="text" -->
           <input
             type="text"
             id="id_{{field.name}}"
@@ -18,9 +31,11 @@
             placeholder="{{field.label}}"
             class="form-control"
           />
+          {% endif %}
         </div>
         {% endfor %}
         <button type="submit" class="btn btn-warning">Register</button>
+
         <p>{{form.errors}}</p>
       </form>
       {% if error_messages %}

@@ -42,3 +42,10 @@ class CreateRentalPropertyForm(ModelForm):
         model = RentalProperty
         fields = "__all__"
         exclude = ["isRented"]
+
+
+class UpdatePropertyForm(ModelForm):
+    class Meta:
+        model = RentalProperty
+        fields = "__all__"
+        exclude = ["isRented"]

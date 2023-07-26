@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 from django.forms import inlineformset_factory
-from django.views.generic.base import TemplateView
-from django.views.generic.edit import UpdateView
-from django.views.generic.detail import DetailView
+from django.views.generic import TemplateView, UpdateView, DetailView, CreateView
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+
 
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.admin.views.decorators import staff_member_required
 
 from .forms import *
 from .models import *
@@ -19,81 +20,7 @@ from django.contrib.auth.decorators import login_required
 from django.views import View
 
 
-class HomePageView(TemplateView):
-    template_name = "home.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["latest_properties"] = RentalProperty.objects.all()[:5]
-        return context
-
-
-# def homeView(request):
-#     context = {}
-#     return render(request, "home.html", context)
-
-
-class PropertiesView(TemplateView):
-    template_name = "properties.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["properties"] = RentalProperty.objects.all()
-        context["property_images"] = PropertyPhoto.objects.all()
-        # print(context["property_images"].values())
-        return context
-
-
-@method_decorator(login_required, name="dispatch")
-class UserProfileDetailView(View):
-    template_name = "user_profile_detail.html"
-
-    def get(self, request, *args, **kwargs):
-        tenant = request.user.tenant
-        tenant_form = TenantForm(instance=tenant)
-        context = {
-            "tenant_form": tenant_form,
-        }
-        return render(request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        tenant = request.user.tenant
-        tenant_form = TenantForm(request.POST, request.FILES, instance=tenant)
-
-        if tenant_form.is_valid():
-            tenant_form.save()
-
-        context = {
-            "tenant_form": tenant_form,
-        }
-        return render(request, self.template_name, context)
-
-
-@method_decorator(login_required, name="dispatch")
-class UserProfileUpdateView(UpdateView):
-    model = Tenant
-    fields = [
-        "first_name",
-        "last_name",
-        "phone",
-        "userEmail",
-    ]
-    template_name = "user_profile_update.html"
-
-
-def PaymentPortal(request):
-    context = {}
-    return render(request, "payment_portal.html", context)
-
-
-# Manager Page
-class MangerView(UpdateView):
-    model = RentalProperty
-
-    def post(self, request):
-        RentalProperty.objects.update()
-
-
+## --------------LOGIN/LOGOUT/REGISTER----------------##
 @unauthenticated_user
 def registerPage(request):
     context = {}
@@ -155,6 +82,105 @@ def loginPage(request):
     return render(request, "login.html", context)
 
 
+def logoutUser(request):
+    logout(request)
+    return redirect("home")
+
+
+# ----------------PROPERTIES---------------
+class PropertiesView(TemplateView):
+    template_name = "properties.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["properties"] = RentalProperty.objects.all()
+        context["property_images"] = PropertyPhoto.objects.all()
+        # print(context["property_images"].values())
+        return context
+
+
+class CreatePropertyView(CreateView):
+    model = RentalProperty
+    form_class = UpdatePropertyForm
+    template_name = "update_property.html"
+    success_url = reverse_lazy("")
+
+    def post(self, request):
+        RentalProperty.objects.update()
+
+
+class UpdatePropertyView(UpdateView):
+    model = RentalProperty
+    form_class = UpdatePropertyForm
+    template_name = "update_property.html"
+    success_url = reverse_lazy("")
+
+    def post(self, request):
+        RentalProperty.objects.update()
+
+
+# --------------------TENANTS/USERS----------------
+@method_decorator(login_required, name="dispatch")
+class UserProfileDetailView(View):
+    template_name = "user_profile_detail.html"
+
+    def get(self, request, *args, **kwargs):
+        tenant = request.user.tenant
+        tenant_form = TenantForm(instance=tenant)
+        context = {
+            "tenant_form": tenant_form,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        tenant = request.user.tenant
+        tenant_form = TenantForm(request.POST, request.FILES, instance=tenant)
+
+        if tenant_form.is_valid():
+            tenant_form.save()
+
+        context = {
+            "tenant_form": tenant_form,
+        }
+        return render(request, self.template_name, context)
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
+class ManagerInterfaceView(TemplateView):
+    template_name = "manager.html"
+
+    # COULD DO THIS BUT WE'LL SEE
+    # # Calculate the starting index for the next set of records (in this case, 5).
+    # next_starting_index = 5
+
+    # # Fetch the next 5 records using slicing with the offset.
+    # next_five_tenants = Tenant.objects.all()[next_starting_index: next_starting_index + 5]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["latest_tenants"] = Tenant.objects.all()
+        context["properties"] = RentalProperty.objects.all()
+        return context
+
+
+##-----------landing pages------------##
+
+
+class HomePageView(TemplateView):
+    template_name = "home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["latest_properties"] = RentalProperty.objects.all()[:5]
+        return context
+
+
+def PaymentPortal(request):
+    context = {}
+    return render(request, "payment_portal.html", context)
+
+
 def contractView(request):
     context = {}
     return render(request, "contract.html", context)
@@ -163,8 +189,3 @@ def contractView(request):
 def contactView(request):
     context = {}
     return render(request, "contact.html", context)
-
-
-def logoutUser(request):
-    logout(request)
-    return redirect("home")

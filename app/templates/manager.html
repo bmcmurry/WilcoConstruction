@@ -1,0 +1,27 @@
+{% extends 'base.html' %}{% load static %} {% block content %}
+<section>
+  <div class="row">
+    <div class="col-md">
+      <div class="card card-body">
+        <table class="table table-sm">
+          <tr>
+            <th>Address</th>
+            <th>Ocuppied</th>
+            <th>bedrooms</th>
+            <th>bathrooms</th>
+          </tr>
+
+          {% for property in properties %}
+          <tr>
+            <td>{{property.address}}</td>
+            <td>{{property.isRented}}</td>
+            <td>{{property.numOfBedrooms}}</td>
+            <td>{{property.numOfBathrooms}}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

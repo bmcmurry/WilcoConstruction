@@ -33,7 +33,7 @@ class RentalProperty(models.Model):
     )
     address = models.CharField(max_length=50)
     city = models.TextField(null=True, choices=LOCATIONS)
-    isRented = models.BooleanField(default=False, verbose_name="Available")
+    isRented = models.BooleanField(default=False, verbose_name="Occupied")
     pricePerMonth = models.FloatField(verbose_name="Price")
     squareFoot = models.IntegerField(verbose_name="Square Footage")
     numOfBedrooms = models.IntegerField(verbose_name="Bedrooms")
@@ -50,4 +50,20 @@ class PropertyPhoto(models.Model):
     picture = models.ImageField(upload_to="images/")
     propertyOfImage = models.ForeignKey(
         "RentalProperty", on_delete=models.PROTECT, null=True, blank=True
+    )
+
+
+class ConstructionTicket(models.Model):
+    title = models.CharField(max_length=50)
+    dateCreated = models.DateField(auto_now_add=True)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+
+class ConstructionTicketPhoto(models.Model):
+    picture = models.ImageField(upload_to="images/")
+    ConstructionOfImage = models.ForeignKey(
+        "ConstructionTicket", on_delete=models.PROTECT, null=True, blank=True
     )
