@@ -1,22 +1,27 @@
-{% extends 'base.html' %}{% load static %} {% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 <section>
   <div class="row">
-    <div class="col-md">
+    <div class="col-md-6">
       <div class="card card-body">
         <table class="table table-sm">
           <tr>
             <th>Address</th>
-            <th>Ocuppied</th>
-            <th>bedrooms</th>
-            <th>bathrooms</th>
+            <th>Occupied</th>
+            <th>Tenant</th>
+            <th>Bedrooms</th>
+            <th>Bathrooms</th>
           </tr>
-
           {% for property in properties %}
           <tr>
-            <td>{{property.address}}</td>
-            <td>{{property.isRented}}</td>
-            <td>{{property.numOfBedrooms}}</td>
-            <td>{{property.numOfBathrooms}}</td>
+            <td>{{ property.address }}</td>
+            <td>{{ property.isRented }}</td>
+            {% if property.isRented %} {% for tenant in tenants %}
+            <td>{{tenant}}</td>
+            {% endfor %} {% else %}
+            <td>N/A</td>
+            {% endif %}
+            <td>{{ property.numOfBedrooms }}</td>
+            <td>{{ property.numOfBathrooms }}</td>
           </tr>
           {% endfor %}
         </table>

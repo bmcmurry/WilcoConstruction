@@ -126,3 +126,18 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_ROOT = BASE_DIR / "media"
 
 MEDIA_URL = "/media/"
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Add your email host, port, username, and password here if you're using a SMTP backend for sending emails.
+# For example, if you're using Gmail SMTP to send emails, you'd configure it like this:
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+
+# Set the default email address from which the emails will be sent (if not specified in the send_mail() function).
+DEFAULT_FROM_EMAIL = ""

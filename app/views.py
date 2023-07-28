@@ -19,12 +19,18 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views import View
 
+from django.core.mail import send_mail
+
+import smtplib
 
 ## --------------LOGIN/LOGOUT/REGISTER----------------##
+
+
 @unauthenticated_user
 def registerPage(request):
     context = {}
     form = CreateUserForm()
+
     if request.method == "POST":
         form = CreateUserForm(request.POST)
         if form.is_valid():
@@ -51,19 +57,19 @@ def registerPage(request):
             error_messages = {}
             for field, error_list in errors.items():
                 error_messages[field] = [error.message for error in error_list]
-                context = {"form": form, "error_messages": error_messages}
 
-    context = {"form": form}
+            context["form"] = form  # Add the form to the context
+            context[
+                "error_messages"
+            ] = error_messages  # Add error_messages to the context
+
+    context["form"] = form  # Add the form to the context even if it's a GET request
     return render(request, "register.html", context)
 
 
-@unauthenticated_user
 def loginPage(request):
-    form = AuthenticationForm()
-
     if request.method == "POST":
-        form = AuthenticationForm(data=request.POST)
-
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
@@ -71,12 +77,17 @@ def loginPage(request):
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
-                messages.success(request, "Welcome" + username)
                 login(request, user)
-                return redirect("payment_portal")
-
+                if request.user.is_superuser:
+                    return redirect("manager_interface")
+                else:
+                    return redirect("payment_portal")
             else:
-                messages.info(request, "Username OR Password is Incorrect")
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Invalid username or password.")
+    else:
+        form = AuthenticationForm()
 
     context = {"form": form}
     return render(request, "login.html", context)
@@ -161,6 +172,7 @@ class ManagerInterfaceView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["latest_tenants"] = Tenant.objects.all()
         context["properties"] = RentalProperty.objects.all()
+        context["tenants"] = Tenant.objects.filter(linkToProperty__isnull=False)
         return context
 
 
@@ -186,6 +198,34 @@ def contractView(request):
     return render(request, "contract.html", context)
 
 
-def contactView(request):
-    context = {}
-    return render(request, "contact.html", context)
+def contact_view(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            first_name = form.cleaned_data["first_name"]
+            last_name = form.cleaned_data["last_name"]
+            email = form.cleaned_data["email"]
+            phone = form.cleaned_data["phone"]
+            subject = form.cleaned_data["subject"]
+            message = form.cleaned_data["message"]
+
+            try:
+                # Customize your email settings below
+                send_mail(
+                    subject,
+                    f"Name: {first_name} {last_name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}",
+                    email,
+                    [""],
+                    fail_silently=False,
+                )
+                print("BOOOO")  # This is just for debugging purposes
+            except smtplib.SMTPException as e:
+                # Handle the exception or display an error message to the user
+                print(f"Error sending email: {e}")
+                # You can also add a message to the user using Django's messages framework.
+                # Example: messages.error(request, "Error sending email. Please try again later.")
+            return redirect("contact.html")
+    else:
+        form = ContactForm()
+
+    return render(request, "contact.html", {"form": form})

@@ -49,3 +49,18 @@ class UpdatePropertyForm(ModelForm):
         model = RentalProperty
         fields = "__all__"
         exclude = ["isRented"]
+
+
+class ContactForm(forms.Form):
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"type": "email"}))
+    CHOICES = (
+        ("Rentals", "Rentals"),
+        ("Contracts", "Contracts"),
+        ("Other", "Other"),
+    )
+    categories = forms.ChoiceField(choices=CHOICES)
+    phone = forms.CharField(max_length=20)
+    subject = forms.CharField(max_length=100)
+    message = forms.CharField(widget=forms.Textarea)

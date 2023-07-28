@@ -2,35 +2,41 @@
 <section class="container-fluid" id="main">
   <!-- contact -->
   <form class="bg-warning-subtle" action="">
+    {%csrf_token%}
     <div class="container-fluid w-75 p-3">
       <p class="text-center display-2">Contact Us</p>
       <p class="lh-base text-center ms-5 me-5">
         <i class="bi bi-telephone-fill"></i> 662-871-8066 <br />
-        <a href="https://www.facebook.com/mississippilicensedcontractors"
-          ><i class="bi bi-facebook"></i
-        ></a>
-        Follow us on Facebook <br />Lorem ipsum dolor sit amet consectetur
-        adipisicing elit. Labore, omnis perspiciatis sint voluptatum tempore
-        sunt iusto ab at aspernatur illo! Possimus totam eligendi aliquid
-        corrupti quis voluptas ipsum repellendus nam? Lorem ipsum dolor sit amet
-        consectetur adipisicing elit. Eligendi, natus adipisci aliquam unde
-        voluptates incidunt repellendus culpa praesentium voluptatum error
-        aspernatur odio tempora corporis perferendis quasi iure non assumenda
-        repellat!
+        <a
+          class="link-underline link-underline-opacity-0"
+          href="https://www.facebook.com/mississippilicensedcontractors"
+          ><i class="bi bi-facebook"></i> Follow us on Facebook</a
+        >
+        <br />Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore,
+        omnis perspiciatis sint voluptatum tempore sunt iusto ab at aspernatur
+        illo! Possimus totam eligendi aliquid corrupti quis voluptas ipsum
+        repellendus nam? Lorem ipsum dolor sit amet consectetur adipisicing
+        elit. Eligendi, natus adipisci aliquam unde voluptates incidunt
+        repellendus culpa praesentium voluptatum error aspernatur odio tempora
+        corporis perferendis quasi iure non assumenda repellat!
       </p>
 
+      {{form.as_p}} {% comment %}
       <div class="mb-3">
         <div class="row mb-2">
           <div class="col">
-            <label for="exampleFormControlInput1" class="form-label"
-              >First Name</label
-            >
+            <label for="first_name" class="form-label">First Name</label>
             <input
               type="text"
+              name="first_name"
               class="form-control"
               placeholder="First name"
               aria-label="First name"
+              required
             />
+            <label for="exampleFormControlInput1" class="form-label"
+              >First Name</label
+            >
           </div>
           <div class="col">
             <label for="exampleFormControlInput1" class="form-label"
@@ -38,9 +44,11 @@
             >
             <input
               type="text"
+              name="last_name"
               class="form-control"
               placeholder="Last name"
               aria-label="Last name"
+              required
             />
           </div>
         </div>
@@ -51,9 +59,11 @@
             >
             <input
               type="text"
+              name="phone"
               class="form-control"
               placeholder="555-555-5555"
               aria-label="Phone"
+              required
             />
           </div>
           <div class="col">
@@ -62,9 +72,11 @@
             >
             <input
               type="text"
+              name="email"
               class="form-control"
               placeholder="email@emailprovider.com"
               aria-label="email"
+              required
             />
           </div>
         </div>
@@ -72,7 +84,11 @@
       <label for="exampleFormControlInput1" class="form-label"
         >Catagories</label
       >
-      <select class="form-select mb-2" aria-label="Default select example">
+      <select
+        class="form-select mb-2"
+        aria-label="Default select example"
+        required
+      >
         <option selected>Please select an area we can help you with</option>
         <option value="1">Rentals</option>
         <option value="2">Contracts</option>
@@ -83,11 +99,14 @@
           >How can we help?</label
         >
         <textarea
+          name="message"
           class="form-control"
           id="exampleFormControlTextarea1"
           rows="3"
+          required
         ></textarea>
       </div>
+      {% endcomment %}
       <button type="submit" class="btn btn-warning mb-3">Submit</button>
     </div>
   </form>

@@ -9,7 +9,7 @@ urlpatterns = [
     path("login/", loginPage, name="login"),
     path("logout/", logoutUser, name="logout"),
     path("contract/", contractView, name="contract"),
-    path("contact/", contactView, name="contact"),
+    path("contact/", contact_view, name="contact"),
     path("payment-portal/", PaymentPortal, name="payment_portal"),
     path("manager/", ManagerInterfaceView.as_view(), name="manager_interface"),
     # -------------CREATE---------------

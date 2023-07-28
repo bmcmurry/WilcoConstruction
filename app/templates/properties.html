@@ -42,7 +42,7 @@
             <div class="modal fade modal-lg" id="{{ property.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
-                  <div class="modal-header">
+                  <div class="modal-header bg-warning">
                  
                     <h1 class="modal-title fs-5" id="exampleModalLabel">{{ property.address }}</h1>
                  
@@ -51,16 +51,13 @@
                   <div class="modal-body">
               
                     <img src="{{ property_photo.picture.url }}" alt="{{ property.address }}" class="card-img-top"/><br>
-                   
-                    
-
-                    
+                  
                     <p class="card-text">Bedrooms: {{ property.numOfBedrooms }}</p>
                     <p class="card-text">Bathrooms: {{ property.numOfBathrooms }}</p>
                     <p class="card-text">{{ property.description }}</p>
 
                   </div>
-                  <div class="modal-footer">
+                  <div class="modal-footer bg-warning">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     
                   </div>
