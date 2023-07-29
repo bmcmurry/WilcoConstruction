@@ -128,8 +128,9 @@
   </div>
   <!-- contact -->
   <form
+    onsubmit="sendEmail(); reset(); return false;"
     class="bg-warning-subtle"
-    action="mailto:dcornelius@basecampcodingacademy.org"
+    id="contact-form"
   >
     <div class="container-fluid w-75 p-3">
       <p class="text-center display-2">Contact Us</p>
@@ -152,6 +153,7 @@
             <input
               type="text"
               class="form-control"
+              id="firstname"
               placeholder="First name"
               aria-label="First name"
             />
@@ -163,6 +165,7 @@
             <input
               type="text"
               class="form-control"
+              id="lastname"
               placeholder="Last name"
               aria-label="Last name"
             />
@@ -176,6 +179,7 @@
             <input
               type="text"
               class="form-control"
+              id="phone"
               placeholder="555-555-5555"
               aria-label="Phone"
             />
@@ -186,6 +190,7 @@
             >
             <input
               type="text"
+              id="email"
               class="form-control"
               placeholder="email@emailprovider.com"
               aria-label="email"
@@ -196,7 +201,11 @@
       <label for="exampleFormControlInput1" class="form-label"
         >Catagories</label
       >
-      <select class="form-select mb-2" aria-label="Default select example">
+      <select
+        class="form-select mb-2"
+        aria-label="Default select example"
+        id="email"
+      >
         <option selected>Please select an area we can help you with</option>
         <option value="1">Rentals</option>
         <option value="2">Contracts</option>
@@ -206,14 +215,63 @@
         <label for="exampleFormControlTextarea1" class="form-label"
           >How can we help?</label
         >
-        <textarea
-          class="form-control"
-          id="exampleFormControlTextarea1"
-          rows="3"
-        ></textarea>
+        <textarea class="form-control" id="msg" rows="3"></textarea>
       </div>
       <button type="submit" class="btn btn-warning mb-3">Submit</button>
     </div>
   </form>
 </section>
 {% endblock content %}
+<script src="https://smtpjs.com/v3/smtp.js"></script>
+<script>
+  function sendEmail() {
+    Email.send({
+      Host: "smtp.elasticemail.com",
+      Username: "ashleybglasz@gmail.com",
+      Password: "64446D35DE84403E1107AB31E8702B4E01C3",
+      To: "ashleybglasz@gmail.com",
+      From: document.getElementById("email").value,
+      Subject: "Wilco Website Inquiry",
+      Body:
+        "Name: " +
+        document.getElementById("firstname").value +
+        "" +
+        document.getElementById("lastname").value +
+        "<br> Email: " +
+        document.getElementById("email").value +
+        "<br> Catagory:" +
+        document.getElementById("catagory").value +
+        "<br> Message: " +
+        document.getElementById("msg").value,
+    }).then((message) => alert(message));
+  }
+</script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
+></script>
+<script type="text/javascript">
+  (function () {
+    emailjs.init("K-mlFzmNFqaa6-QOL");
+  })();
+</script>
+<script type="text/javascript">
+  window.onload = function () {
+    document
+      .getElementById("contact-form")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+        // generate a five digit number for the contact_number variable
+        this.contact_number.value = (Math.random() * 100000) | 0;
+        // these IDs from the previous steps
+        emailjs.sendForm("contact_service", "contact_form", this).then(
+          function () {
+            console.log("SUCCESS!");
+          },
+          function (error) {
+            console.log("FAILED...", error);
+          }
+        );
+      });
+  };
+</script>

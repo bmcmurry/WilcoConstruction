@@ -12,8 +12,10 @@ urlpatterns = [
     path("contact/", contact_view, name="contact"),
     path("payment-portal/", PaymentPortal, name="payment_portal"),
     path("manager/", ManagerInterfaceView.as_view(), name="manager_interface"),
+    path("search/", search_property, name="search_property"),
     # -------------CREATE---------------
     path("register/", registerPage, name="register"),
+    path("properties/create/", CreatePropertyView.as_view(), name="create_property"),
     # -------------READ---------------
     path("", HomePageView.as_view(), name="home"),
     path("properties/", PropertiesView.as_view(), name="properties"),
@@ -27,6 +29,11 @@ urlpatterns = [
         name="update_property",
     ),
     # -------------DELETE---------------
+    path(
+        "properties/<int:pk>/delete/",
+        PropertyDeleteView.as_view(),
+        name="delete_property",
+    ),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

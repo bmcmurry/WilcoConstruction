@@ -1,0 +1,26 @@
+<form
+  class="d-flex mt-3"
+  role="search"
+  method="post"
+  action="{% url 'properties' %}"
+>
+  {% csrf_token %}
+  <select class="form-select me-2" name="search_field">
+    <option value="address">Address</option>
+    <option value="city">City</option>
+    <option value="isRented">Occupied</option>
+    <option value="price">Price</option>
+    <option value="squarefoot">Square Footage</option>
+    <option value="numOfBedrooms">Bedrooms</option>
+    <option value="numOfBathrooms">Bathrooms</option>
+    <option value="isPetFriendly">Pets Allowed</option>
+  </select>
+  <input
+    class="form-control me-2"
+    type="search"
+    name="search_query"
+    placeholder="Search"
+    aria-label="Search"
+  />
+  <button class="btn btn-outline-warning" type="submit">Search</button>
+</form>

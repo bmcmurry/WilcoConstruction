@@ -11,12 +11,15 @@
     praesentium voluptatum error aspernatur odio tempora corporis perferendis
     quasi iure non assumenda repellat!
   </p>
+  {% include "search_property.html" %}
   <!-- rental cards -->
 
-  <div class="row mb-3">
+  <div class="row mb-3" id="rental-cards-container">
+    
     {% for property in properties %}
     {% if property.isRented == False %}
-    <div class="col-sm-4 col-md-3 mb-3 mb-sm-0">
+    <div class="col-sm-4 col-md-3 mb-3 mb-sm-0 mx-auto rental-card" data-address="{{ property.address }}" data-city="{{ property.city }}" data-isRented="{{ property.isRented }}" data-price="{{ property.price }}" data-squarefoot="{{ property.squarefoot }}" data-numOfBedrooms="{{ property.numOfBedrooms }}" data-numOfBathrooms="{{ property.numOfBathrooms }}" data-isPetFriendly="{{ property.isPetFriendly }}">
+  
       <div class="card mt-3">
         {% with property_photo=property.propertyphoto_set.first %}
         <! ignore prettier ->
@@ -49,9 +52,20 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
+                    {% with property_photo=property.propertyphoto_set.all %}
+                    {% if property_photo %}
               
-                    <img src="{{ property_photo.picture.url }}" alt="{{ property.address }}" class="card-img-top"/><br>
-                  
+                    <! ignore prettier ->
+                    {% for photo in property_photo %}
+                    <img
+                      src="{{ photo.picture.url }}"
+                      class="card-img-top p-2"
+                      alt="{{ property.address }}"
+                    />
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                  <br>
                     <p class="card-text">Bedrooms: {{ property.numOfBedrooms }}</p>
                     <p class="card-text">Bathrooms: {{ property.numOfBathrooms }}</p>
                     <p class="card-text">{{ property.description }}</p>
@@ -82,6 +96,19 @@
     {% endfor %}
   </div>
 
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1">Previous</a>
+      </li>
+      <li class="page-item"><a class="page-link" href="#">1</a></li>
+      <li class="page-item"><a class="page-link" href="#">2</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li>
+      <li class="page-item">
+        <a class="page-link" href="#">Next</a>
+      </li>
+    </ul>
+  </nav>
   <!-- rental inquires -->
   <form class="bg-warning-subtle" action="" id="rentalform">
     <div class="container-fluid w-75 p-3">

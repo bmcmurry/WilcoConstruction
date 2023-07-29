@@ -6,7 +6,7 @@
       width="200" />
     </a>
     {% if user.is_authenticated %}
-    <p class="text-center d-xs display-6 d-s display-4">
+    <p class="text-center d-none d-md-block display-6">
       Welcome, {{ user.username }}!
     </p>
     {% endif %}
@@ -79,7 +79,6 @@
               >Manage</a
             >
           </li>
-          {% else %}
           <li class="nav-item">
             <a
               class="nav-link active"
@@ -94,6 +93,7 @@
           </li>
           {% endif %}
         </ul>
+        {% comment %}
         <form class="d-flex mt-3" role="search">
           <input
             class="form-control me-2"
@@ -103,6 +103,7 @@
           />
           <button class="btn btn-outline-warning" type="submit">Search</button>
         </form>
+        {% endcomment %}
         <a href="https://www.facebook.com/mississippilicensedcontractors"
           ><i class="bi bi-facebook" style="font-size: 2rem"></i
         ></a>

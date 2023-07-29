@@ -49,7 +49,7 @@ class RentalProperty(models.Model):
 class PropertyPhoto(models.Model):
     picture = models.ImageField(upload_to="images/")
     propertyOfImage = models.ForeignKey(
-        "RentalProperty", on_delete=models.PROTECT, null=True, blank=True
+        "RentalProperty", on_delete=models.CASCADE, null=True, blank=True
     )
 
 

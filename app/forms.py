@@ -37,18 +37,18 @@ class TenantForm(ModelForm):
         ]
 
 
-class CreateRentalPropertyForm(ModelForm):
+class PropertyForm(ModelForm):
     class Meta:
         model = RentalProperty
         fields = "__all__"
         exclude = ["isRented"]
 
 
-class UpdatePropertyForm(ModelForm):
+class PropertyPhotoForm(ModelForm):
     class Meta:
-        model = RentalProperty
+        model = PropertyPhoto
         fields = "__all__"
-        exclude = ["isRented"]
+        exclude = ["propertyOfImage"]
 
 
 class ContactForm(forms.Form):
@@ -64,3 +64,19 @@ class ContactForm(forms.Form):
     phone = forms.CharField(max_length=20)
     subject = forms.CharField(max_length=100)
     message = forms.CharField(widget=forms.Textarea)
+
+
+class PropertySearchForm(forms.Form):
+    SEARCH_CHOICES = [
+        ("address", "Address"),
+        ("city", "City"),
+        ("isRented", "isRented"),
+        ("price", "Price"),
+        ("squareFoot", "squareFoot"),
+        ("numOfBedrooms", "numOfBedrooms"),
+        ("numOfBathrooms", "numOfBathrooms"),
+        ("isPetFriendly", "isPetFriendly"),
+    ]
+
+    search_field = forms.ChoiceField(choices=SEARCH_CHOICES, label="Search Field")
+    search_query = forms.CharField(label="Search Query", max_length=100)

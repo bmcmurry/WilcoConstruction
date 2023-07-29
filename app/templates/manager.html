@@ -1,8 +1,16 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
+<! ignore prettier ->
 <section>
+  {% comment %} {% include 'create_property.html' %} {% endcomment %}
+
+  <a href="{% url 'search_property' %}">
+    <button type="button" class="btn btn-warning">Search</button></a
+  >
   <div class="row">
     <div class="col-md-6">
       <div class="card card-body">
+        <input type="search" class="form-control" id="datatable-search-input" />
+        <label class="form-label" for="datatable-search-input">Search</label>
         <table class="table table-sm">
           <tr>
             <th>Address</th>
@@ -22,11 +30,56 @@
             {% endif %}
             <td>{{ property.numOfBedrooms }}</td>
             <td>{{ property.numOfBathrooms }}</td>
+            <td>
+              <a href="{% url 'update_property' property.id %}"
+                ><button type="button" class="btn btn-primary">Edit</button></a
+              >
+            </td>
+            <td>
+              <a href="{% url 'delete_property' property.id %}"
+                ><button type="button" class="btn btn-danger">Delete</button></a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+        <a href="{% url 'create_property' %}">
+          <button type="button" class="btn btn-warning">Add Property</button></a
+        >
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card card-body">
+        <input type="search" class="form-control" id="datatable-search-input" />
+        <label class="form-label" for="datatable-search-input">Search</label>
+        <table class="table table-sm">
+          <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th>Balance</th>
+            <th>Date Created</th>
+          </tr>
+          {% for tenant in latest_tenants %}
+          <tr>
+            <td>{{ tenant.last_name }}</td>
+            <td>{{ tenant.first_name }}</td>
+            <td>{{ tenant.phone }}</td>
+            <td>{{ tenant.userEmail }}</td>
+            <td>{{ tenant.currentBalance }}</td>
+            <td>{{ tenant.dateCreated }}</td>
           </tr>
           {% endfor %}
         </table>
       </div>
     </div>
+    <div class="form-outline mb-4">
+      <input type="search" class="form-control" id="datatable-search-input" />
+      <label class="form-label" for="datatable-search-input">Search</label>
+    </div>
+    <div id="datatable"></div>
   </div>
 </section>
 {% endblock %}

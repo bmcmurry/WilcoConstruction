@@ -1,6 +1,12 @@
 from django.shortcuts import render, redirect
-from django.forms import inlineformset_factory
-from django.views.generic import TemplateView, UpdateView, DetailView, CreateView
+from django.forms import modelformset_factory
+from django.views.generic import (
+    TemplateView,
+    UpdateView,
+    DetailView,
+    CreateView,
+    DeleteView,
+)
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 
@@ -104,30 +110,77 @@ class PropertiesView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["properties"] = RentalProperty.objects.all()
-        context["property_images"] = PropertyPhoto.objects.all()
-        # print(context["property_images"].values())
+
+        # Check if the 'results' and 'search_query' keyword arguments are present
+        if "results" in self.kwargs and "search_query" in self.kwargs:
+            context["results"] = self.kwargs["results"]
+            context["search_query"] = self.kwargs["search_query"]
+        else:
+            context["properties"] = RentalProperty.objects.all()
+            context["property_images"] = PropertyPhoto.objects.all()
+
         return context
 
 
+# @method_decorator(login_required, name="dispatch")
+# @method_decorator(staff_member_required, name="dispatch")
 class CreatePropertyView(CreateView):
-    model = RentalProperty
-    form_class = UpdatePropertyForm
-    template_name = "update_property.html"
-    success_url = reverse_lazy("")
+    template_name = "create_property.html"
+    success_url = "manager_interface"
+
+    def get(self, request):
+        property_form = PropertyForm()
+        context = {"property_form": property_form}
+        return render(request, self.template_name, context)
 
     def post(self, request):
-        RentalProperty.objects.update()
+        property_form = PropertyForm(request.POST)
+
+        if property_form.is_valid():
+            property_form.save()
+
+        context = {"property_form": property_form}
+
+        return render(request, self.template_name, context)
 
 
+# @method_decorator(login_required, name="dispatch")
+# @method_decorator(staff_member_required, name="dispatch")
 class UpdatePropertyView(UpdateView):
-    model = RentalProperty
-    form_class = UpdatePropertyForm
     template_name = "update_property.html"
-    success_url = reverse_lazy("")
+    success_url = "manager_interface"
 
-    def post(self, request):
-        RentalProperty.objects.update()
+    def get(self, request, pk):
+        property = RentalProperty.objects.get(id=pk)
+        property_form = PropertyForm(instance=property)
+        context = {"property_form": property_form}
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk):
+        property = RentalProperty.objects.get(id=pk)
+        property_form = PropertyForm(request.POST, instance=property)
+
+        if property_form.is_valid():
+            property_form.save()
+
+        context = {"property_form": property_form}
+
+        return render(request, self.template_name, context)
+
+
+# @method_decorator(login_required, name="dispatch")
+# @method_decorator(staff_member_required, name="dispatch")
+class PropertyDeleteView(View):
+    def get(self, request, pk):
+        property = get_object_or_404(RentalProperty, pk=pk)
+        return render(request, "delete_property.html", {"property": property})
+
+    def post(self, request, pk):
+        property = get_object_or_404(RentalProperty, pk=pk)
+
+        if "confirm" in request.POST:
+            property.delete()
+        return redirect("home")
 
 
 # --------------------TENANTS/USERS----------------
@@ -156,22 +209,24 @@ class UserProfileDetailView(View):
         return render(request, self.template_name, context)
 
 
-@method_decorator(login_required, name="dispatch")
-@method_decorator(staff_member_required, name="dispatch")
+# @method_decorator(login_required, name="dispatch")
+# @method_decorator(staff_member_required, name="dispatch")
 class ManagerInterfaceView(TemplateView):
     template_name = "manager.html"
 
     # COULD DO THIS BUT WE'LL SEE
     # # Calculate the starting index for the next set of records (in this case, 5).
-    # next_starting_index = 5
 
     # # Fetch the next 5 records using slicing with the offset.
     # next_five_tenants = Tenant.objects.all()[next_starting_index: next_starting_index + 5]
 
     def get_context_data(self, **kwargs):
+        next_starting_index = 0
         context = super().get_context_data(**kwargs)
-        context["latest_tenants"] = Tenant.objects.all()
-        context["properties"] = RentalProperty.objects.all()
+        context["latest_tenants"] = Tenant.objects.all()[
+            next_starting_index : next_starting_index + 10
+        ]
+        context["properties"] = RentalProperty.objects.all()[:10]
         context["tenants"] = Tenant.objects.filter(linkToProperty__isnull=False)
         return context
 
@@ -229,3 +284,47 @@ def contact_view(request):
         form = ContactForm()
 
     return render(request, "contact.html", {"form": form})
+
+
+# class ProfileSearchView(ListView)
+#     template_name = '/your/template.html'
+#     model = Person
+
+#     def get_queryset(self):
+#         name = self.kwargs.get('name', '')
+#         object_list = self.model.objects.all()
+#         if name:
+#             object_list = object_list.filter(name__icontains=name)
+#         return object_list
+
+
+def search_property(request):
+    if request.method == "POST":
+        form = PropertySearchForm(request.POST)
+        if form.is_valid():
+            search_field = form.cleaned_data["search_field"]
+            search_query = form.cleaned_data["search_query"]
+
+            # Create a dictionary to map form field names to model field names
+            field_mapping = {
+                "address": "address__icontains",
+                "city": "city__icontains",
+                "isRented": "isRented__icontains",
+                "price": "price__icontains",
+                "squareFoot": "squarefoot__icontains",
+                "numOfBedrooms": "numOfBedrooms__icontains",
+                "numOfBathrooms": "numOfBathrooms__icontains",
+                "isPetFriendly": "isPetFriendly__icontains",
+            }
+
+            if search_field in field_mapping:
+                query_field = field_mapping[search_field]
+                results = RentalProperty.objects.filter(**{query_field: search_query})
+                return redirect(
+                    "properties", results=results, search_query=search_query
+                )
+
+    else:
+        form = PropertySearchForm()
+
+    return render(request, "search_property.html", {"form": form})
