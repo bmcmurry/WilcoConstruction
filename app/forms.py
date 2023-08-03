@@ -60,6 +60,7 @@ class ContactForm(forms.Form):
         ("Contracts", "Contracts"),
         ("Other", "Other"),
     )
+
     categories = forms.ChoiceField(choices=CHOICES)
     phone = forms.CharField(max_length=20)
     subject = forms.CharField(max_length=100)

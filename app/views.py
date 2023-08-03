@@ -261,7 +261,7 @@ def contact_view(request):
             last_name = form.cleaned_data["last_name"]
             email = form.cleaned_data["email"]
             phone = form.cleaned_data["phone"]
-            subject = form.cleaned_data["subject"]
+            subject = form.cleaned_data["categories"]
             message = form.cleaned_data["message"]
 
             try:
