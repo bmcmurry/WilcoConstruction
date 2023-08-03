@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 
-<section class="container-fluid" id="main">
+<section class="container-fluid mt-0" id="main">
   <!-- image carousel -->
   <div
     id="carouselExampleCaptions"
@@ -89,10 +89,10 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-6 mb-3 mb-sm-0">
-        <div class="card shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+        <div class="card shadow-sm mb-5 bg-body-tertiary rounded">
+          <img src="{% static "images\how-to-design-a-house.jpg"%}"
+          class="card-img-top" alt="..." />
           <div class="card-body">
-            <img src="{% static "images\how-to-design-a-house.jpg"%}"
-            class="card-img-top" alt="..." />
             <h5 class="card-title mt-2">Featured Property</h5>
             <p class="card-text">{{ featured_property.description }}</p>
             <a href="{% url 'properties' %}" class="btn btn-warning"
@@ -102,18 +102,12 @@
         </div>
       </div>
       <div class="col-sm-6">
-        <div class="card shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+        <div class="card shadow-sm mb-5 bg-body-tertiary rounded">
+          <img src="{% static "images\construction-hero@2x.jpg"%}"
+          class="card-img-top" alt="..." />
           <div class="card-body">
-            <img src="{% static "images\construction-hero@2x.jpg"%}"
-            class="card-img-top" alt="..." />
             <h5 class="card-title mt-2">Featured Contract</h5>
-            <p class="card-text">
-              Our team is hard at work building Lorem, ipsum dolor sit amet
-              consectetur adipisicing elit. A consectetur aliquam nobis
-              veritatis sapiente explicabo dolorem reprehenderit reiciendis
-              tempora dicta voluptatem, ratione itaque, deleniti, atque facilis
-              maxime? Ea, consequatur accusamus?
-            </p>
+            <p class="card-text">...</p>
             <a href="contract.html" class="btn btn-warning">View All</a>
           </div>
         </div>
