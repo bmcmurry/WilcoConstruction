@@ -4,6 +4,7 @@
       <div class="card p-2 bg-warning-subtle">
     <form method="post" class="bg-warning-subtle">
       {% csrf_token %} {{ property_form.as_p }}
+      {{ property_photo.as_p }}
       <button class="btn btn-warning" type="submit">Create</button>
       
 

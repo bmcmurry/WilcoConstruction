@@ -37,7 +37,7 @@ class TenantForm(ModelForm):
         ]
 
 
-class PropertyForm(ModelForm):
+class CreatePropertyForm(ModelForm):
     class Meta:
         model = RentalProperty
         fields = "__all__"

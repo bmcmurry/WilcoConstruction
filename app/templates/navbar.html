@@ -73,21 +73,24 @@
           </li>
           {% if request.user.is_authenticated %}
           <! ignore prettier ->
-          {% if request.user.is_superuser %}
-          <li>
-            <a class="nav-link active" href="{% url 'manager_interface' %}"
-              >Manage</a
-            >
-          </li>
           <li class="nav-item">
             <a
               class="nav-link active"
               href="{% url 'user_profile_detail' pk=request.user.pk %}"
               >Account</a
-            >{% endif %}
+            >
+          </li>
+          <li class="nav-item">
             <a class="nav-link active" href="{% url 'logout' %}">Logout</a>
           </li>
-          {% else %}
+          {% if request.user.is_superuser %}
+          <li>
+            <a class="nav-link active" href="{% url 'manager_interface' %}"
+              >Manage</a
+            >
+            {% else %}
+          </li>
+          {% endif %} {% else %}
           <li class="nav-item">
             <a class="nav-link active" href="{% url 'login' %}">Login</a>
           </li>

@@ -26,8 +26,10 @@ from django.contrib.auth.decorators import login_required
 from django.views import View
 
 from django.core.mail import send_mail
-
+from django.conf import settings
 import smtplib
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 ## --------------LOGIN/LOGOUT/REGISTER----------------##
 
@@ -105,19 +107,59 @@ def logoutUser(request):
 
 
 # ----------------PROPERTIES---------------
+# class PropertiesView(TemplateView):
+#     template_name = "properties.html"
+#     # Number of items per page
+
+#     def get_context_data(self, **kwargs):
+#         paginate_by = 10
+#         context = super().get_context_data(**kwargs)
+
+#         # Retrieve all rental properties and property photos
+#         all_properties = RentalProperty.objects.all()
+#         all_property_photos = PropertyPhoto.objects.all()
+
+#         # Create a Paginator instance
+#         paginator = Paginator(all_properties, paginate_by)
+
+#         # Get the current page number from the request's GET parameters
+#         page_number = self.request.GET.get("page")
+
+#         try:
+#             # Get the current page's RentalProperty queryset
+#             properties = paginator.page(page_number)
+#         except PageNotAnInteger:
+#             # If page_number is not an integer, show the first page
+#             properties = paginator.page(1)
+#         except EmptyPage:
+#             # If page_number is out of range (e.g., 9999), show the last page
+#             properties = paginator.page(paginator.num_pages)
+
+#         # Add the paginated queryset and property photos to the context
+#         context["properties"] = properties
+#         context["property_images"] = all_property_photos
+
+#         return context
+
+
 class PropertiesView(TemplateView):
     template_name = "properties.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        next_starting_index = 0
 
         # Check if the 'results' and 'search_query' keyword arguments are present
         if "results" in self.kwargs and "search_query" in self.kwargs:
             context["results"] = self.kwargs["results"]
             context["search_query"] = self.kwargs["search_query"]
         else:
-            context["properties"] = RentalProperty.objects.all()
-            context["property_images"] = PropertyPhoto.objects.all()
+            context["properties"] = RentalProperty.objects.all()[
+                next_starting_index : next_starting_index + 12
+            ]
+            context["property_images"] = PropertyPhoto.objects.all()[
+                next_starting_index : next_starting_index + 12
+            ]
 
         return context
 
@@ -129,17 +171,18 @@ class CreatePropertyView(CreateView):
     success_url = "manager_interface"
 
     def get(self, request):
-        property_form = PropertyForm()
-        context = {"property_form": property_form}
+        property_form = CreatePropertyForm()
+        property_photo = PropertyPhotoForm()
+        context = {"property_form": property_form, "property_photo": property_photo}
         return render(request, self.template_name, context)
 
     def post(self, request):
-        property_form = PropertyForm(request.POST)
-
+        property_form = CreatePropertyForm(request.POST)
+        property_photo = PropertyPhotoForm(request.POST)
         if property_form.is_valid():
             property_form.save()
-
-        context = {"property_form": property_form}
+            redirect("manager_interface")
+        context = {"property_form": property_form, "property_photo": property_photo}
 
         return render(request, self.template_name, context)
 
@@ -152,13 +195,13 @@ class UpdatePropertyView(UpdateView):
 
     def get(self, request, pk):
         property = RentalProperty.objects.get(id=pk)
-        property_form = PropertyForm(instance=property)
+        property_form = CreatePropertyForm(instance=property)
         context = {"property_form": property_form}
         return render(request, self.template_name, context)
 
     def post(self, request, pk):
         property = RentalProperty.objects.get(id=pk)
-        property_form = PropertyForm(request.POST, instance=property)
+        property_form = CreatePropertyForm(request.POST, instance=property)
 
         if property_form.is_valid():
             property_form.save()
@@ -239,6 +282,9 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["featured_property"] = RentalProperty.objects.get(
+            isFeaturedProperty=True
+        )
         context["latest_properties"] = RentalProperty.objects.all()[:5]
         return context
 
@@ -257,29 +303,33 @@ def contact_view(request):
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-            first_name = form.cleaned_data["first_name"]
-            last_name = form.cleaned_data["last_name"]
-            email = form.cleaned_data["email"]
-            phone = form.cleaned_data["phone"]
-            subject = form.cleaned_data["subject"]
-            message = form.cleaned_data["message"]
+            # if request.POST["choices"] == "rentals":
 
+            first_name = request.POST["first_name"]
+            last_name = request.POST["last_name"]
+            email = request.POST["email"]
+            phone = request.POST["phone"]
+            subject = request.POST["subject"]
+            message = request.POST["message"]
+
+            # Send the email here
             try:
-                # Customize your email settings below
                 send_mail(
                     subject,
                     f"Name: {first_name} {last_name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}",
                     email,
-                    [""],
+                    [
+                        "bryanmcmurry7@gmail.com",
+                    ],  # Replace with the actual recipient email address
                     fail_silently=False,
                 )
-                print("BOOOO")  # This is just for debugging purposes
-            except smtplib.SMTPException as e:
-                # Handle the exception or display an error message to the user
-                print(f"Error sending email: {e}")
-                # You can also add a message to the user using Django's messages framework.
-                # Example: messages.error(request, "Error sending email. Please try again later.")
-            return redirect("contact.html")
+                # Add success message or redirect to a success page
+                return redirect("home")
+            except Exception as e:
+                # Handle the email sending error, add error message or redirect to an error page
+                return redirect("manager_interface")
+        else:
+            print(form.errors)
     else:
         form = ContactForm()
 
@@ -327,4 +377,4 @@ def search_property(request):
     else:
         form = PropertySearchForm()
 
-    return render(request, "search_property.html", {"form": form})
+    return render(request, "properties", {"form": form})

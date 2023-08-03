@@ -39,6 +39,7 @@ class RentalProperty(models.Model):
     numOfBedrooms = models.IntegerField(verbose_name="Bedrooms")
     numOfBathrooms = models.FloatField(verbose_name="Bathrooms")
     isPetFriendly = models.BooleanField(verbose_name="Pet Friendly")
+    isFeaturedProperty = models.BooleanField(default=False, verbose_name="Featured")
     description = models.TextField()
 
     def __str__(self):

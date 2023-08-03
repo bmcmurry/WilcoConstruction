@@ -75,7 +75,7 @@
     </button>
   </div>
   <!-- about company text -->
-  <p class="text-center display-2">Welcome</p>
+  <h1 class="text-center display-2">Welcome</h1>
   <p class="lh-base text-center ms-5 me-5">
     Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, omnis
     perspiciatis sint voluptatum tempore sunt iusto ab at aspernatur illo!
@@ -94,13 +94,7 @@
             <img src="{% static "images\how-to-design-a-house.jpg"%}"
             class="card-img-top" alt="..." />
             <h5 class="card-title mt-2">Featured Property</h5>
-            <p class="card-text">
-              This 3 bedroom 2 bath in the hirrible city of Whoville Lorem,
-              ipsum dolor sit amet consectetur adipisicing elit. A consectetur
-              aliquam nobis veritatis sapiente explicabo dolorem reprehenderit
-              reiciendis tempora dicta voluptatem, ratione itaque, deleniti,
-              atque facilis maxime? Ea, consequatur accusamus?
-            </p>
+            <p class="card-text">{{ featured_property.description }}</p>
             <a href="{% url 'properties' %}" class="btn btn-warning"
               >View All</a
             >
@@ -222,56 +216,3 @@
   </form>
 </section>
 {% endblock content %}
-<script src="https://smtpjs.com/v3/smtp.js"></script>
-<script>
-  function sendEmail() {
-    Email.send({
-      Host: "smtp.elasticemail.com",
-      Username: "ashleybglasz@gmail.com",
-      Password: "64446D35DE84403E1107AB31E8702B4E01C3",
-      To: "ashleybglasz@gmail.com",
-      From: document.getElementById("email").value,
-      Subject: "Wilco Website Inquiry",
-      Body:
-        "Name: " +
-        document.getElementById("firstname").value +
-        "" +
-        document.getElementById("lastname").value +
-        "<br> Email: " +
-        document.getElementById("email").value +
-        "<br> Catagory:" +
-        document.getElementById("catagory").value +
-        "<br> Message: " +
-        document.getElementById("msg").value,
-    }).then((message) => alert(message));
-  }
-</script>
-<script
-  type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
-></script>
-<script type="text/javascript">
-  (function () {
-    emailjs.init("K-mlFzmNFqaa6-QOL");
-  })();
-</script>
-<script type="text/javascript">
-  window.onload = function () {
-    document
-      .getElementById("contact-form")
-      .addEventListener("submit", function (event) {
-        event.preventDefault();
-        // generate a five digit number for the contact_number variable
-        this.contact_number.value = (Math.random() * 100000) | 0;
-        // these IDs from the previous steps
-        emailjs.sendForm("contact_service", "contact_form", this).then(
-          function () {
-            console.log("SUCCESS!");
-          },
-          function (error) {
-            console.log("FAILED...", error);
-          }
-        );
-      });
-  };
-</script>

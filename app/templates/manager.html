@@ -1,13 +1,14 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <! ignore prettier ->
 <section>
-  {% comment %} {% include 'create_property.html' %} {% endcomment %}
+  {% comment %} {% include 'create_property.html' %}
 
   <a href="{% url 'search_property' %}">
-    <button type="button" class="btn btn-warning">Search</button></a
-  >
-  <div class="row">
-    <div class="col-md-6">
+    <button type="button" class="btn btn-warning mb-3 ms-5">Search</button></a
+  >{% endcomment %}
+
+  <div class="row p-2">
+    <div class="col-md-12 col-lg-6">
       <div class="card card-body">
         <input type="search" class="form-control" id="datatable-search-input" />
         <label class="form-label" for="datatable-search-input">Search</label>
@@ -49,14 +50,13 @@
       </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-12 col-lg-6">
       <div class="card card-body">
         <input type="search" class="form-control" id="datatable-search-input" />
         <label class="form-label" for="datatable-search-input">Search</label>
         <table class="table table-sm">
           <tr>
-            <th>Last Name</th>
-            <th>First Name</th>
+            <th>Name</th>
             <th>Phone Number</th>
             <th>Email</th>
             <th>Balance</th>
@@ -64,21 +64,77 @@
           </tr>
           {% for tenant in latest_tenants %}
           <tr>
-            <td>{{ tenant.last_name }}</td>
-            <td>{{ tenant.first_name }}</td>
+            <td>{{ tenant.first_name }} {{ tenant.last_name }}</td>
             <td>{{ tenant.phone }}</td>
             <td>{{ tenant.userEmail }}</td>
             <td>{{ tenant.currentBalance }}</td>
             <td>{{ tenant.dateCreated }}</td>
+            <!-- Button trigger modal -->
+            <td>
+              <button
+                type="button"
+                class="btn btn-warning"
+                data-bs-toggle="modal"
+                data-bs-target="#{{ tenant.id }}"
+              >
+                Info
+              </button>
+              <div
+                class="modal fade modal-lg"
+                id="{{ tenant.id }}"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="modal-body">
+                      <br />
+                      <p class="card-text">
+                        First Name: {{ tenant.first_name }}
+                      </p>
+                      <p class="card-text">Last Name: {{ tenant.last_name }}</p>
+                      <p class="card-text">Phone: {{ tenant.phone }}</p>
+                      <p class="card-text">Email: {{ tenant.userEmail }}</p>
+                      <p class="card-text">
+                        Balance: {{ tenant.currentBalance }}
+                      </p>
+                      <p class="card-text">
+                        Date Created: {{ tenant.dateCreated }}
+                      </p>
+                    </div>
+                    <div class="modal-footer bg-warning">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
           </tr>
           {% endfor %}
         </table>
       </div>
     </div>
+    {% comment %}
     <div class="form-outline mb-4">
       <input type="search" class="form-control" id="datatable-search-input" />
       <label class="form-label" for="datatable-search-input">Search</label>
     </div>
+    {% endcomment %}
     <div id="datatable"></div>
   </div>
 </section>
