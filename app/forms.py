@@ -41,7 +41,7 @@ class CreatePropertyForm(ModelForm):
     class Meta:
         model = RentalProperty
         fields = "__all__"
-        exclude = ["isRented"]
+        exclude = ["isRented", "isFeaturedProperty"]
 
 
 class PropertyPhotoForm(ModelForm):

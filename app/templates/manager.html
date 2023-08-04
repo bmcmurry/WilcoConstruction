@@ -41,12 +41,17 @@
                 ><button type="button" class="btn btn-danger">Delete</button></a
               >
             </td>
+            {% comment %}
+            <td>{% include 'feature_property.html' %}</td>
+            {% endcomment %}
           </tr>
           {% endfor %}
         </table>
-        <a href="{% url 'create_property' %}">
-          <button type="button" class="btn btn-warning">Add Property</button></a
-        >
+        <div>
+          <a href="{% url 'create_property' %}" class="btn btn-warning"
+            >Add Property</a
+          >
+        </div>
       </div>
     </div>
 
@@ -138,4 +143,7 @@
     <div id="datatable"></div>
   </div>
 </section>
+{% endblock %} {% block extra_scripts %}
+<!-- Additional script tags for this specific child template go here... -->
+<script src="{% static 'staticsetFeatured.js' %}"></script>
 {% endblock %}

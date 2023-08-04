@@ -7,7 +7,7 @@ from django.views.generic import (
     CreateView,
     DeleteView,
 )
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 
 
@@ -28,7 +28,7 @@ from django.views import View
 from django.core.mail import send_mail
 from django.conf import settings
 import smtplib
-
+from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 ## --------------LOGIN/LOGOUT/REGISTER----------------##
@@ -146,6 +146,11 @@ class PropertiesView(TemplateView):
     template_name = "properties.html"
 
     def get_context_data(self, **kwargs):
+        # Pagination
+        # p = Paginator(RentalProperty.objects.all(), 2)
+        # page = request.GET.get("page")
+        # venues = p.get_page(page)
+
         context = super().get_context_data(**kwargs)
         next_starting_index = 0
 
@@ -224,6 +229,24 @@ class PropertyDeleteView(View):
         if "confirm" in request.POST:
             property.delete()
         return redirect("home")
+
+
+class SetPropertyToFeaturedView(View):
+    def post(self, request, pk):
+        # Retrieve all rental properties
+        all_properties = RentalProperty.objects.all()
+
+        # Set 'isFeaturedProperty' to False for all RentalProperty objects
+        for each in all_properties:
+            each.isFeaturedProperty = False
+            each.save()
+
+        # Get the selected property and set its 'isFeaturedProperty' to True
+        obj = get_object_or_404(RentalProperty, pk=pk)
+        obj.isFeaturedProperty = True
+        obj.save()
+
+        return reverse("manager")
 
 
 # --------------------TENANTS/USERS----------------
@@ -309,7 +332,7 @@ def contact_view(request):
             last_name = request.POST["last_name"]
             email = request.POST["email"]
             phone = request.POST["phone"]
-            subject = request.POST["subject"]
+            subject = request.POST["categories"]
             message = request.POST["message"]
 
             # Send the email here

@@ -6,6 +6,13 @@
       {% csrf_token %} {{ property_form.as_p }}
       <button class="btn btn-warning" type="submit">Update</button>
     </form>
+    {% comment %} <form method="post" class="bg-warning-subtle" enctype="multipart/form-data">
+      {% csrf_token %} {{ property_form.as_p }}
+      {{ property_photo.as_p }}
+      <button class="btn btn-warning" type="submit">Create</button>
+      
+
+    </form> {% endcomment %}
   </div>
 </div>
   </section>

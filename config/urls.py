@@ -34,6 +34,11 @@ urlpatterns = [
         PropertyDeleteView.as_view(),
         name="delete_property",
     ),
+    path(
+        "manager/",
+        SetPropertyToFeaturedView.as_view(),
+        name="feature_property",
+    ),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
