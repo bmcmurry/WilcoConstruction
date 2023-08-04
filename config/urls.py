@@ -11,6 +11,9 @@ urlpatterns = [
     path("contract/", contractView, name="contract"),
     path("contact/", contact_view, name="contact"),
     path("payment-portal/", PaymentPortal, name="payment_portal"),
+    path("payment_success/", paymentSuccess, name="payment_success"),
+    path("payment_fail/", paymentFail, name="payment_fail"),
+    path("stripe_webhook", stripe_webhook, name="stripe_webhook"),
     path("manager/", ManagerInterfaceView.as_view(), name="manager_interface"),
     path("search/", search_property, name="search_property"),
     # -------------CREATE---------------
@@ -35,7 +38,7 @@ urlpatterns = [
         name="delete_property",
     ),
     path(
-        "manager/",
+        "manager/<int:pk>/",
         SetPropertyToFeaturedView.as_view(),
         name="feature_property",
     ),

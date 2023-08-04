@@ -93,3 +93,44 @@ body {
     color: #414141;
 }
 
+/* everything bellow is bryans css */
+
+/* Style for existing images */
+.existing-image img {
+    display: block;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 10px;
+    cursor: pointer;
+  }
+  
+  /* Style for the file input container */
+  .file-upload-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Style for the file input button overlay */
+  .file-upload-container::after {
+    content: 'Upload Image';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  /* Hide the default file input button */
+  .file-upload-container input[type='file'] {
+    display: none;
+  }
+  

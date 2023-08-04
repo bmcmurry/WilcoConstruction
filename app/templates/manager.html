@@ -29,8 +29,8 @@
             {% endfor %} {% else %}
             <td>N/A</td>
             {% endif %}
-            <td>{{ property.numOfBedrooms }}</td>
-            <td>{{ property.numOfBathrooms }}</td>
+            <td>{{ property.bedrooms }}</td>
+            <td>{{ property.bathrooms }}</td>
             <td>
               <a href="{% url 'update_property' property.id %}"
                 ><button type="button" class="btn btn-primary">Edit</button></a
@@ -41,9 +41,13 @@
                 ><button type="button" class="btn btn-danger">Delete</button></a
               >
             </td>
-            {% comment %}
-            <td>{% include 'feature_property.html' %}</td>
-            {% endcomment %}
+            <td>
+              <a href="{% url 'feature_property' property.id %}"
+                ><button type="button" class="btn btn-warning">
+                  Feature
+                </button></a
+              >
+            </td>
           </tr>
           {% endfor %}
         </table>
@@ -143,7 +147,4 @@
     <div id="datatable"></div>
   </div>
 </section>
-{% endblock %} {% block extra_scripts %}
-<!-- Additional script tags for this specific child template go here... -->
-<script src="{% static 'staticsetFeatured.js' %}"></script>
 {% endblock %}

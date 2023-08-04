@@ -1,7 +1,25 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <section class="container-fluid">
   <div class="text-center">
-    <a href="" class="btn btn-warning">Pay Rent</a>
+    {% if user.is_authenticated %}
+    <form enctype="multipart/form-data" method="post" role="payment_portal">
+      {% csrf_token %}
+      <h2>
+        Hi {{ user }}! To pay, click on this button
+        <button
+          type="submit"
+          class="btn btn-success"
+          href="{% url 'payment_portal' %}"
+          data-bid-href="pricing"
+        >
+          Payment
+        </button>
+      </h2>
+    </form>
+    {% else %}
+    <h2>You're not logged in...</h2>
+    <a href="{% url 'login' %}" class="btn btn-secondary">Log in</a>
+    {% endif %}
   </div>
 </section>
 {% endblock content %}

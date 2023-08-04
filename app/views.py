@@ -30,6 +30,10 @@ from django.conf import settings
 import smtplib
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.forms import formset_factory
+import stripe
+import time
+from django.views.decorators.csrf import csrf_exempt
 
 ## --------------LOGIN/LOGOUT/REGISTER----------------##
 
@@ -177,18 +181,36 @@ class CreatePropertyView(CreateView):
 
     def get(self, request):
         property_form = CreatePropertyForm()
-        property_photo = PropertyPhotoForm()
-        context = {"property_form": property_form, "property_photo": property_photo}
+        PropertyPhotoFormSet = formset_factory(PropertyPhotoForm, extra=1)
+        property_photo_formset = PropertyPhotoFormSet()
+        context = {
+            "property_form": property_form,
+            "property_photo_formset": property_photo_formset,
+        }
         return render(request, self.template_name, context)
 
     def post(self, request):
         property_form = CreatePropertyForm(request.POST)
-        property_photo = PropertyPhotoForm(request.POST)
-        if property_form.is_valid():
-            property_form.save()
-            redirect("manager_interface")
-        context = {"property_form": property_form, "property_photo": property_photo}
+        PropertyPhotoFormSet = formset_factory(PropertyPhotoForm, extra=1)
+        property_photo_formset = PropertyPhotoFormSet(request.POST, request.FILES)
 
+        if property_form.is_valid() and property_photo_formset.is_valid():
+            # Save the RentalProperty object
+            rental_property = property_form.save()
+
+            # Save all PropertyPhoto objects associated with the RentalProperty
+            for form in property_photo_formset:
+                if form.is_valid():
+                    property_photo_instance = form.save(commit=False)
+                    property_photo_instance.propertyOfImage = rental_property
+                    property_photo_instance.save()
+
+            return redirect("manager_interface")
+
+        context = {
+            "property_form": property_form,
+            "property_photo_formset": property_photo_formset,
+        }
         return render(request, self.template_name, context)
 
 
@@ -201,18 +223,51 @@ class UpdatePropertyView(UpdateView):
     def get(self, request, pk):
         property = RentalProperty.objects.get(id=pk)
         property_form = CreatePropertyForm(instance=property)
-        context = {"property_form": property_form}
+
+        # Get existing photos associated with the RentalProperty
+        PropertyPhotoFormSet = modelformset_factory(
+            PropertyPhoto, form=PropertyPhotoForm, extra=1
+        )
+        property_photo_formset = PropertyPhotoFormSet(
+            queryset=PropertyPhoto.objects.filter(propertyOfImage=property)
+        )
+
+        context = {
+            "property_form": property_form,
+            "property_photo_formset": property_photo_formset,
+        }
         return render(request, self.template_name, context)
 
     def post(self, request, pk):
         property = RentalProperty.objects.get(id=pk)
         property_form = CreatePropertyForm(request.POST, instance=property)
 
-        if property_form.is_valid():
+        # Get existing photos associated with the RentalProperty
+        PropertyPhotoFormSet = modelformset_factory(
+            PropertyPhoto, form=PropertyPhotoForm, extra=1
+        )
+        property_photo_formset = PropertyPhotoFormSet(
+            request.POST,
+            request.FILES,
+            queryset=PropertyPhoto.objects.filter(propertyOfImage=property),
+        )
+
+        if property_form.is_valid() and property_photo_formset.is_valid():
             property_form.save()
 
-        context = {"property_form": property_form}
+            # Save all new PropertyPhoto objects associated with the RentalProperty
+            for photo in property_photo_formset:
+                if photo.is_valid():
+                    property_photo_instance = photo.save(commit=False)
+                    property_photo_instance.propertyOfImage = property
+                    property_photo_instance.save()
 
+            return redirect("manager_interface")
+
+        context = {
+            "property_form": property_form,
+            "property_photo_formset": property_photo_formset,
+        }
         return render(request, self.template_name, context)
 
 
@@ -228,7 +283,7 @@ class PropertyDeleteView(View):
 
         if "confirm" in request.POST:
             property.delete()
-        return redirect("home")
+        return redirect("manager_interface")
 
 
 class SetPropertyToFeaturedView(View):
@@ -246,7 +301,7 @@ class SetPropertyToFeaturedView(View):
         obj.isFeaturedProperty = True
         obj.save()
 
-        return reverse("manager")
+        return reverse_lazy("manager")
 
 
 # --------------------TENANTS/USERS----------------
@@ -275,7 +330,7 @@ class UserProfileDetailView(View):
         return render(request, self.template_name, context)
 
 
-# @method_decorator(login_required, name="dispatch")
+@method_decorator(login_required, name="dispatch")
 # @method_decorator(staff_member_required, name="dispatch")
 class ManagerInterfaceView(TemplateView):
     template_name = "manager.html"
@@ -308,13 +363,9 @@ class HomePageView(TemplateView):
         context["featured_property"] = RentalProperty.objects.get(
             isFeaturedProperty=True
         )
+
         context["latest_properties"] = RentalProperty.objects.all()[:5]
         return context
-
-
-def PaymentPortal(request):
-    context = {}
-    return render(request, "payment_portal.html", context)
 
 
 def contractView(request):
@@ -385,8 +436,8 @@ def search_property(request):
                 "isRented": "isRented__icontains",
                 "price": "price__icontains",
                 "squareFoot": "squarefoot__icontains",
-                "numOfBedrooms": "numOfBedrooms__icontains",
-                "numOfBathrooms": "numOfBathrooms__icontains",
+                "bedrooms": "bedrooms__icontains",
+                "bathrooms": "bathrooms__icontains",
                 "isPetFriendly": "isPetFriendly__icontains",
             }
 
@@ -401,3 +452,69 @@ def search_property(request):
         form = PropertySearchForm()
 
     return render(request, "properties", {"form": form})
+
+
+##===============below is the payment views for stripe============================##
+def PaymentPortal(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    if request.method == "POST":
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[
+                {
+                    "price": settings.PRODUCT_PRICE,
+                    "quantity": 1,
+                },
+            ],
+            mode="payment",
+            customer_creation="always",
+            success_url=settings.REDIRECT_DOMAIN
+            + "/payment_success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=settings.REDIRECT_DOMAIN + "/payment_fail",
+        )
+        return redirect(checkout_session.url, code=303)
+
+    return render(request, "payment_portal.html")
+
+
+def paymentSuccess(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    checkout_session_id = request.GET.get("session_id", None)
+    session = stripe.checkout.Session.retrieve(checkout_session_id)
+    customer = stripe.Customer.retrieve(session.customer)
+    user_id = request.user.user_id
+    user_payment = TenantPayment.objects.get(Tenant=user_id)
+    user_payment.stripe_checkout_id = checkout_session_id
+    user_payment.save()
+
+    return render(request, "payment_success.html", {"customer": customer})
+
+
+def paymentFail(request):
+    return render(request, "payment_fail.html")
+
+
+@csrf_exempt
+def stripe_webhook(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    time.sleep(10)
+    payload = request.body
+    signature_header = request.META["HTTP_STRIPE_SIGNATURE"]
+    event = None
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, signature_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError as e:
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        return HttpResponse(status=400)
+    if event["type"] == "checkout.session.,completed":
+        session = event["data"]["object"]
+        session_id = session.get("id", None)
+        time.sleep(15)
+        user_payment = TenantPayment.objects.get(stripe_checkout_id=session_id)
+        line_items = stripe.checkout.Session.list_line_items(session_id, limit=1)
+        user_payment.payment_bool = True
+        user_payment.save()
+    return HttpResponse(status=200)

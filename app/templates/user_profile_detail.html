@@ -1,14 +1,59 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
-  <section class="container-fluid" id="main">
-    <div class="container-fluid w-75 p-3">
-      <div class="card p-2 bg-warning-subtle">
-    <form method="post" class="bg-warning-subtle" enctype="multipart/form-data">
-      {% csrf_token %} {{ tenant_form.as_p }}
-      <button class="btn btn-warning" type="submit">Update</button>
-    </form>
+{% extends 'base.html' %} {% load static %} {% load widget_tweaks %}
+<! ignore prettier ->
+{% block content %}
+<section class="container-fluid" id="main">
+  <div class="container-fluid w-75 p-3">
+    <h1 class="text-center display-2 pb-3">Update your Profile</h1>
+    <div class="card p-2 bg-warning-subtle">
+      <form
+        method="post"
+        class="bg-warning-subtle"
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+        <div class="mb-3">
+          <div class="row mb-2">
+            <div class="col">
+              <div class="form_field">
+                <label for="exampleFormControlInput1" class="form-label"
+                  >First Name</label
+                >
+                {% render_field tenant_form.first_name class="form-control" %}
+              </div>
+            </div>
+            <div class="col">
+              <div class="form_field">
+                <label for="exampleFormControlInput1" class="form-label"
+                  >Last Name</label
+                >
+                {% render_field tenant_form.last_name class="form-control" %}
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col">
+              <div class="form_field">
+                <label for="exampleFormControlInput1" class="form-label"
+                  >Phone Number</label
+                >
+
+                {% render_field tenant_form.phone class="form-control" %}
+              </div>
+            </div>
+            <div class="col">
+              <div class="form_field">
+                <label for="exampleFormControlInput1" class="form-label"
+                  >Email</label
+                >
+                {% render_field tenant_form.userEmail class="form-control" %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-warning" type="submit">Update</button>
+      </form>
+    </div>
   </div>
-</div>
-  </section>
 </section>
 
 {% endblock content %}

@@ -32,8 +32,8 @@
         {% endif %}
         <div class="card-body">
           <h5 class="card-title">{{ property.address }}</h5>
-          <p class="card-text">Bedrooms: {{ property.numOfBedrooms }}</p>
-          <p class="card-text">Bathrooms: {{ property.numOfBathrooms }}</p>
+          <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
+          <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
           <p class="card-text">{{ property.description }}</p>
           <p class="card-text">
             <!-- Button trigger modal -->
@@ -66,8 +66,8 @@
                     {% endif %}
                     {% endwith %}
                   <br>
-                    <p class="card-text">Bedrooms: {{ property.numOfBedrooms }}</p>
-                    <p class="card-text">Bathrooms: {{ property.numOfBathrooms }}</p>
+                    <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
+                    <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
                     <p class="card-text">{{ property.description }}</p>
 
                   </div>

@@ -72,10 +72,10 @@ class PropertySearchForm(forms.Form):
         ("address", "Address"),
         ("city", "City"),
         ("isRented", "isRented"),
-        ("price", "Price"),
+        ("price", "price"),
         ("squareFoot", "squareFoot"),
-        ("numOfBedrooms", "numOfBedrooms"),
-        ("numOfBathrooms", "numOfBathrooms"),
+        ("bedrooms", "bedrooms"),
+        ("bathrooms", "bathrooms"),
         ("isPetFriendly", "isPetFriendly"),
     ]
 
