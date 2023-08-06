@@ -1,39 +1,37 @@
 from django.shortcuts import render, redirect
-from django.forms import modelformset_factory
+from django.forms import modelformset_factory, formset_factory
 from django.views.generic import (
     TemplateView,
     UpdateView,
     DetailView,
     CreateView,
     DeleteView,
+    View,
 )
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
-
-
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.admin.views.decorators import staff_member_required
-
-from .forms import *
-from .models import *
-from .decorators import *
-
-from django.contrib.auth.models import Group
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from django.views import View
-
+from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.conf import settings
 import smtplib
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.forms import formset_factory
 import stripe
 import time
+import pdb
 from django.views.decorators.csrf import csrf_exempt
+
+from .forms import *
+from .models import *
+from .decorators import *
+
+# Your code implementation goes here...
+
 
 ## --------------LOGIN/LOGOUT/REGISTER----------------##
 
@@ -111,111 +109,65 @@ def logoutUser(request):
 
 
 # ----------------PROPERTIES---------------
-# class PropertiesView(TemplateView):
-#     template_name = "properties.html"
-#     # Number of items per page
-
-#     def get_context_data(self, **kwargs):
-#         paginate_by = 10
-#         context = super().get_context_data(**kwargs)
-
-#         # Retrieve all rental properties and property photos
-#         all_properties = RentalProperty.objects.all()
-#         all_property_photos = PropertyPhoto.objects.all()
-
-#         # Create a Paginator instance
-#         paginator = Paginator(all_properties, paginate_by)
-
-#         # Get the current page number from the request's GET parameters
-#         page_number = self.request.GET.get("page")
-
-#         try:
-#             # Get the current page's RentalProperty queryset
-#             properties = paginator.page(page_number)
-#         except PageNotAnInteger:
-#             # If page_number is not an integer, show the first page
-#             properties = paginator.page(1)
-#         except EmptyPage:
-#             # If page_number is out of range (e.g., 9999), show the last page
-#             properties = paginator.page(paginator.num_pages)
-
-#         # Add the paginated queryset and property photos to the context
-#         context["properties"] = properties
-#         context["property_images"] = all_property_photos
-
-#         return context
 
 
 class PropertiesView(TemplateView):
     template_name = "properties.html"
+    ITEMS_PER_PAGE = 12
 
     def get_context_data(self, **kwargs):
-        # Pagination
-        # p = Paginator(RentalProperty.objects.all(), 2)
-        # page = request.GET.get("page")
-        # venues = p.get_page(page)
-
         context = super().get_context_data(**kwargs)
         next_starting_index = 0
 
         # Check if the 'results' and 'search_query' keyword arguments are present
         if "results" in self.kwargs and "search_query" in self.kwargs:
-            context["results"] = self.kwargs["results"]
+            context["properties"] = self.kwargs["results"]
             context["search_query"] = self.kwargs["search_query"]
         else:
-            context["properties"] = RentalProperty.objects.all()[
-                next_starting_index : next_starting_index + 12
-            ]
-            context["property_images"] = PropertyPhoto.objects.all()[
-                next_starting_index : next_starting_index + 12
-            ]
+            # Pagination
+            page_number = self.request.GET.get("page")
+            properties = RentalProperty.objects.all()
+            property_images = PropertyPhoto.objects.all()
+            p = Paginator(properties, self.ITEMS_PER_PAGE)
+            context["properties"] = p.get_page(page_number)
+            p_images = Paginator(property_images, self.ITEMS_PER_PAGE)
+            context["property_photo"] = p_images.get_page(page_number)
 
         return context
 
 
-# @method_decorator(login_required, name="dispatch")
-# @method_decorator(staff_member_required, name="dispatch")
-class CreatePropertyView(CreateView):
-    template_name = "create_property.html"
-    success_url = "manager_interface"
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
+def CreatePropertyView(request):
+    PropertyPhotoFormSet = formset_factory(PropertyPhotoForm, extra=1)
 
-    def get(self, request):
-        property_form = CreatePropertyForm()
-        PropertyPhotoFormSet = formset_factory(PropertyPhotoForm, extra=1)
-        property_photo_formset = PropertyPhotoFormSet()
-        context = {
-            "property_form": property_form,
-            "property_photo_formset": property_photo_formset,
-        }
-        return render(request, self.template_name, context)
-
-    def post(self, request):
+    if request.method == "POST":
         property_form = CreatePropertyForm(request.POST)
-        PropertyPhotoFormSet = formset_factory(PropertyPhotoForm, extra=1)
         property_photo_formset = PropertyPhotoFormSet(request.POST, request.FILES)
 
         if property_form.is_valid() and property_photo_formset.is_valid():
-            # Save the RentalProperty object
             rental_property = property_form.save()
 
-            # Save all PropertyPhoto objects associated with the RentalProperty
             for form in property_photo_formset:
-                if form.is_valid():
+                if form.is_valid() and form.cleaned_data.get("picture"):
                     property_photo_instance = form.save(commit=False)
                     property_photo_instance.propertyOfImage = rental_property
                     property_photo_instance.save()
 
             return redirect("manager_interface")
+    else:
+        property_form = CreatePropertyForm()
+        property_photo_formset = PropertyPhotoFormSet()
 
-        context = {
-            "property_form": property_form,
-            "property_photo_formset": property_photo_formset,
-        }
-        return render(request, self.template_name, context)
+    context = {
+        "property_form": property_form,
+        "property_photo_formset": property_photo_formset,
+    }
+    return render(request, "create_property.html", context)
 
 
-# @method_decorator(login_required, name="dispatch")
-# @method_decorator(staff_member_required, name="dispatch")
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
 class UpdatePropertyView(UpdateView):
     template_name = "update_property.html"
     success_url = "manager_interface"
@@ -223,18 +175,15 @@ class UpdatePropertyView(UpdateView):
     def get(self, request, pk):
         property = RentalProperty.objects.get(id=pk)
         property_form = CreatePropertyForm(instance=property)
+        photos = PropertyPhoto.objects.filter(propertyOfImage=property)
 
         # Get existing photos associated with the RentalProperty
-        PropertyPhotoFormSet = modelformset_factory(
-            PropertyPhoto, form=PropertyPhotoForm, extra=1
-        )
-        property_photo_formset = PropertyPhotoFormSet(
-            queryset=PropertyPhoto.objects.filter(propertyOfImage=property)
-        )
+        property_photo_form = PropertyPhotoForm()
 
         context = {
             "property_form": property_form,
-            "property_photo_formset": property_photo_formset,
+            "property_photo_form": property_photo_form,
+            "photos": photos,
         }
         return render(request, self.template_name, context)
 
@@ -242,37 +191,31 @@ class UpdatePropertyView(UpdateView):
         property = RentalProperty.objects.get(id=pk)
         property_form = CreatePropertyForm(request.POST, instance=property)
 
-        # Get existing photos associated with the RentalProperty
-        PropertyPhotoFormSet = modelformset_factory(
-            PropertyPhoto, form=PropertyPhotoForm, extra=1
-        )
-        property_photo_formset = PropertyPhotoFormSet(
+        photos = PropertyPhoto.objects.filter(propertyOfImage=property)
+        property_photo_form = PropertyPhotoForm(
             request.POST,
             request.FILES,
-            queryset=PropertyPhoto.objects.filter(propertyOfImage=property),
         )
 
-        if property_form.is_valid() and property_photo_formset.is_valid():
+        if property_form.is_valid() and property_photo_form.is_valid():
             property_form.save()
 
-            # Save all new PropertyPhoto objects associated with the RentalProperty
-            for photo in property_photo_formset:
-                if photo.is_valid():
-                    property_photo_instance = photo.save(commit=False)
-                    property_photo_instance.propertyOfImage = property
-                    property_photo_instance.save()
+            property_photo = property_photo_form.save(commit=False)
+            property_photo.propertyOfImage = property
+            if property_photo.picture != "":
+                property_photo.save()
 
             return redirect("manager_interface")
-
         context = {
             "property_form": property_form,
-            "property_photo_formset": property_photo_formset,
+            "property_photo_form": property_photo_form,
+            "photos": photos,
         }
         return render(request, self.template_name, context)
 
 
-# @method_decorator(login_required, name="dispatch")
-# @method_decorator(staff_member_required, name="dispatch")
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
 class PropertyDeleteView(View):
     def get(self, request, pk):
         property = get_object_or_404(RentalProperty, pk=pk)
@@ -286,22 +229,41 @@ class PropertyDeleteView(View):
         return redirect("manager_interface")
 
 
+class PhotoDeleteView(View):
+    def get(self, request, pk):
+        photo = get_object_or_404(PropertyPhoto, pk=pk)
+        if "confirm" in request.POST:
+            photo.delete()
+        return render(request, "delete_photo.html", {"photo": photo})
+
+    def post(self, request, pk):
+        photo = get_object_or_404(PropertyPhoto, pk=pk)
+        if "confirm" in request.POST:
+            photo.delete()
+        return redirect("manager_interface")
+
+
 class SetPropertyToFeaturedView(View):
+    def get(self, request, pk):
+        property = get_object_or_404(RentalProperty, pk=pk)
+        return render(request, "feature_property.html", {"property": property})
+
     def post(self, request, pk):
         # Retrieve all rental properties
-        all_properties = RentalProperty.objects.all()
+        if "confirm" in request.POST:
+            all_properties = RentalProperty.objects.all()
 
-        # Set 'isFeaturedProperty' to False for all RentalProperty objects
-        for each in all_properties:
-            each.isFeaturedProperty = False
-            each.save()
+            # Set 'isFeaturedProperty' to False for all RentalProperty objects
+            for each in all_properties:
+                each.isFeaturedProperty = False
+                each.save()
 
-        # Get the selected property and set its 'isFeaturedProperty' to True
-        obj = get_object_or_404(RentalProperty, pk=pk)
-        obj.isFeaturedProperty = True
-        obj.save()
+            # Get the selected property and set its 'isFeaturedProperty' to True
+            obj = get_object_or_404(RentalProperty, pk=pk)
+            obj.isFeaturedProperty = True
+            obj.save()
 
-        return reverse_lazy("manager")
+        return redirect("manager_interface")
 
 
 # --------------------TENANTS/USERS----------------
@@ -331,23 +293,14 @@ class UserProfileDetailView(View):
 
 
 @method_decorator(login_required, name="dispatch")
-# @method_decorator(staff_member_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
 class ManagerInterfaceView(TemplateView):
     template_name = "manager.html"
 
-    # COULD DO THIS BUT WE'LL SEE
-    # # Calculate the starting index for the next set of records (in this case, 5).
-
-    # # Fetch the next 5 records using slicing with the offset.
-    # next_five_tenants = Tenant.objects.all()[next_starting_index: next_starting_index + 5]
-
     def get_context_data(self, **kwargs):
-        next_starting_index = 0
         context = super().get_context_data(**kwargs)
-        context["latest_tenants"] = Tenant.objects.all()[
-            next_starting_index : next_starting_index + 10
-        ]
-        context["properties"] = RentalProperty.objects.all()[:10]
+        context["latest_tenants"] = Tenant.objects.all()
+        context["properties"] = RentalProperty.objects.all()
         context["tenants"] = Tenant.objects.filter(linkToProperty__isnull=False)
         return context
 
@@ -360,11 +313,15 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["featured_property"] = RentalProperty.objects.get(
+        featured_property = RentalProperty.objects.filter(
             isFeaturedProperty=True
-        )
-
-        context["latest_properties"] = RentalProperty.objects.all()[:5]
+        ).first()
+        if featured_property:
+            context["featured_property"] = featured_property
+            context["property_photo"] = PropertyPhoto.objects.filter(
+                propertyOfImage=featured_property
+            ).first()
+        # context["latest_properties"] = RentalProperty.objects.all()[:5]
         return context
 
 
@@ -494,7 +451,7 @@ def paymentFail(request):
     return render(request, "payment_fail.html")
 
 
-@csrf_exempt
+# @csrf_exempt
 def stripe_webhook(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     time.sleep(10)

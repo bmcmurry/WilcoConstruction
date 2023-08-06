@@ -4,7 +4,7 @@
   <!-- image carousel -->
   <div
     id="carouselExampleCaptions"
-    class="carousel slide"
+    class="carousel slide vw-100 position-relative start-0"
     data-bs-ride="carousel"
   >
     <div class="carousel-indicators">
@@ -75,7 +75,8 @@
     </button>
   </div>
   <!-- about company text -->
-  <h1 class="text-center display-2">Welcome</h1>
+
+  <h1 class="text-center display-2 mt-3">Welcome</h1>
   <p class="lh-base text-center ms-5 me-5">
     Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, omnis
     perspiciatis sint voluptatum tempore sunt iusto ab at aspernatur illo!
@@ -86,71 +87,103 @@
     quasi iure non assumenda repellat!
   </p>
   <!-- featured content -->
+
   {% comment %}
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-6 mb-3 mb-sm-0">
-        <div class="card-deck">
-          <div class="card shadow-sm mb-5 bg-body-tertiary rounded">
-            <img src="{% static "images/house3.jpg"%}" class="card-img-top
-            mh-75" alt="Featured Rental" />
-            <div class="card-body">
-              <h5 class="card-title mt-2">Featured Property</h5>
-              <p class="card-text">{{ featured_property.description }}</p>
-              <a href="{% url 'properties' %}" class="btn btn-warning"
-                >View All</a
-              >
-            </div>
+        <div class="card shadow-sm mb-5 bg-body-tertiary rounded">
+          {% if property_photo %}
+          <img
+            src="{{ property_photo.picture.url }}"
+            class="card-img-top"
+            alt="{{ feature_property.address }}"
+            style="
+               {
+                max-height: 50px;
+              }
+            "
+          />
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title mt-2">Featured Property</h5>
+            <p class="card-text">{{ featured_property.description }}</p>
+            <a href="{% url 'properties' %}" class="btn btn-warning"
+              >View All</a
+            >
           </div>
         </div>
-        <div class="col-sm-6">
-          <div class="card shadow-sm mb-5 bg-body-tertiary rounded">
-            <img src="{% static "images\construction-hero@2x.jpg"%}"
-            class="card-img-top mh-75" alt="Featured Contract"/>
-            <div class="card-body">
-              <h5 class="card-title mt-2">Featured Contract</h5>
-              <p class="card-text">...</p>
-              <a href="contract.html" class="btn btn-warning">View All</a>
-            </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card shadow-sm mb-5 bg-body-tertiary rounded">
+          <img src="{% static "images\construction-hero@2x.jpg"%}"
+          class="card-img-top" alt="Featured Contract"/>
+          <div class="card-body">
+            <h5 class="card-title mt-2">Featured Contract</h5>
+            <p class="card-text">...</p>
+            <a href="contract.html" class="btn btn-warning">View All</a>
           </div>
         </div>
       </div>
     </div>
   </div>
   {% endcomment %}
-
-  <div class="card-deck">
-    <div class="row p-2">
-      <div class="card col-sm-6 mb-3 mb-sm-0">
-        <img src="{% static "images/house3.jpg"%}" class="card-img-top mh-75"
-        alt="Featured Rental" />
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This content is a little bit longer.
-          </p>
+  <div style="display: grid; justify-items: center">
+    <div class="card mb-3 w-75">
+      <div class="row g-0">
+        <div class="col-md-4">
+          {% if property_photo %}
+          <img
+            src="{{ property_photo.picture.url }}"
+            class="img-fluid rounded-start"
+            alt="{{ feature_property.address }}"
+            style=""
+          />
+          {% endif %}
         </div>
-        <div class="card-footer">
-          <small class="text-muted">Last updated 3 mins ago</small>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h3 class="card-title mt-2">Featured Property</h5>
+            <p class="card-text">{{ featured_property.description }}</p>
+            <p class="card-text">
+              <small class="text-body-secondary"
+                ><a href="{% url 'properties' %}" class="btn btn-warning position-absolute bottom-0 end-0 m-2"
+                  >View All</a
+                ></small
+              >
+            </p>
+          </div>
         </div>
       </div>
-      <div class="card col-sm-6">
-        <img src="{% static "images\construction-hero@2x.jpg"%}"
-        class="card-img-top mh-75" alt="Featured Contract"/>
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            This card has supporting text below as a natural lead-in to
-            additional content.
-          </p>
+    </div>
+
+    <div class="card mb-3 w-75">
+      <div class="row g-0">
+        <div class="col-md-8">
+          <div class="card-body">
+            <h3 class="card-title mt-2">Featured Contract</h5>
+            <p class="card-text">
+              This is a wider card with supporting text below as a natural
+              lead-in to additional content. This content is a little bit
+              longer.
+            </p>
+            <p class="card-text">
+              <small class="text-body-secondary"
+                ><a href="contract.html" class="btn btn-warning position-absolute bottom-0 start-0 m-2"
+                  >View All</a
+                ></small
+              >
+            </p>
+          </div>
         </div>
-        <div class="card-footer">
-          <small class="text-muted">Last updated 3 mins ago</small>
+        <div class="col-md-4">
+          <img src="{% static "images\construction-hero@2x.jpg"%}"
+          class="img-fluid rounded-end" alt="" style="" />
         </div>
       </div>
     </div>
   </div>
+
   <!-- contact -->
   <form
     onsubmit="sendEmail(); reset(); return false;"
@@ -246,4 +279,5 @@
     </div>
   </form>
 </section>
+
 {% endblock content %}

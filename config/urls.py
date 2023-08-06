@@ -13,12 +13,12 @@ urlpatterns = [
     path("payment-portal/", PaymentPortal, name="payment_portal"),
     path("payment_success/", paymentSuccess, name="payment_success"),
     path("payment_fail/", paymentFail, name="payment_fail"),
-    path("stripe_webhook", stripe_webhook, name="stripe_webhook"),
+    path("stripe_webhook/", stripe_webhook, name="stripe_webhook"),
     path("manager/", ManagerInterfaceView.as_view(), name="manager_interface"),
     path("search/", search_property, name="search_property"),
     # -------------CREATE---------------
     path("register/", registerPage, name="register"),
-    path("properties/create/", CreatePropertyView.as_view(), name="create_property"),
+    path("properties/create/", CreatePropertyView, name="create_property"),
     # -------------READ---------------
     path("", HomePageView.as_view(), name="home"),
     path("properties/", PropertiesView.as_view(), name="properties"),
@@ -31,6 +31,11 @@ urlpatterns = [
         UpdatePropertyView.as_view(),
         name="update_property",
     ),
+    path(
+        "properties/<int:pk>/feature/",
+        SetPropertyToFeaturedView.as_view(),
+        name="feature_property",
+    ),
     # -------------DELETE---------------
     path(
         "properties/<int:pk>/delete/",
@@ -38,9 +43,9 @@ urlpatterns = [
         name="delete_property",
     ),
     path(
-        "manager/<int:pk>/",
-        SetPropertyToFeaturedView.as_view(),
-        name="feature_property",
+        "photos/<int:pk>/delete/",
+        PhotoDeleteView.as_view(),
+        name="delete_photo",
     ),
 ]
 

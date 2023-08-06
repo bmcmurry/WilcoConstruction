@@ -43,6 +43,23 @@ class CreatePropertyForm(ModelForm):
         fields = "__all__"
         exclude = ["isRented", "isFeaturedProperty"]
 
+    def clean(self):
+        cleaned_data = super().clean()
+        address = cleaned_data.get("address")
+        city = cleaned_data.get("city")
+
+        # Check if a property with the same address and city already exists
+        if address and city:
+            existing_property = RentalProperty.objects.filter(
+                address=address, city=city
+            ).exists()
+            if existing_property:
+                raise forms.ValidationError(
+                    f"A property with the address {address} in the city {city} already exists and can't be duplicated."
+                )
+
+        return cleaned_data
+
 
 class PropertyPhotoForm(ModelForm):
     class Meta:

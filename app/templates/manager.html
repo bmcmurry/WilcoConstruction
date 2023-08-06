@@ -1,56 +1,58 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <! ignore prettier ->
-<section>
+<section class="overflow-hidden">
   {% comment %} {% include 'create_property.html' %}
 
   <a href="{% url 'search_property' %}">
     <button type="button" class="btn btn-warning mb-3 ms-5">Search</button></a
   >{% endcomment %}
-
+  <h1 class="text-center display-2 mt-3">Manager Interface</h1>
   <div class="row p-2">
-    <div class="col-md-12 col-lg-6">
+    <div class="col-lg-12 col-xl-6 mb-2 overflow-auto">
       <div class="card card-body">
         <input type="search" class="form-control" id="datatable-search-input" />
         <label class="form-label" for="datatable-search-input">Search</label>
-        <table class="table table-sm">
-          <tr>
-            <th>Address</th>
-            <th>Occupied</th>
-            <th>Tenant</th>
-            <th>Bedrooms</th>
-            <th>Bathrooms</th>
-          </tr>
-          {% for property in properties %}
-          <tr>
-            <td>{{ property.address }}</td>
-            <td>{{ property.isRented }}</td>
-            {% if property.isRented %} {% for tenant in tenants %}
-            <td>{{tenant}}</td>
-            {% endfor %} {% else %}
-            <td>N/A</td>
-            {% endif %}
-            <td>{{ property.bedrooms }}</td>
-            <td>{{ property.bathrooms }}</td>
-            <td>
-              <a href="{% url 'update_property' property.id %}"
-                ><button type="button" class="btn btn-primary">Edit</button></a
-              >
-            </td>
-            <td>
-              <a href="{% url 'delete_property' property.id %}"
-                ><button type="button" class="btn btn-danger">Delete</button></a
-              >
-            </td>
-            <td>
-              <a href="{% url 'feature_property' property.id %}"
-                ><button type="button" class="btn btn-warning">
-                  Feature
-                </button></a
-              >
-            </td>
-          </tr>
-          {% endfor %}
-        </table>
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <tr>
+              <th>Address</th>
+              <th>Occupied</th>
+              <th>Tenant</th>
+              <th>Bedrooms</th>
+              <th>Bathrooms</th>
+            </tr>
+            {% for property in properties %}
+            <tr>
+              <td>{{ property.address }}</td>
+              <td>{{ property.isRented }}</td>
+              {% if property.isRented %} {% for tenant in tenants %}
+              <td>{{tenant}}</td>
+              {% endfor %} {% else %}
+              <td>N/A</td>
+              {% endif %}
+              <td>{{ property.bedrooms }}</td>
+              <td>{{ property.bathrooms }}</td>
+              <td>
+                <a href="{% url 'update_property' property.id %}"
+                  ><i class="bi bi-pencil-square"></i
+                ></a>
+              </td>
+              {% if property.isFeaturedProperty == False %}
+              <td>
+                <a href="{% url 'delete_property' property.id %}">
+                  <i class="bi bi-trash3-fill text-danger"></i
+                ></a>
+              </td>
+              <td>
+                <a href="{% url 'feature_property' property.id %}"
+                  ><i class="bi bi-bookmark-star-fill text-warning"></i
+                ></a>
+              </td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
         <div>
           <a href="{% url 'create_property' %}" class="btn btn-warning"
             >Add Property</a
@@ -59,83 +61,97 @@
       </div>
     </div>
 
-    <div class="col-md-12 col-lg-6">
+    <div class="col-lg-12 col-xl-6 overflow-auto">
       <div class="card card-body">
         <input type="search" class="form-control" id="datatable-search-input" />
         <label class="form-label" for="datatable-search-input">Search</label>
-        <table class="table table-sm">
-          <tr>
-            <th>Name</th>
-            <th>Phone Number</th>
-            <th>Email</th>
-            <th>Balance</th>
-            <th>Date Created</th>
-          </tr>
-          {% for tenant in latest_tenants %}
-          <tr>
-            <td>{{ tenant.first_name }} {{ tenant.last_name }}</td>
-            <td>{{ tenant.phone }}</td>
-            <td>{{ tenant.userEmail }}</td>
-            <td>{{ tenant.currentBalance }}</td>
-            <td>{{ tenant.dateCreated }}</td>
-            <!-- Button trigger modal -->
-            <td>
-              <button
-                type="button"
-                class="btn btn-warning"
-                data-bs-toggle="modal"
-                data-bs-target="#{{ tenant.id }}"
-              >
-                Info
-              </button>
-              <div
-                class="modal fade modal-lg"
-                id="{{ tenant.id }}"
-                tabindex="-1"
-                aria-labelledby="exampleModalLabel"
-                aria-hidden="true"
-              >
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header bg-warning">
-                      <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                      ></button>
-                    </div>
-                    <div class="modal-body">
-                      <br />
-                      <p class="card-text">
-                        First Name: {{ tenant.first_name }}
-                      </p>
-                      <p class="card-text">Last Name: {{ tenant.last_name }}</p>
-                      <p class="card-text">Phone: {{ tenant.phone }}</p>
-                      <p class="card-text">Email: {{ tenant.userEmail }}</p>
-                      <p class="card-text">
-                        Balance: {{ tenant.currentBalance }}
-                      </p>
-                      <p class="card-text">
-                        Date Created: {{ tenant.dateCreated }}
-                      </p>
-                    </div>
-                    <div class="modal-footer bg-warning">
-                      <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                      >
-                        Close
-                      </button>
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <tr>
+              <th>Name</th>
+              {% comment %}
+              <th>Phone Number</th>
+              {% endcomment %} {% comment %}
+              <th>Email</th>
+              {% endcomment %}
+              <th>Property</th>
+              <th>Balance</th>
+              <th>More Info</th>
+              {% comment %}
+              <th>Date Created</th>
+              {% endcomment %}
+            </tr>
+            {% for tenant in latest_tenants %}
+            <tr>
+              <td>{{ tenant.first_name }} {{ tenant.last_name }}</td>
+              {% comment %}
+              <td>{{ tenant.phone }}</td>
+              {% endcomment %} {% comment %}
+              <td>{{ tenant.userEmail }}</td>
+              {% endcomment %}
+              <td>{{ tenant.linkToProperty }}</td>
+              <td>{{ tenant.currentBalance }}</td>
+              {% comment %}
+              <td>{{ tenant.dateCreated }}</td>
+              {% endcomment %}
+              <!-- Button trigger modal -->
+              <td>
+                <i
+                  class="bi bi-info-square-fill text-info"
+                  data-bs-toggle="modal"
+                  data-bs-target="#{{ tenant.id }}"
+                ></i>
+
+                <div
+                  class="modal fade modal-lg"
+                  id="{{ tenant.id }}"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header bg-warning">
+                        <h3>{{ tenant.first_name }} {{ tenant.last_name }}</h3>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        <p class="card-text">
+                          Address: {{ tenant.linkToProperty }}
+                        </p>
+
+                        <p class="card-text">Phone: {{ tenant.phone }}</p>
+                        <p class="card-text">Email: {{ tenant.userEmail }}</p>
+
+                        <p class="card-text">
+                          Balance: {{ tenant.currentBalance }}
+                        </p>
+                        <p class="card-text">
+                          Date Created: {{ tenant.dateCreated }}
+                        </p>
+                      </div>
+                      <div class="modal-footer bg-warning">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal"
+                        >
+                          Close
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-          {% endfor %}
-        </table>
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
       </div>
     </div>
     {% comment %}
@@ -143,8 +159,10 @@
       <input type="search" class="form-control" id="datatable-search-input" />
       <label class="form-label" for="datatable-search-input">Search</label>
     </div>
-    {% endcomment %}
+    {% endcomment %} {% comment %}
     <div id="datatable"></div>
+    {% endcomment %}
   </div>
 </section>
+
 {% endblock %}
