@@ -10,7 +10,8 @@ env = environ.Env()
 environ.Env.read_env()
 # ...
 # # Your secret key
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY")
+
 
 from pathlib import Path
 
@@ -25,9 +26,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -77,6 +75,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# =================local database======================
+
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -86,7 +86,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 #         "HOST": os.getenv("DB_HOST"),
 #     }
 # }
-# Add the new Heroku Postgres settings
+
+# =========heroku database==================
 DATABASES = {"default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))}
 
 # Password validation
@@ -145,7 +146,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-ALLOWED_HOSTS = ["wilco-app-c6223eb282aa.herokuapp.com"]
+ALLOWED_HOSTS = ["wilco-app-c6223eb282aa.herokuapp.com", "127.0.0.1", "localhost"]
 
 STRIPE_SECRET_KEY = "sk_test_51NbRsdCffthPIRLKsKEjqXGQo3H7zcpoulRxnXo0Wrj46cpkhVmysuZ4lmhDDOc0dd7Uk1mfolG1HIYHqFjoVWbw00jj6IpQCL"
 PRODUCT_PRICE = 1
