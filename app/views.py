@@ -29,6 +29,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import *
 from .models import *
 from .decorators import *
+from django.db.models import Q
 
 # Your code implementation goes here...
 
@@ -111,7 +112,7 @@ def logoutUser(request):
 # ----------------PROPERTIES---------------
 
 
-class PropertiesView(TemplateView):
+class PropertyView(TemplateView):
     template_name = "properties.html"
     ITEMS_PER_PAGE = 12
 
@@ -119,21 +120,39 @@ class PropertiesView(TemplateView):
         context = super().get_context_data(**kwargs)
         next_starting_index = 0
 
-        # Check if the 'results' and 'search_query' keyword arguments are present
-        if "results" in self.kwargs and "search_query" in self.kwargs:
-            context["properties"] = self.kwargs["results"]
-            context["search_query"] = self.kwargs["search_query"]
-        else:
-            # Pagination
-            page_number = self.request.GET.get("page")
-            properties = RentalProperty.objects.all()
-            property_images = PropertyPhoto.objects.all()
-            p = Paginator(properties, self.ITEMS_PER_PAGE)
-            context["properties"] = p.get_page(page_number)
-            p_images = Paginator(property_images, self.ITEMS_PER_PAGE)
-            context["property_photo"] = p_images.get_page(page_number)
-
+        # Pagination
+        page_number = self.request.GET.get("page")
+        properties = RentalProperty.objects.all()
+        property_images = PropertyPhoto.objects.all()
+        p = Paginator(properties, self.ITEMS_PER_PAGE)
+        context["properties"] = p.get_page(page_number)
+        p_images = Paginator(property_images, self.ITEMS_PER_PAGE)
+        context["property_photo"] = p_images.get_page(page_number)
+        context["search_form"] = PropertySearchForm()
         return context
+
+    def search_properties(self, search_field, search_query):
+        # Filter the RentalProperty objects based on the search query
+        results = RentalProperty.objects.filter(
+            Q(**{search_field + "__icontains": search_query})
+        )
+        return results
+
+    def post(self, request, *args, **kwargs):
+        form = PropertySearchForm(request.POST)
+        if form.is_valid():
+            search_field = form.cleaned_data["search_field"]
+            search_query = form.cleaned_data["search_query"]
+
+            # If both search_field and search_query exist, perform the search and redirect to the same view
+            if search_field and search_query:
+                results = self.search_properties(search_field, search_query)
+                return redirect(
+                    "search_results", search_query=search_query, results=results
+                )
+
+        # If the form is not valid or if search_field or search_query is empty, just render the page without filtering
+        return self.get(request, *args, **kwargs)
 
 
 @method_decorator(login_required, name="dispatch")
@@ -350,7 +369,7 @@ def contact_view(request):
                     f"Name: {first_name} {last_name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}",
                     email,
                     [
-                        "bryanmcmurry7@gmail.com",
+                        settings.EMAIL_HOST_USER,
                     ],  # Replace with the actual recipient email address
                     fail_silently=False,
                 )
@@ -379,36 +398,36 @@ def contact_view(request):
 #         return object_list
 
 
-def search_property(request):
-    if request.method == "POST":
-        form = PropertySearchForm(request.POST)
-        if form.is_valid():
-            search_field = form.cleaned_data["search_field"]
-            search_query = form.cleaned_data["search_query"]
+# def search_property(request):
+#     if request.method == "POST":
+#         form = PropertySearchForm(request.POST)
+#         if form.is_valid():
+#             search_field = form.cleaned_data["search_field"]
+#             search_query = form.cleaned_data["search_query"]
 
-            # Create a dictionary to map form field names to model field names
-            field_mapping = {
-                "address": "address__icontains",
-                "city": "city__icontains",
-                "isRented": "isRented__icontains",
-                "price": "price__icontains",
-                "squareFoot": "squarefoot__icontains",
-                "bedrooms": "bedrooms__icontains",
-                "bathrooms": "bathrooms__icontains",
-                "isPetFriendly": "isPetFriendly__icontains",
-            }
+#             # Create a dictionary to map form field names to model field names
+#             field_mapping = {
+#                 "address": "address__icontains",
+#                 "city": "city__icontains",
+#                 "isRented": "isRented__icontains",
+#                 "price": "price__icontains",
+#                 "squareFoot": "squarefoot__icontains",
+#                 "bedrooms": "bedrooms__icontains",
+#                 "bathrooms": "bathrooms__icontains",
+#                 "isPetFriendly": "isPetFriendly__icontains",
+#             }
 
-            if search_field in field_mapping:
-                query_field = field_mapping[search_field]
-                results = RentalProperty.objects.filter(**{query_field: search_query})
-                return redirect(
-                    "properties", results=results, search_query=search_query
-                )
+#             if search_field in field_mapping:
+#                 query_field = field_mapping[search_field]
+#                 results = RentalProperty.objects.filter(**{query_field: search_query})
+#                 return redirect(
+#                     "properties", results=results, search_query=search_query
+#                 )
 
-    else:
-        form = PropertySearchForm()
+#     else:
+#         form = PropertySearchForm()
 
-    return render(request, "properties", {"form": form})
+#     return render(request, "properties", {"form": form})
 
 
 ##===============below is the payment views for stripe============================##

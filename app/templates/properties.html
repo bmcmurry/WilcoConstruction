@@ -11,11 +11,104 @@
     praesentium voluptatum error aspernatur odio tempora corporis perferendis
     quasi iure non assumenda repellat!
   </p>
-  {% include "search_property.html" %}
+  <form class="d-flex mt-3" role="search" method="post" action="{% url 'search_results' search_query=search_query results=results %}">
+    {% csrf_token %}
+    {{ search_form.as_p }}
+    <button class="btn btn-outline-warning" type="submit">Search</button>
+  </form>
+
   <!-- rental cards -->
 
   <div class="row mb-3" id="rental-cards-container">
-    
+    {% if search_query %}
+    <div class="alert alert-primary" role="alert">
+      {{ results }} properties found matching "{{ search_query }}" 
+      <a href="{% url 'properties' %}" class="btn btn-secondary">Clear Search</a>
+    </div>
+    <!-- rental cards -->
+    <div class="row mb-3" id="rental-cards-container">
+      {% for property in results %}
+      {% if property.isRented == False %}
+      <div class="col-sm-12 col-md-3 mb-3 mb-sm-0 mx-auto rental-card" data-address="{{ property.address }}" data-city="{{ property.city }}" data-isRented="{{ property.isRented }}" data-price="{{ property.price }}" data-squarefoot="{{ property.squarefoot }}" data-bedrooms="{{ property.bedrooms }}" data-numOfBathrooms="{{ property.bathrooms }}" data-isPetFriendly="{{ property.isPetFriendly }}">
+  
+        <div class="card mt-3">
+          {% with property_photo=property.propertyphoto_set.first %}
+          <! ignore prettier ->
+          {% if property_photo %}
+         
+          <img
+            src="{{ property_photo.picture.url }}"
+            class="card-img-top"
+            alt="{{ property.address }}"
+          />
+          {% else %}
+          <p class="card-text">No Image Found</p>
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ property.address }}</h5>
+            <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
+            <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
+            <p class="card-text">{{ property.description }}</p>
+            <p class="card-text">
+              <!-- Button trigger modal -->
+              <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#{{ property.id }}">
+                Info
+              </button>
+  
+              <!-- Modal -->
+              <div class="modal fade modal-lg" id="{{ property.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                   
+                      <h1 class="modal-title fs-5" id="exampleModalLabel">{{ property.address }}</h1>
+                   
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      {% with property_photo=property.propertyphoto_set.all %}
+                      {% if property_photo %}
+                
+                      <! ignore prettier ->
+                      {% for photo in property_photo %}
+                      <img
+                        src="{{ photo.picture.url }}"
+                        class="card-img-top p-2"
+                        alt="{{ property.address }}"
+                      />
+                      {% endfor %}
+                      {% endif %}
+                      {% endwith %}
+                    <br>
+                      <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
+                      <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
+                      <p class="card-text">{{ property.description }}</p>
+  
+                    </div>
+                    <div class="modal-footer bg-warning">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div> 
+  
+  <!--end modal-->
+              {% if user.is_staff %}
+  
+              <a href="{% url 'update_property' property.id %}"
+                  ><button type="button" class="btn btn-primary">Edit</button></a
+                >
+              {% endif %}
+            </p>
+          </div>
+        </div>
+      </div> {% endwith %}
+      {% endif %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <!-- Show all properties if search_query does not exist -->
     {% for property in properties %}
     {% if property.isRented == False %}
     <div class="col-sm-12 col-md-3 mb-3 mb-sm-0 mx-auto rental-card" data-address="{{ property.address }}" data-city="{{ property.city }}" data-isRented="{{ property.isRented }}" data-price="{{ property.price }}" data-squarefoot="{{ property.squarefoot }}" data-bedrooms="{{ property.bedrooms }}" data-numOfBathrooms="{{ property.bathrooms }}" data-isPetFriendly="{{ property.isPetFriendly }}">
@@ -96,7 +189,7 @@
     {% endif %}
     {% endfor %}
   </div>
-
+  {% endif %}
 <!--PAGINATION-->
   <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
@@ -239,5 +332,4 @@
     </div>
   </form> {% endcomment %}
 </section>
-
 {% endblock content %}

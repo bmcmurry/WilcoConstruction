@@ -2,11 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.utils.text import slugify
 
 
 # Create your models here.
 class Tenant(models.Model):
     linkToBuiltinUser = models.OneToOneField(User, on_delete=models.PROTECT)
+    slug = models.SlugField(blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     phone = models.CharField(max_length=50)
@@ -16,6 +18,10 @@ class Tenant(models.Model):
     linkToProperty = models.ForeignKey(
         "RentalProperty", on_delete=models.CASCADE, blank=True, null=True
     )
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.first_name + self.last_name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.first_name + " " + self.last_name
@@ -33,6 +39,7 @@ class RentalProperty(models.Model):
         ("Amory", "Amory"),
         ("New Albany", "New Albany"),
     )
+    slug = models.SlugField(blank=True, null=True)
     address = models.CharField(max_length=50)
     city = models.TextField(null=True, choices=LOCATIONS)
     isRented = models.BooleanField(default=False, verbose_name="Occupied")
@@ -43,6 +50,9 @@ class RentalProperty(models.Model):
     isPetFriendly = models.BooleanField(verbose_name="Pet Friendly")
     isFeaturedProperty = models.BooleanField(default=False, verbose_name="Featured")
     description = models.TextField()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.address
@@ -60,9 +70,13 @@ class PropertyPhoto(models.Model):
 
 
 class ConstructionTicket(models.Model):
+    slug = models.SlugField(blank=True, null=True)
     title = models.CharField(max_length=50)
     dateCreated = models.DateField(auto_now_add=True)
     description = models.TextField()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title

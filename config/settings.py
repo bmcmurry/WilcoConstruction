@@ -77,18 +77,18 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # =================local database======================
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": os.getenv("DB_NAME"),
-#         "USER": os.getenv("DB_USER"),
-#         "PASSWORD": os.getenv("DB_PASSWORD"),
-#         "HOST": os.getenv("DB_HOST"),
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+    }
+}
 
 # =========heroku database==================
-DATABASES = {"default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))}
+# DATABASES = {"default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -148,5 +148,5 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ALLOWED_HOSTS = ["wilco-app-c6223eb282aa.herokuapp.com", "127.0.0.1", "localhost"]
 
-STRIPE_SECRET_KEY = "sk_test_51NbRsdCffthPIRLKsKEjqXGQo3H7zcpoulRxnXo0Wrj46cpkhVmysuZ4lmhDDOc0dd7Uk1mfolG1HIYHqFjoVWbw00jj6IpQCL"
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
 PRODUCT_PRICE = 1
