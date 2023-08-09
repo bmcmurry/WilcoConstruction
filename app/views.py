@@ -131,28 +131,28 @@ class PropertyView(TemplateView):
         context["search_form"] = PropertySearchForm()
         return context
 
-    def search_properties(self, search_field, search_query):
-        # Filter the RentalProperty objects based on the search query
-        results = RentalProperty.objects.filter(
-            Q(**{search_field + "__icontains": search_query})
-        )
-        return results
+    # def search_properties(self, search_field, search_query):
+    #     # Filter the RentalProperty objects based on the search query
+    #     results = RentalProperty.objects.filter(
+    #         Q(**{search_field + "__icontains": search_query})
+    #     )
+    #     return results
 
-    def post(self, request, *args, **kwargs):
-        form = PropertySearchForm(request.POST)
-        if form.is_valid():
-            search_field = form.cleaned_data["search_field"]
-            search_query = form.cleaned_data["search_query"]
+    # def post(self, request, *args, **kwargs):
+    #     form = PropertySearchForm(request.POST)
+    #     if form.is_valid():
+    #         search_field = form.cleaned_data["search_field"]
+    #         search_query = form.cleaned_data["search_query"]
 
-            # If both search_field and search_query exist, perform the search and redirect to the same view
-            if search_field and search_query:
-                results = self.search_properties(search_field, search_query)
-                return redirect(
-                    "search_results", search_query=search_query, results=results
-                )
+    #         # If both search_field and search_query exist, perform the search and redirect to the same view
+    #         if search_field and search_query:
+    #             results = self.search_properties(search_field, search_query)
+    #             return redirect(
+    #                 "search_results", search_query=search_query, results=results
+    #             )
 
-        # If the form is not valid or if search_field or search_query is empty, just render the page without filtering
-        return self.get(request, *args, **kwargs)
+    #     # If the form is not valid or if search_field or search_query is empty, just render the page without filtering
+    #     return self.get(request, *args, **kwargs)
 
 
 @method_decorator(login_required, name="dispatch")

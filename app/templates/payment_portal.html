@@ -1,21 +1,90 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <section class="container-fluid">
   <div class="text-center">
+    <h1 class="text-center display-2 mt-3">Payment Portal</h1>
     {% if user.is_authenticated %}
-    <form enctype="multipart/form-data" method="post" role="payment_portal">
-      {% csrf_token %}
-      <h2>
-        Hi {{ user }}! To pay, click on this button
-        <button
-          type="submit"
-          class="btn btn-success"
-          href="{% url 'payment_portal' %}"
-          data-bid-href="pricing"
-        >
-          Payment
-        </button>
-      </h2>
-    </form>
+
+    <div class="d-flex mt-4">
+      <div class="p-2 w-75">
+        <div class="card">
+          <div class="card-header bg-warning">{{ user }}</div>
+          <div class="card-body">
+            <h5 class="card-title">Special title treatment</h5>
+            <p class="card-text">
+              With supporting text below as a natural lead-in to additional
+              content. With supporting text below as a natural lead-in to
+              additional content. With supporting text below as a natural
+              lead-in to additional content. With supporting text below as a
+              natural lead-in to additional content. With supporting text below
+              as a natural lead-in to additional content. With supporting text
+              below as a natural lead-in to additional content.
+            </p>
+            
+          </div>
+        </div>
+      </div>
+      <div class="p-2 flex-shrink-1">
+        <div class="card">
+          <div class="card-header bg-warning-subtle">Extras</div>
+          <div class="card-body">
+            <h5 class="card-title">How To Use This Page</h5>
+            <p class="card-text">
+              With supporting text below as a natural lead-in to additional
+              content.
+            </p>
+     
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex mt-4">
+      <div class="p-2 w-75">
+        <div class="card">
+          <div class="card-header bg-warning">Payment History</div>
+          <div class="card-body">
+            <h5 class="card-title">Special title treatment</h5>
+            <p class="card-text">
+              With supporting text below as a natural lead-in to additional
+              content. With supporting text below as a natural lead-in to
+              additional content. With supporting text below as a natural
+              lead-in to additional content. With supporting text below as a
+              natural lead-in to additional content. With supporting text below
+              as a natural lead-in to additional content. With supporting text
+              below as a natural lead-in to additional content.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="p-2 flex-shrink-1">
+        <div class="card">
+          <div class="card-header bg-success text-light">Payments</div>
+          <div class="card-body">
+            <h5 class="card-title">{% csrf_token %}
+             
+                Hi {{ user }}! To pay, click on this button
+            <p class="card-text">   <form
+              enctype="multipart/form-data"
+              method="post"
+              role="payment_portal"
+            >
+              
+                <button
+                  type="submit"
+                  class="btn btn-success"
+                  href="{% url 'payment_portal' %}"
+                  data-bid-href="pricing"
+                >
+                  Pay Now
+                </button>
+         
+            </form></p>
+         
+          </div>
+        </div>
+      </div>
+    </div>
+
     {% else %}
     <h2>You're not logged in...</h2>
     <a href="{% url 'login' %}" class="btn btn-secondary">Log in</a>

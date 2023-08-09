@@ -11,11 +11,11 @@
     praesentium voluptatum error aspernatur odio tempora corporis perferendis
     quasi iure non assumenda repellat!
   </p>
-  <form class="d-flex mt-3" role="search" method="post" action="{% url 'search_results' search_query=search_query results=results %}">
+  {% comment %} <form class="d-flex mt-3" role="search" method="post" action="{% url 'search_results' search_query=search_query results=results %}">
     {% csrf_token %}
     {{ search_form.as_p }}
     <button class="btn btn-outline-warning" type="submit">Search</button>
-  </form>
+  </form> {% endcomment %}
 
   <!-- rental cards -->
 

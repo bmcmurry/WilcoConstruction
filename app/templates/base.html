@@ -23,10 +23,10 @@
     />
   </head>
   {% include 'navbar.html' %}
-  <body class="vh-100">
+  <body>
     <style>
       section {
-        padding: 150px 0;
+        padding: 120px 0;
       }
     </style>
     <div id="page-container" style="position: relative; min-height: 100vh">
@@ -42,18 +42,5 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://smtpjs.com/v3/smtp.js"></script>
-    <script>
-      function sendEmail() {
-        Email.send({
-          Host: "smtp.gmail.com",
-          Username: "ashleybglasz@gmail.com",
-          Password: "Horses123!!!",
-          To: "ashleybglasz@gmail.com",
-          From: document.getElementById("email").value,
-          Subject: "Wilco Website Inquiry",
-          Body: "And this is the body",
-        }).then((message) => alert(message));
-      }
-    </script>
   </body>
 </html>
