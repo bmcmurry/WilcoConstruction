@@ -13,10 +13,9 @@ class Tenant(models.Model):
     last_name = models.CharField(max_length=50)
     phone = models.CharField(max_length=50)
     userEmail = models.EmailField(max_length=254, verbose_name="Email")
-    currentBalance = models.IntegerField(default=0, verbose_name="Balance")
     dateCreated = models.DateTimeField(auto_now_add=True)
-    linkToProperty = models.ForeignKey(
-        "RentalProperty", on_delete=models.CASCADE, blank=True, null=True
+    linkToLease = models.ForeignKey(
+        "Lease", on_delete=models.CASCADE, blank=True, null=True
     )
 
     def save(self, *args, **kwargs):
@@ -25,6 +24,19 @@ class Tenant(models.Model):
 
     def __str__(self):
         return self.first_name + " " + self.last_name
+
+
+class Lease(models.Model):
+    slug = models.SlugField(blank=True, null=True)
+    pricePerMonth = models.FloatField(verbose_name="Price")
+    dateCreated = models.DateTimeField(auto_now_add=True)
+    currentBalance = models.IntegerField(default=0, verbose_name="Balance")
+    linkToProperty = models.OneToOneField(
+        "RentalProperty", on_delete=models.CASCADE, blank=True, null=True
+    )
+
+    def __str__(self):
+        return self.linkToProperty
 
 
 class RentalProperty(models.Model):

@@ -23,17 +23,18 @@
     />
   </head>
   {% include 'navbar.html' %}
-  <body>
+  <body class="overflow-auto">
     <style>
       section {
         padding: 120px 0;
       }
     </style>
+
     <div id="page-container" style="position: relative; min-height: 100vh">
       <div id="content-wrap" style="padding-bottom: 2.5rem">
         {% block content %}{% endblock content %}
       </div>
-      {% include 'footer.html' %}
+      <div class="mt-10">{% include 'footer.html' %}</div>
     </div>
 
     <script

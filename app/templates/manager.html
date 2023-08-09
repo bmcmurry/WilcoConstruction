@@ -89,7 +89,7 @@
               {% endcomment %} {% comment %}
               <td>{{ tenant.userEmail }}</td>
               {% endcomment %}
-              <td>{{ tenant.linkToProperty }}</td>
+              <td>{{ tenant.linkToLease }}</td>
               <td>{{ tenant.currentBalance }}</td>
               {% comment %}
               <td>{{ tenant.dateCreated }}</td>
@@ -122,14 +122,14 @@
                       </div>
                       <div class="modal-body">
                         <p class="card-text">
-                          Address: {{ tenant.linkToProperty }}
+                          Address: {{ tenant.linkToLease.linkToProperty }}
                         </p>
 
                         <p class="card-text">Phone: {{ tenant.phone }}</p>
                         <p class="card-text">Email: {{ tenant.userEmail }}</p>
 
                         <p class="card-text">
-                          Balance: {{ tenant.currentBalance }}
+                          Balance: {{ tenant.Lease.currentBalance }}
                         </p>
                         <p class="card-text">
                           Date Created: {{ tenant.dateCreated }}

@@ -77,18 +77,18 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # =================local database======================
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": os.getenv("DB_NAME"),
-#         "USER": os.getenv("DB_USER"),
-#         "PASSWORD": os.getenv("DB_PASSWORD"),
-#         "HOST": os.getenv("DB_HOST"),
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+    }
+}
 
 # =========heroku database==================
-DATABASES = {"default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))}
+# DATABASES = {"default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
