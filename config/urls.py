@@ -17,15 +17,10 @@ urlpatterns = [
     path("manager/", ManagerInterfaceView.as_view(), name="manager_interface"),
     # -------------CREATE---------------
     path("register/", registerPage, name="register"),
-    path("properties/create/", CreatePropertyView, name="create_property"),
+    path("properties/create/", CreatePropertyView.as_view(), name="create_property"),
     # -------------READ---------------
     path("", HomePageView.as_view(), name="home"),
     path("properties/", PropertyView.as_view(), name="properties"),
-    path(
-        "properties/<str:search_query>/<str:results>/",
-        PropertyView.as_view(),
-        name="search_results",
-    ),
     path(
         "profile/<int:pk>/", UserProfileDetailView.as_view(), name="user_profile_detail"
     ),
