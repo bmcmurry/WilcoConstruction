@@ -36,7 +36,7 @@ class Lease(models.Model):
     )
 
     def __str__(self):
-        return self.linkToProperty
+        return f"{self.linkToProperty}"
 
 
 class RentalProperty(models.Model):

@@ -26,8 +26,15 @@
               <td>{{ property.address }}</td>
               <td>{{ property.isRented }}</td>
               {% if property.isRented %} {% for tenant in tenants %}
-              <td>{{tenant}}</td>
-              {% endfor %} {% else %}
+              <! ignore prettier ->
+              {% if tenant.linkToLease.linkToProperty == property %}
+              <! ignore prettier ->
+
+              <! ignore prettier ->
+
+              <td>{{ tenant }}</td>
+              <! ignore prettier ->
+              {% endif %} {% endfor %} {% else %}
               <td>N/A</td>
               {% endif %}
               <td>{{ property.bedrooms }}</td>
@@ -90,7 +97,7 @@
               <td>{{ tenant.userEmail }}</td>
               {% endcomment %}
               <td>{{ tenant.linkToLease }}</td>
-              <td>{{ tenant.currentBalance }}</td>
+              <td>{{ tenant.linkToLease.currentBalance }}</td>
               {% comment %}
               <td>{{ tenant.dateCreated }}</td>
               {% endcomment %}
