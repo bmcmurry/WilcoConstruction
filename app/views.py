@@ -118,49 +118,58 @@ class PropertyView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        next_starting_index = 0
+
+        properties = RentalProperty.objects.all()
+        property_images = PropertyPhoto.objects.all()
 
         # Pagination
         page_number = self.request.GET.get("page")
-        properties = RentalProperty.objects.all()
-        property_images = PropertyPhoto.objects.all()
         p = Paginator(properties, self.ITEMS_PER_PAGE)
-        context["properties"] = p.get_page(page_number)
         p_images = Paginator(property_images, self.ITEMS_PER_PAGE)
+
+        context["properties"] = p.get_page(page_number)
         context["property_photo"] = p_images.get_page(page_number)
-        context["search_form"] = PropertySearchForm()
+
+        # SEARCH BAR
+        search_query = self.request.GET.get("search")
+        if search_query:
+            properties = properties.filter(name__icontains=search_query)
+        # context["search_form"] = PropertySearchForm()
+
+        # SORT BY
+        sort_order = self.request.GET.get("sort")
+        if sort_order == "asc":
+            properties = properties.order_by("price")
+        elif sort_order == "desc":
+            properties = properties.order_by("-price")
+
         return context
 
-    # def search_properties(self, search_field, search_query):
-    #     # Filter the RentalProperty objects based on the search query
-    #     results = RentalProperty.objects.filter(
-    #         Q(**{search_field + "__icontains": search_query})
-    #     )
-    #     return results
 
-    # def post(self, request, *args, **kwargs):
-    #     form = PropertySearchForm(request.POST)
-    #     if form.is_valid():
-    #         search_field = form.cleaned_data["search_field"]
-    #         search_query = form.cleaned_data["search_query"]
+# @method_decorator(login_required, name="dispatch")
+# @method_decorator(staff_member_required, name="dispatch")
+class CreatePropertyView(View):
+    template_name = "create_property.html"
 
-    #         # If both search_field and search_query exist, perform the search and redirect to the same view
-    #         if search_field and search_query:
-    #             results = self.search_properties(search_field, search_query)
-    #             return redirect(
-    #                 "search_results", search_query=search_query, results=results
-    #             )
+    @method_decorator(login_required)
+    @method_decorator(staff_member_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
-    #     # If the form is not valid or if search_field or search_query is empty, just render the page without filtering
-    #     return self.get(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        PropertyPhotoFormSet = formset_factory(PropertyPhotoForm, extra=1)
+        property_form = CreatePropertyForm()
+        property_photo_formset = PropertyPhotoFormSet()
 
+        context = {
+            "property_form": property_form,
+            "property_photo_formset": property_photo_formset,
+        }
+        return render(request, self.template_name, context)
 
-@method_decorator(login_required, name="dispatch")
-@method_decorator(staff_member_required, name="dispatch")
-def CreatePropertyView(request):
-    PropertyPhotoFormSet = formset_factory(PropertyPhotoForm, extra=1)
+    def post(self, request, *args, **kwargs):
+        PropertyPhotoFormSet = formset_factory(PropertyPhotoForm, extra=1)
 
-    if request.method == "POST":
         property_form = CreatePropertyForm(request.POST)
         property_photo_formset = PropertyPhotoFormSet(request.POST, request.FILES)
 
@@ -174,15 +183,12 @@ def CreatePropertyView(request):
                     property_photo_instance.save()
 
             return redirect("manager_interface")
-    else:
-        property_form = CreatePropertyForm()
-        property_photo_formset = PropertyPhotoFormSet()
 
-    context = {
-        "property_form": property_form,
-        "property_photo_formset": property_photo_formset,
-    }
-    return render(request, "create_property.html", context)
+        context = {
+            "property_form": property_form,
+            "property_photo_formset": property_photo_formset,
+        }
+        return render(request, self.template_name, context)
 
 
 @method_decorator(login_required, name="dispatch")
@@ -320,7 +326,7 @@ class ManagerInterfaceView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["latest_tenants"] = Tenant.objects.all()
         context["properties"] = RentalProperty.objects.all()
-        context["tenants"] = Tenant.objects.filter(linkToProperty__isnull=False)
+        context["tenants"] = Tenant.objects.filter(linkToLease__isnull=False)
         return context
 
 
@@ -384,18 +390,6 @@ def contact_view(request):
         form = ContactForm()
 
     return render(request, "contact.html", {"form": form})
-
-
-# class ProfileSearchView(ListView)
-#     template_name = '/your/template.html'
-#     model = Person
-
-#     def get_queryset(self):
-#         name = self.kwargs.get('name', '')
-#         object_list = self.model.objects.all()
-#         if name:
-#             object_list = object_list.filter(name__icontains=name)
-#         return object_list
 
 
 # def search_property(request):
