@@ -122,19 +122,15 @@ class PropertyView(TemplateView):
         properties = RentalProperty.objects.all()
         property_images = PropertyPhoto.objects.all()
 
-        # Pagination
-        page_number = self.request.GET.get("page")
-        p = Paginator(properties, self.ITEMS_PER_PAGE)
-        p_images = Paginator(property_images, self.ITEMS_PER_PAGE)
-
-        context["properties"] = p.get_page(page_number)
-        context["property_photo"] = p_images.get_page(page_number)
-
         # SEARCH BAR
         search_query = self.request.GET.get("search")
         if search_query:
-            properties = properties.filter(name__icontains=search_query)
-        # context["search_form"] = PropertySearchForm()
+            properties = properties.filter(
+                Q(address__icontains=search_query)
+                | Q(city__icontains=search_query)
+                | Q(description__icontains=search_query)
+            )
+            property_images = property_images.filter(propertyOfImage__in=properties)
 
         # SORT BY
         sort_order = self.request.GET.get("sort")
@@ -142,6 +138,14 @@ class PropertyView(TemplateView):
             properties = properties.order_by("price")
         elif sort_order == "desc":
             properties = properties.order_by("-price")
+
+        # Pagination
+        page_number = self.request.GET.get("page")
+        p = Paginator(properties, self.ITEMS_PER_PAGE)
+        p_images = Paginator(property_images, self.ITEMS_PER_PAGE)
+
+        context["properties"] = p.get_page(page_number)
+        context["property_photo"] = p_images.get_page(page_number)
 
         return context
 
