@@ -179,3 +179,4 @@ PRODUCT_PRICE = 1
 
 # # Set DEBUG to False in production
 DEBUG = True
+REDIRECT_DOMAIN = "https://wilco-app-c6223eb282aa.herokuapp.com/payment-portal/"
