@@ -28,10 +28,6 @@
               {% if property.isRented %} {% for tenant in tenants %}
               <! ignore prettier ->
               {% if tenant.linkToLease.linkToProperty == property %}
-              <! ignore prettier ->
-
-              <! ignore prettier ->
-
               <td>{{ tenant }}</td>
               <! ignore prettier ->
               {% endif %} {% endfor %} {% else %}
@@ -136,7 +132,7 @@
                         <p class="card-text">Email: {{ tenant.userEmail }}</p>
 
                         <p class="card-text">
-                          Balance: {{ tenant.Lease.currentBalance }}
+                          Balance: {{ tenant.linkToLease.currentBalance }}
                         </p>
                         <p class="card-text">
                           Date Created: {{ tenant.dateCreated }}
