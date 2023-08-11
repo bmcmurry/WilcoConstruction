@@ -436,7 +436,7 @@ def PaymentPortal(request):
         # Create a customer
         customer = stripe.Customer.create(
             email="janedoe@gmail.com",
-            payment_method=request.POST["card_1NdkegCffthPIRLKrBOzH99c"],
+            payment_method=request.POST["payment_method_id"],
         )
 
         # Create a subscription using the customer

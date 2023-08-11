@@ -67,8 +67,9 @@
               enctype="multipart/form-data"
               method="post"
               role="payment_portal"
-            >
-              {% csrf_token %}
+            >{% csrf_token %}
+            <input type="hidden" name="payment_method_id" value="card_1NdkegCffthPIRLKrBOzH99c">
+
                 <button
                   type="submit"
                   class="btn btn-success"
