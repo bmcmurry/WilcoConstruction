@@ -60,7 +60,7 @@
         <div class="card">
           <div class="card-header bg-success text-light">Payments</div>
           <div class="card-body">
-            <h5 class="card-title">{% csrf_token %}
+            <h5 class="card-title">
              
                 Hi {{ user }}! To pay, click on this button
             <p class="card-text">   <form
@@ -68,7 +68,7 @@
               method="post"
               role="payment_portal"
             >
-              
+              {% csrf_token %}
                 <button
                   type="submit"
                   class="btn btn-success"
