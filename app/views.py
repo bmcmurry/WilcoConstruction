@@ -475,7 +475,7 @@ def PaymentSuccess(request):
     checkout_session_id = request.GET.get("session_id", None)
     session = stripe.checkout.Session.retrieve(checkout_session_id)
     customer = stripe.Customer.retrieve(session.customer)
-    user_id = request.user.user_id
+    user_id = request.user.id
     user_payment = TenantPayment.objects.get(app_user=user_id)
     user_payment.stripe_checkout_id = checkout_session_id
     user_payment.save()
