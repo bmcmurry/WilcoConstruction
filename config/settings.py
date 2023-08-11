@@ -157,7 +157,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://buy.stripe.com/test_28o2aAafGeRCcPC5kk",
 ]
 
-STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
+STRIPE_SECRET_KEY = "sk_test_51NbRsdCffthPIRLKsKEjqXGQo3H7zcpoulRxnXo0Wrj46cpkhVmysuZ4lmhDDOc0dd7Uk1mfolG1HIYHqFjoVWbw00jj6IpQCL"
 PRODUCT_PRICE = 1
 
 # settings.py
