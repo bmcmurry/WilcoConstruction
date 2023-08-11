@@ -25,7 +25,7 @@ import stripe
 import time
 import pdb
 from django.views.decorators.csrf import csrf_exempt
-
+from django.http import JsonResponse
 from .forms import *
 from .models import *
 from .decorators import *
@@ -430,6 +430,25 @@ def contact_view(request):
 
 
 ##===============below is the payment views for stripe============================##
+# def PaymentPortal(request):
+#     if request.method == "POST":
+#         stripe.api_key = settings.STRIPE_SECRET_KEY
+#         checkout_session = stripe.checkout.Session.create(
+#             payment_method_types=["card"],
+#             line_items=[
+#                 {
+#                     "price": settings.PRODUCT_PRICE,
+#                     "quantity": 1,
+#                 },
+#             ],
+#             mode="payment",
+#             success_url=request.build_absolute_uri("/payment_success/"),
+#             cancel_url=request.build_absolute_uri("/payment_cancel/"),
+#         )
+#         return redirect(checkout_session.url)
+
+
+#     return render(request, "payment_portal.html")
 def PaymentPortal(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     if request.method == "POST":
@@ -448,24 +467,23 @@ def PaymentPortal(request):
             cancel_url=settings.REDIRECT_DOMAIN + "/payment_fail",
         )
         return redirect(checkout_session.url, code=303)
-
     return render(request, "payment_portal.html")
 
 
-def paymentSuccess(request):
+def PaymentSuccess(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     checkout_session_id = request.GET.get("session_id", None)
     session = stripe.checkout.Session.retrieve(checkout_session_id)
     customer = stripe.Customer.retrieve(session.customer)
-    user_id = request.user.user_id
-    user_payment = TenantPayment.objects.get(Tenant=user_id)
+    user_id = request.user.id
+    user_payment = TenantPayment.objects.get(app_user=user_id)
     user_payment.stripe_checkout_id = checkout_session_id
     user_payment.save()
 
     return render(request, "payment_success.html", {"customer": customer})
 
 
-def paymentFail(request):
+def PaymentFail(request):
     return render(request, "payment_fail.html")
 
 
@@ -484,7 +502,7 @@ def stripe_webhook(request):
         return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError as e:
         return HttpResponse(status=400)
-    if event["type"] == "checkout.session.,completed":
+    if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         session_id = session.get("id", None)
         time.sleep(15)
