@@ -152,7 +152,10 @@ ALLOWED_HOSTS = [
     "localhost",
 ]
 
-CSRF_TRUSTED_ORIGINS = ["https://wilco-app-c6223eb282aa.herokuapp.com"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://wilco-app-c6223eb282aa.herokuapp.com",
+    os.environ.get("STRIPE_TEST_URL"),
+]
 
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
 PRODUCT_PRICE = 1
