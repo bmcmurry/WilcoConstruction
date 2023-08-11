@@ -158,7 +158,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 STRIPE_SECRET_KEY = "sk_test_51NbRsdCffthPIRLKsKEjqXGQo3H7zcpoulRxnXo0Wrj46cpkhVmysuZ4lmhDDOc0dd7Uk1mfolG1HIYHqFjoVWbw00jj6IpQCL"
-PRODUCT_PRICE = 1
+PRODUCT_PRICE = "price_1NbSDHCffthPIRLKafVX0mbD"
 
 # settings.py
 
