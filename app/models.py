@@ -28,7 +28,7 @@ class Tenant(models.Model):
 
 class Lease(models.Model):
     slug = models.SlugField(blank=True, null=True)
-    pricePerMonth = models.FloatField(verbose_name="Price")
+    pricePerMonth = models.FloatField(default=0, verbose_name="Price")
     dateCreated = models.DateTimeField(auto_now_add=True)
     currentBalance = models.IntegerField(default=0, verbose_name="Balance")
     linkToProperty = models.OneToOneField(

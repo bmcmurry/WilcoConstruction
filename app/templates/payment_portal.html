@@ -19,7 +19,6 @@
               as a natural lead-in to additional content. With supporting text
               below as a natural lead-in to additional content.
             </p>
-            
           </div>
         </div>
       </div>
@@ -32,7 +31,6 @@
               With supporting text below as a natural lead-in to additional
               content.
             </p>
-     
           </div>
         </div>
       </div>
@@ -60,27 +58,24 @@
         <div class="card">
           <div class="card-header bg-success text-light">Payments</div>
           <div class="card-body">
-            <h5 class="card-title">
-             
-                Hi {{ user }}! To pay, click on this button
-            <p class="card-text">   <form
+            <form
               enctype="multipart/form-data"
               method="post"
               role="payment_portal"
-            >{% csrf_token %}
-            <input type="hidden" name="payment_method_id" value="card_1NdkegCffthPIRLKrBOzH99c">
-
+            >
+              {% csrf_token %}
+              <h5 class="card-title">
+                Hi {{ user }}! To pay, click on this button
                 <button
                   type="submit"
                   class="btn btn-success"
                   href="{% url 'payment_portal' %}"
-                  data-bid-href="pricing"
+                  data-bind-href="pricing"
                 >
-                  Pay Now
+                  Payment
                 </button>
-         
-            </form></p>
-         
+              </h5>
+            </form>
           </div>
         </div>
       </div>
