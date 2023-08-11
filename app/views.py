@@ -469,7 +469,7 @@ def paymentFail(request):
     return render(request, "payment_fail.html")
 
 
-# @csrf_exempt
+@csrf_exempt
 def stripe_webhook(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     time.sleep(10)
