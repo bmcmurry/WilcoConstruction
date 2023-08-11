@@ -154,7 +154,7 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "https://wilco-app-c6223eb282aa.herokuapp.com",
-    os.environ.get("STRIPE_TEST_URL"),
+    "https://buy.stripe.com/test_28o2aAafGeRCcPC5kk",
 ]
 
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
