@@ -430,31 +430,26 @@ def contact_view(request):
 
 
 ##===============below is the payment views for stripe============================##
-from django.shortcuts import render, redirect
-import stripe
-from django.conf import settings
-
-
 def PaymentPortal(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     if request.method == "POST":
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=["card"],
-            line_items=[
+        # Create a customer
+        customer = stripe.Customer.create(
+            email="janedoe@gmail.com",
+            payment_method=request.POST["card_1NdkegCffthPIRLKrBOzH99c"],
+        )
+
+        # Create a subscription using the customer
+        subscription = stripe.Subscription.create(
+            customer=customer.id,
+            items=[
                 {
                     "price": settings.PRODUCT_PRICE,
-                    "quantity": 1,
                 },
             ],
-            mode="payment",
-            subscription_data={
-                "customer": "your_customer_id",  # Replace with the actual customer ID
-            },
-            success_url=settings.REDIRECT_DOMAIN
-            + "/payment_success?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=settings.REDIRECT_DOMAIN + "/payment_fail",
         )
-        return redirect(checkout_session.url, code=303)
+
+        return redirect(subscription.latest_invoice.hosted_invoice_url, code=303)
 
     return render(request, "payment_portal.html")
 
