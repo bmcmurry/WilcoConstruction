@@ -470,7 +470,7 @@ def PaymentPortal(request):
     return render(request, "payment_portal.html")
 
 
-def paymentSuccess(request):
+def PaymentSuccess(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     checkout_session_id = request.GET.get("session_id", None)
     session = stripe.checkout.Session.retrieve(checkout_session_id)
@@ -483,7 +483,7 @@ def paymentSuccess(request):
     return render(request, "payment_success.html", {"customer": customer})
 
 
-def paymentFail(request):
+def PaymentFail(request):
     return render(request, "payment_fail.html")
 
 
