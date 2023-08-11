@@ -430,6 +430,11 @@ def contact_view(request):
 
 
 ##===============below is the payment views for stripe============================##
+from django.shortcuts import render, redirect
+import stripe
+from django.conf import settings
+
+
 def PaymentPortal(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     if request.method == "POST":
@@ -442,7 +447,9 @@ def PaymentPortal(request):
                 },
             ],
             mode="payment",
-            customer_creation="always",
+            subscription_data={
+                "customer": "your_customer_id",  # Replace with the actual customer ID
+            },
             success_url=settings.REDIRECT_DOMAIN
             + "/payment_success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=settings.REDIRECT_DOMAIN + "/payment_fail",
