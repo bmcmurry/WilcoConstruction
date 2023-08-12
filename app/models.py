@@ -5,7 +5,6 @@ from django.db.models.signals import post_save
 from django.utils.text import slugify
 
 
-# Create your models here.
 class Tenant(models.Model):
     linkToBuiltinUser = models.OneToOneField(User, on_delete=models.PROTECT)
     slug = models.SlugField(blank=True, null=True)
@@ -30,7 +29,7 @@ class Lease(models.Model):
     slug = models.SlugField(blank=True, null=True)
     pricePerMonth = models.FloatField(default=0, verbose_name="Price")
     dateCreated = models.DateTimeField(auto_now_add=True)
-    currentBalance = models.IntegerField(default=0, verbose_name="Balance")
+    currentBalance = models.FloatField(default=0, verbose_name="Balance")
     linkToProperty = models.OneToOneField(
         "RentalProperty", on_delete=models.CASCADE, blank=True, null=True
     )
@@ -105,6 +104,10 @@ class TenantPayment(models.Model):
     app_user = models.ForeignKey("Tenant", on_delete=models.CASCADE)
     payment_bool = models.BooleanField(default=False)
     stripe_checkout_id = models.CharField(max_length=500)
+    payment_amount = models.FloatField(default=0)
+    linked_lease = models.ForeignKey(
+        "Lease", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
 
 @receiver(post_save, sender=Tenant)
