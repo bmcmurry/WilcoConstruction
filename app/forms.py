@@ -67,6 +67,10 @@ class PropertyPhotoForm(ModelForm):
         fields = "__all__"
         exclude = ["propertyOfImage"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["picture"].required = False
+
 
 class ContactForm(forms.Form):
     first_name = forms.CharField(max_length=100)
