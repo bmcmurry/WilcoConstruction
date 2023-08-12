@@ -1,0 +1,9 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<section>
+  <h2>Create a Lease</h2>
+  <form method="post">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit">Create Lease</button>
+  </form>
+</section>
+{% endblock %}

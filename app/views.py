@@ -150,15 +150,15 @@ class PropertyView(TemplateView):
         return context
 
 
-# @method_decorator(login_required, name="dispatch")
-# @method_decorator(staff_member_required, name="dispatch")
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
 class CreatePropertyView(View):
     template_name = "create_property.html"
 
-    @method_decorator(login_required)
-    @method_decorator(staff_member_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
+    # @method_decorator(login_required)
+    # @method_decorator(staff_member_required)
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         PropertyPhotoFormSet = formset_factory(PropertyPhotoForm, extra=1)
@@ -293,6 +293,28 @@ class SetPropertyToFeaturedView(View):
             obj.save()
 
         return redirect("manager_interface")
+
+
+def CreateLease(request):
+    if request.method == "POST":
+        form = LeaseForm(request.POST)
+
+        if form.is_valid():
+            lease = form.save()
+            # Assuming you have a field named 'selected_tenant' in the form
+            selected_tenants = form.cleaned_data["selected_tenant"]
+            selected_tenant_ids = [tenant.id for tenant in selected_tenants]
+
+            # Associate the selected tenant with the created lease
+            tenant = Tenant.objects.get(id=selected_tenant_ids)
+            tenant.linkToLease = lease
+            tenant.save()
+
+            return redirect("manager_interface")
+    else:
+        form = LeaseForm()
+
+    return render(request, "create_lease.html", {"form": form})
 
 
 # --------------------TENANTS/USERS----------------
@@ -434,66 +456,18 @@ def quote_view(request):
     return render(request, "contract.html", {"form": form})
 
 
-# def search_property(request):
-#     if request.method == "POST":
-#         form = PropertySearchForm(request.POST)
-#         if form.is_valid():
-#             search_field = form.cleaned_data["search_field"]
-#             search_query = form.cleaned_data["search_query"]
-
-#             # Create a dictionary to map form field names to model field names
-#             field_mapping = {
-#                 "address": "address__icontains",
-#                 "city": "city__icontains",
-#                 "isRented": "isRented__icontains",
-#                 "price": "price__icontains",
-#                 "squareFoot": "squarefoot__icontains",
-#                 "bedrooms": "bedrooms__icontains",
-#                 "bathrooms": "bathrooms__icontains",
-#                 "isPetFriendly": "isPetFriendly__icontains",
-#             }
-
-#             if search_field in field_mapping:
-#                 query_field = field_mapping[search_field]
-#                 results = RentalProperty.objects.filter(**{query_field: search_query})
-#                 return redirect(
-#                     "properties", results=results, search_query=search_query
-#                 )
-
-#     else:
-#         form = PropertySearchForm()
-
-#     return render(request, "properties", {"form": form})
-
-
 ##===============below is the payment views for stripe============================##
-# def PaymentPortal(request):
-#     if request.method == "POST":
-#         stripe.api_key = settings.STRIPE_SECRET_KEY
-#         checkout_session = stripe.checkout.Session.create(
-#             payment_method_types=["card"],
-#             line_items=[
-#                 {
-#                     "price": settings.PRODUCT_PRICE,
-#                     "quantity": 1,
-#                 },
-#             ],
-#             mode="payment",
-#             success_url=request.build_absolute_uri("/payment_success/"),
-#             cancel_url=request.build_absolute_uri("/payment_cancel/"),
-#         )
-#         return redirect(checkout_session.url)
-
-
-#     return render(request, "payment_portal.html")
 def PaymentPortal(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     if request.method == "POST":
+        custom_amount = float(request.POST.get("payment_amount"))
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=[
                 {
-                    "price": settings.PRODUCT_PRICE,
+                    "amount": int(custom_amount * 100),  # Convert to cents
+                    "currency": "usd",
+                    "name": "Rent Payment",
                     "quantity": 1,
                 },
             ],
@@ -517,6 +491,32 @@ def PaymentSuccess(request):
     user_payment.stripe_checkout_id = checkout_session_id
     user_payment.save()
 
+    ## Experimental code below
+    user = request.user
+    # Get the logged-in tenant
+    logged_in_tenant = Tenant.objects.get(linkToBuiltinUser=user)
+
+    # Update currentBalance based on the linked lease
+    lease = logged_in_tenant.linkToLease
+    if lease:
+        custom_amount = (
+            float(session.display_items[0].amount) / 100
+        )  # Convert from cents
+
+        # Create or update the TenantPayment entry
+        user_payment, created = TenantPayment.objects.get_or_create(
+            app_user=logged_in_tenant
+        )
+
+        user_payment.payment_bool = True
+        user_payment.payment_amount = custom_amount
+        user_payment.linked_lease = lease
+        user_payment.save()
+
+        # Update the lease's currentBalance
+        lease.currentBalance += custom_amount
+        lease.save()
+
     return render(request, "payment_success.html", {"customer": customer})
 
 
@@ -527,10 +527,10 @@ def PaymentFail(request):
 @csrf_exempt
 def stripe_webhook(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
-    time.sleep(10)
     payload = request.body
     signature_header = request.META["HTTP_STRIPE_SIGNATURE"]
     event = None
+
     try:
         event = stripe.Webhook.construct_event(
             payload, signature_header, settings.STRIPE_WEBHOOK_SECRET
@@ -539,12 +539,12 @@ def stripe_webhook(request):
         return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError as e:
         return HttpResponse(status=400)
+
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         session_id = session.get("id", None)
-        time.sleep(15)
         user_payment = TenantPayment.objects.get(stripe_checkout_id=session_id)
-        line_items = stripe.checkout.Session.list_line_items(session_id, limit=1)
         user_payment.payment_bool = True
         user_payment.save()
+
     return HttpResponse(status=200)

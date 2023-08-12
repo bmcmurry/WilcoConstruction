@@ -92,24 +92,3 @@
   </div>
 </section>
 {% endblock content %}
-{% comment %}
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const addImageButton = document.getElementById("add_image");
-    addImageButton.addEventListener("click", function () {
-      const formsetContainer = document.querySelector(".formset-container");
-      const totalFormsInput = document.getElementById("id_form-TOTAL_FORMS");
-      const newFormIndex = parseInt(totalFormsInput.value);
-      const formPrefix = "form";
-      const formHtml = `
-        <div class="form_field">
-          <label for="${formPrefix}-${newFormIndex}-photo">Photo</label>
-          <input type="file" name="${formPrefix}-${newFormIndex}-photo" required id="${formPrefix}-${newFormIndex}-photo">
-        </div>
-      `;
-      formsetContainer.insertAdjacentHTML("beforeend", formHtml);
-      totalFormsInput.value = newFormIndex + 1;
-    });
-  });
-</script>
-{% endcomment %}

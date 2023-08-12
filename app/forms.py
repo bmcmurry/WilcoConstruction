@@ -29,19 +29,32 @@ class TenantForm(ModelForm):
         model = Tenant
         fields = "__all__"
         exclude = [
+            "slug",
             "person",
             "dateCreated",
             "currentBalance",
-            "linkToProperty",
             "linkToBuiltinUser",
         ]
+
+
+class LeaseForm(forms.ModelForm):
+    selected_tenant = forms.ModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+    class Meta:
+        model = Lease
+        fields = "__all__"
+        exclude = ["slug"]
 
 
 class CreatePropertyForm(ModelForm):
     class Meta:
         model = RentalProperty
         fields = "__all__"
-        exclude = ["isRented", "isFeaturedProperty"]
+        exclude = ["isRented", "isFeaturedProperty", "slug"]
 
     def clean(self):
         cleaned_data = super().clean()
@@ -65,7 +78,11 @@ class PropertyPhotoForm(ModelForm):
     class Meta:
         model = PropertyPhoto
         fields = "__all__"
-        exclude = ["propertyOfImage"]
+        exclude = ["propertyOfImage", "slug"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["picture"].required = False
 
 
 class ContactForm(forms.Form):
@@ -102,17 +119,35 @@ class QuoteForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea)
 
 
-class PropertySearchForm(forms.Form):
-    SEARCH_CHOICES = [
-        ("address", "Address"),
-        ("city", "City"),
-        ("isRented", "isRented"),
-        ("price", "price"),
-        ("squareFoot", "squareFoot"),
-        ("bedrooms", "bedrooms"),
-        ("bathrooms", "bathrooms"),
-        ("isPetFriendly", "isPetFriendly"),
-    ]
+class QuoteForm(forms.Form):
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"type": "email"}))
+    CHOICES = (
+        ("Residential", "Residential"),
+        ("Commercial", "Commercial"),
+        ("Other", "Other"),
+    )
 
-    search_field = forms.ChoiceField(choices=SEARCH_CHOICES, label="Search Field")
-    search_query = forms.CharField(label="Search Query", max_length=100)
+    categories = forms.Select(choices=CHOICES)
+
+    phone = forms.CharField(max_length=20)
+    subject = forms.CharField(max_length=100)
+
+    message = forms.CharField(widget=forms.Textarea)
+
+
+# class PropertySearchForm(forms.Form):
+#     SEARCH_CHOICES = [
+#         ("address", "Address"),
+#         ("city", "City"),
+#         ("isRented", "isRented"),
+#         ("price", "price"),
+#         ("squareFoot", "squareFoot"),
+#         ("bedrooms", "bedrooms"),
+#         ("bathrooms", "bathrooms"),
+#         ("isPetFriendly", "isPetFriendly"),
+#     ]
+
+#     search_field = forms.ChoiceField(choices=SEARCH_CHOICES, label="Search Field")
+#     search_query = forms.CharField(label="Search Query", max_length=100)

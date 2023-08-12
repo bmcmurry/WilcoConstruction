@@ -18,6 +18,7 @@ urlpatterns = [
     # -------------CREATE---------------
     path("register/", registerPage, name="register"),
     path("properties/create/", CreatePropertyView.as_view(), name="create_property"),
+    path("lease/create/", CreateLease, name="create_lease"),
     # -------------READ---------------
     path("", HomePageView.as_view(), name="home"),
     path("properties/", PropertyView.as_view(), name="properties"),
