@@ -362,7 +362,44 @@ def contractView(request):
 
 def contact_view(request):
     if request.method == "POST":
-        form = ContactForm(request.POST)
+        contact_view = ContactForm(request.POST)
+        if contact_view.is_valid():
+            # if request.POST["choices"] == "rentals":
+
+            first_name = request.POST["first_name"]
+            last_name = request.POST["last_name"]
+            email = request.POST["email"]
+            phone = request.POST["phone"]
+            subject = request.POST["categories"]
+            message = request.POST["message"]
+
+            # Send the email here
+            try:
+                send_mail(
+                    subject,
+                    f"Name: {first_name} {last_name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}",
+                    email,
+                    [
+                        "ashleybglasz@gmail.com",
+                    ],  # Replace with the actual recipient email address
+                    fail_silently=False,
+                )
+                # Add success message or redirect to a success page
+                return redirect("home")
+            except Exception as e:
+                # Handle the email sending error, add error message or redirect to an error page
+                return redirect("properties")
+        else:
+            print(contact_view.errors)
+    else:
+        contact_view = ContactForm()
+
+    return render(request, "contact.html", {"contact_view": contact_view})
+
+
+def quote_view(request):
+    if request.method == "POST":
+        form = QuoteForm(request.POST)
         if form.is_valid():
             # if request.POST["choices"] == "rentals":
 
@@ -388,13 +425,13 @@ def contact_view(request):
                 return redirect("home")
             except Exception as e:
                 # Handle the email sending error, add error message or redirect to an error page
-                return redirect("manager_interface")
+                return redirect("properties")
         else:
             print(form.errors)
     else:
-        form = ContactForm()
+        form = QuoteForm()
 
-    return render(request, "contact.html", {"form": form})
+    return render(request, "contract.html", {"form": form})
 
 
 # def search_property(request):

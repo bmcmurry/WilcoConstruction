@@ -1,7 +1,14 @@
-{% extends 'base.html' %}{% load static %} {% block content %}
+{% extends 'base.html' %}{% load static %} {% load widget_tweaks %}
+<! ignore prettier ->{% block content %}
+
 <section class="container-fluid" id="main">
   <!-- contact -->
-  <form class="bg-warning-subtle" action="" method="post">
+  <form
+    class="bg-warning-subtle"
+    action=""
+    method="post"
+    enctype="multipart/form-data"
+  >
     {%csrf_token%}
     <div class="container-fluid w-75 p-3">
       <h1 class="text-center display-2">Contact Us</h1>
@@ -21,35 +28,17 @@
         corporis perferendis quasi iure non assumenda repellat!
       </p>
 
-      {% comment %} {{form.as_p}} {% endcomment %}
       <div class="mb-3">
         <div class="row mb-2">
-          <div class="col">
+          <div class="col form-field">
             <label for="first_name" class="form-label">First Name</label>
-            <input
-              type="text"
-              name="first_name"
-              class="form-control"
-              placeholder="First name"
-              aria-label="First name"
-              required
-            />
-            <label for="exampleFormControlInput1" class="form-label"
-              >First Name</label
-            >
+            {% render_field contact_view.first_name class="form-control" %}
           </div>
           <div class="col">
             <label for="exampleFormControlInput1" class="form-label"
               >Last Name</label
             >
-            <input
-              type="text"
-              name="last_name"
-              class="form-control"
-              placeholder="Last name"
-              aria-label="Last name"
-              required
-            />
+            {% render_field contact_view.last_name class="form-control" %}
           </div>
         </div>
         <div class="row">
@@ -57,54 +46,32 @@
             <label for="exampleFormControlInput1" class="form-label"
               >Phone</label
             >
-            <input
-              type="text"
-              name="phone"
-              class="form-control"
-              placeholder="555-555-5555"
-              aria-label="Phone"
-              required
-            />
+            {% render_field contact_view.phone class="form-control" %}
           </div>
           <div class="col">
             <label for="exampleFormControlInput1" class="form-label"
               >Email</label
             >
-            <input
-              type="text"
-              name="email"
-              class="form-control"
-              placeholder="email@emailprovider.com"
-              aria-label="email"
-              required
-            />
+            {% render_field contact_view.email class="form-control" %}
           </div>
         </div>
       </div>
       <label for="exampleFormControlInput1" class="form-label"
         >Catagories</label
       >
-      <select
-        class="form-select mb-2"
-        aria-label="Default select example"
-        required
-      >
-        <option selected>Please select an area we can help you with</option>
-        <option value="1">Rentals</option>
-        <option value="2">Contracts</option>
-        <option value="3">Other</option>
+      <select class="form-select">
+        {% render_field contact_view.subject class="custom-select form-select"
+        %}
+        <option val="Rentals">Rentals</option>
+        <option val="Construction">Construction</option>
+        <option val="Other">Other</option>
       </select>
+
       <div class="mb-3">
         <label for="exampleFormControlTextarea1" class="form-label"
           >How can we help?</label
         >
-        <textarea
-          name="message"
-          class="form-control"
-          id="exampleFormControlTextarea1"
-          rows="3"
-          required
-        ></textarea>
+        {% render_field contact_view.message class="form-control" %}
       </div>
 
       <button type="submit" class="btn btn-warning mb-3">Submit</button>

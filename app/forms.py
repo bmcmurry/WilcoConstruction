@@ -84,6 +84,24 @@ class ContactForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea)
 
 
+class QuoteForm(forms.Form):
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"type": "email"}))
+    CHOICES = (
+        ("Residential", "Residential"),
+        ("Commercial", "Commercial"),
+        ("Other", "Other"),
+    )
+
+    categories = forms.Select(choices=CHOICES)
+
+    phone = forms.CharField(max_length=20)
+    subject = forms.CharField(max_length=100)
+
+    message = forms.CharField(widget=forms.Textarea)
+
+
 class PropertySearchForm(forms.Form):
     SEARCH_CHOICES = [
         ("address", "Address"),
