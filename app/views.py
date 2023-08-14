@@ -133,11 +133,15 @@ class PropertyView(TemplateView):
             property_images = property_images.filter(propertyOfImage__in=properties)
 
         # SORT BY
+        category = self.request.GET.get("category")
         sort_order = self.request.GET.get("sort")
-        if sort_order == "asc":
-            properties = properties.order_by("price")
-        elif sort_order == "desc":
-            properties = properties.order_by("-price")
+
+        if category and sort_order:
+            property_images = PropertyPhoto.objects.all()
+            if sort_order == "asc":
+                properties = properties.order_by(f"{category}")
+            elif sort_order == "desc":
+                properties = properties.order_by(f"-{category}")
 
         # Pagination
         page_number = self.request.GET.get("page")
