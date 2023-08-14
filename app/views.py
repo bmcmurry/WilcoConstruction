@@ -223,12 +223,8 @@ class UpdatePropertyView(UpdateView):
     def post(self, request, pk):
         property = RentalProperty.objects.get(id=pk)
         property_form = CreatePropertyForm(request.POST, instance=property)
-
         photos = PropertyPhoto.objects.filter(propertyOfImage=property)
-        property_photo_form = PropertyPhotoForm(
-            request.POST,
-            request.FILES,
-        )
+        property_photo_form = PropertyPhotoForm(request.POST, request.FILES)
 
         if property_form.is_valid() and property_photo_form.is_valid():
             property_form.save()
