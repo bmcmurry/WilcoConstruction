@@ -23,10 +23,10 @@
   <div class="m-3 d-flex justify-content-evenly">
       <form class="d-flex ">
         <div class="form-floating me-3">
-          <select class="form-select" id="sort-category" aria-label="Floating label select example">
-            <option selected>Select Category</option>
-            <option value="1">Price</option>
-            <option value="2">Beds</option>
+          <select class="form-select" id="category" aria-label="Floating label select example" name="category">
+            <option value="" selected disabled>Select Category</option>
+            <option value="bathrooms">Bathrooms</option>
+            <option value="bedrooms">Beds</option>
             
           </select>
           <label for="sort-category" class="text-warning">Sort by Catagory:</label>
@@ -34,15 +34,16 @@
         <div class="form-floating">
           <select class="form-select" id="sort-order" aria-label="Floating label select example" name="sort">
        
-            <option selected>Select Category</option>
-            <option value="1">High-to-Low</option>
-            <option value="2">Low-to-High</option>
+            <option value="" selected disabled>Select Category</option>
+            <option value="desc">High-to-Low</option>
+            <option value="asc">Low-to-High</option>
             
           </select>
           <label for="sort-order" class="text-warning">Sort Order:</label>
         </div>
        
-          <button class="btn btn-warning ms-3" type="submit">Sort</button> 
+          <button class="btn btn-warning ms-3" type="submit">Sort</button>
+          <button class="btn btn-warning ms-3" type="reset">Reset</button>
       </form>
   </div>
 </div>

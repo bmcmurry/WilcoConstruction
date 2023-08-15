@@ -7,8 +7,8 @@
         <p>Are you sure you want to delete "{{ property }}"</p>
         <form action="{% url 'delete_property' property.id %}" method="POST">
           {% csrf_token %}
-          <a class="btn btn-warning" href="{% url 'home' %}">Cancel</a>
           <input class="btn btn-danger" type="submit" name="confirm" />
+          <a class="btn btn-warning" href="{% url 'home' %}">Cancel</a>
         </form>
       </div>
     </div>

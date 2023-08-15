@@ -1,4 +1,5 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% load static %}
+{% block content %}
 
 <section id="main">
   <!-- image carousel -->
@@ -145,105 +146,9 @@
       </div>
     </div>
   </div>
-
-  <!-- contact -->
- 
-
- 
-<form
-    onsubmit="sendEmail(); reset(); return false;"
-    class="bg-warning-subtle"
-    id="contact-form"
-  >
-    <div class="container-fluid w-75 p-3">
-      <p class="text-center display-2">Contact Us</p>
-      <p class="lh-base text-center ms-5 me-5">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, omnis
-        perspiciatis sint voluptatum tempore sunt iusto ab at aspernatur illo!
-        Possimus totam eligendi aliquid corrupti quis voluptas ipsum repellendus
-        nam? Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi,
-        natus adipisci aliquam unde voluptates incidunt repellendus culpa
-        praesentium voluptatum error aspernatur odio tempora corporis
-        perferendis quasi iure non assumenda repellat!
-      </p>
-
-      <div class="mb-3">
-        <div class="row mb-2">
-          <div class="col">
-            <label for="exampleFormControlInput1" class="form-label"
-              >First Name</label
-            >
-            <input
-              type="text"
-              class="form-control"
-              id="firstname"
-              placeholder="First name"
-              aria-label="First name"
-            />
-          </div>
-          <div class="col">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Last Name</label
-            >
-            <input
-              type="text"
-              class="form-control"
-              id="lastname"
-              placeholder="Last name"
-              aria-label="Last name"
-            />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Phone</label
-            >
-            <input
-              type="text"
-              class="form-control"
-              id="phone"
-              placeholder="555-555-5555"
-              aria-label="Phone"
-            />
-          </div>
-          <div class="col">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Email</label
-            >
-            <input
-              type="text"
-              id="email"
-              class="form-control"
-              placeholder="email@emailprovider.com"
-              aria-label="email"
-            />
-          </div>
-        </div>
-      </div>
-      <label for="exampleFormControlInput1" class="form-label"
-        >Catagories</label
-      >
-      <select
-        class="form-select mb-2"
-        aria-label="Default select example"
-        id="email"
-      >
-        <option selected>Please select an area we can help you with</option>
-        <option value="1">Rentals</option>
-        <option value="2">Contracts</option>
-        <option value="3">Other</option>
-      </select>
-      <div class="mb-3">
-        <label for="exampleFormControlTextarea1" class="form-label"
-          >How can we help?</label
-        >
-        <textarea class="form-control" id="msg" rows="3"></textarea>
-      </div>
-      <button type="submit" class="btn btn-warning mb-3">Submit</button>
-    </div>
-  </form> 
-
 </section>
+  <!-- contact -->
+{% include 'contact.html' %} 
+ 
 
 {% endblock content %}

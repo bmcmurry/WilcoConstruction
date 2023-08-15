@@ -133,11 +133,15 @@ class PropertyView(TemplateView):
             property_images = property_images.filter(propertyOfImage__in=properties)
 
         # SORT BY
+        category = self.request.GET.get("category")
         sort_order = self.request.GET.get("sort")
-        if sort_order == "asc":
-            properties = properties.order_by("price")
-        elif sort_order == "desc":
-            properties = properties.order_by("-price")
+
+        if category and sort_order:
+            property_images = PropertyPhoto.objects.all()
+            if sort_order == "asc":
+                properties = properties.order_by(f"{category}")
+            elif sort_order == "desc":
+                properties = properties.order_by(f"-{category}")
 
         # Pagination
         page_number = self.request.GET.get("page")
@@ -214,12 +218,8 @@ class UpdatePropertyView(UpdateView):
     def post(self, request, pk):
         property = RentalProperty.objects.get(id=pk)
         property_form = CreatePropertyForm(request.POST, instance=property)
-
         photos = PropertyPhoto.objects.filter(propertyOfImage=property)
-        property_photo_form = PropertyPhotoForm(
-            request.POST,
-            request.FILES,
-        )
+        property_photo_form = PropertyPhotoForm(request.POST, request.FILES)
 
         if property_form.is_valid() and property_photo_form.is_valid():
             property_form.save()
@@ -379,7 +379,44 @@ def contractView(request):
 
 def contact_view(request):
     if request.method == "POST":
-        form = ContactForm(request.POST)
+        contact_view = ContactForm(request.POST)
+        if contact_view.is_valid():
+            # if request.POST["choices"] == "rentals":
+
+            first_name = request.POST["first_name"]
+            last_name = request.POST["last_name"]
+            email = request.POST["email"]
+            phone = request.POST["phone"]
+            subject = request.POST["categories"]
+            message = request.POST["message"]
+
+            # Send the email here
+            try:
+                send_mail(
+                    subject,
+                    f"Name: {first_name} {last_name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}",
+                    email,
+                    [
+                        "ashleybglasz@gmail.com",
+                    ],  # Replace with the actual recipient email address
+                    fail_silently=False,
+                )
+                # Add success message or redirect to a success page
+                return redirect("home")
+            except Exception as e:
+                # Handle the email sending error, add error message or redirect to an error page
+                return redirect("properties")
+        else:
+            print(contact_view.errors)
+    else:
+        contact_view = ContactForm()
+
+    return render(request, "contact.html", {"contact_view": contact_view})
+
+
+def quote_view(request):
+    if request.method == "POST":
+        form = QuoteForm(request.POST)
         if form.is_valid():
             # if request.POST["choices"] == "rentals":
 
@@ -409,9 +446,9 @@ def contact_view(request):
         else:
             print(form.errors)
     else:
-        form = ContactForm()
+        form = QuoteForm()
 
-    return render(request, "contact.html", {"form": form})
+    return render(request, "contract.html", {"form": form})
 
 
 ##===============below is the payment views for stripe============================##
