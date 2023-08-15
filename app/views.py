@@ -155,13 +155,8 @@ class PropertyView(TemplateView):
 class CreatePropertyView(View):
     template_name = "create_property.html"
 
-    # @method_decorator(login_required)
-    # @method_decorator(staff_member_required)
-    # def dispatch(self, request, *args, **kwargs):
-    #     return super().dispatch(request, *args, **kwargs)
-
     def get(self, request, *args, **kwargs):
-        PropertyPhotoFormSet = formset_factory(PropertyPhotoForm, extra=1)
+        PropertyPhotoFormSet = formset_factory(PropertyPhotoForm, extra=5)
         property_form = CreatePropertyForm()
         property_photo_formset = PropertyPhotoFormSet()
 

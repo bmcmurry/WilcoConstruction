@@ -85,10 +85,12 @@
             {{ property_photo_formset.management_form }}
             <div id="photo-formset">
               {% for form in property_photo_formset %}
-              <div class="file-upload-container">{{ form.as_p }}</div>
+              <div class="file-upload-container">
+                <label for="{{ form.picture.id_for_label }}" class="form-label">Upload Image</label>
+                {{ form.picture }}
+              </div>
               {% endfor %}
             </div>
-          </div>
         </div>
         <!-- You may display additional form fields for PropertyPhoto here if needed -->
         {% if property_form.non_field_errors %}
