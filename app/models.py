@@ -1,15 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.dispatch import receiver
-from django.db.models.signals import post_save
-from django.utils.text import slugify
+from django.db.models.signals import post_save, pre_save
 from django.utils import timezone
+from django.utils.text import slugify
 import calendar
+from .utils import *
 
 
 class Tenant(models.Model):
     linkToBuiltinUser = models.OneToOneField(User, on_delete=models.PROTECT)
-    slug = models.SlugField(blank=True, null=True)
+    slug = models.SlugField(unique=True, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     phone = models.CharField(max_length=50)
@@ -20,11 +21,24 @@ class Tenant(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.first_name + self.last_name)
+        # if self.slug is None:
+        #     self.slug = slugify(self.first_name + self.last_name)
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.first_name + " " + self.last_name
+
+
+@receiver(pre_save, sender=Tenant)
+def tenant_pre_save(sender, instance, *args, **kwargs):
+    if instance.slug is None:
+        slugify_instance_tenant(instance, save=False)
+
+
+@receiver(post_save, sender=Tenant)
+def tenant_post_save(sender, instance, created, *args, **kwargs):
+    if created:
+        slugify_instance_tenant(instance, save=True)
 
 
 class Lease(models.Model):
