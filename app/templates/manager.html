@@ -11,7 +11,9 @@
     <div class="col-lg-12 col-xl-6 mb-2 overflow-auto">
       <div class="card card-body">
         <input type="search" class="form-control" id="datatable-search-input" />
-        <label class="form-label" for="datatable-search-input">Search</label>
+        <label class="form-label" for="datatable-search-input"
+          >Search Properties</label
+        >
         <div class="table-responsive">
           <table class="table table-sm">
             <tr>
@@ -63,51 +65,45 @@
         </div>
       </div>
     </div>
-
     <div class="col-lg-12 col-xl-6 overflow-auto">
       <div class="card card-body">
         <input type="search" class="form-control" id="datatable-search-input" />
-        <label class="form-label" for="datatable-search-input">Search</label>
+        <label class="form-label" for="datatable-search-input"
+          >Search Leases</label
+        >
         <div class="table-responsive">
           <table class="table table-sm">
             <tr>
               <th>Name</th>
-              {% comment %}
-              <th>Phone Number</th>
-              {% endcomment %} {% comment %}
-              <th>Email</th>
-              {% endcomment %}
               <th>Property</th>
+              <th>Monthly Price</th>
               <th>Balance</th>
+              <th>Length</th>
               <th>More Info</th>
-              {% comment %}
-              <th>Date Created</th>
-              {% endcomment %}
             </tr>
-            {% for tenant in latest_tenants %}
+            {% for lease in leases %}
             <tr>
-              <td>{{ tenant.first_name }} {{ tenant.last_name }}</td>
-              {% comment %}
-              <td>{{ tenant.phone }}</td>
-              {% endcomment %} {% comment %}
-              <td>{{ tenant.userEmail }}</td>
-              {% endcomment %}
-              <td>{{ tenant.linkToLease }}</td>
-              <td>{{ tenant.linkToLease.currentBalance }}</td>
-              {% comment %}
-              <td>{{ tenant.dateCreated }}</td>
-              {% endcomment %}
+              <td>
+                {% for tenant in lease.tenant_set.all %} {{ tenant.first_name }}
+                {{ tenant.last_name }}<br />
+                {% endfor %}
+              </td>
+              <td>{{ lease.linkToProperty }}</td>
+              <td>{{ lease.pricePerMonth }}</td>
+              <td>{{ lease.currentBalance }}</td>
+              <td>{{ lease.numOfMonths }} Months</td>
+
               <!-- Button trigger modal -->
               <td>
                 <i
                   class="bi bi-info-square-fill text-info"
                   data-bs-toggle="modal"
-                  data-bs-target="#{{ tenant.id }}"
+                  data-bs-target="#{{ lease.id }}"
                 ></i>
 
                 <div
                   class="modal fade modal-lg"
-                  id="{{ tenant.id }}"
+                  id="{{ lease.id }}"
                   tabindex="-1"
                   aria-labelledby="exampleModalLabel"
                   aria-hidden="true"
@@ -115,7 +111,7 @@
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header bg-warning">
-                        <h3>{{ tenant.first_name }} {{ tenant.last_name }}</h3>
+                        <h3>{{ lease.linkToProperty }}</h3>
                         <button
                           type="button"
                           class="btn-close"
@@ -125,17 +121,21 @@
                       </div>
                       <div class="modal-body">
                         <p class="card-text">
-                          Address: {{ tenant.linkToLease.linkToProperty }}
+                          Address: {{ lease.linkToProperty }}
                         </p>
-
+                        {% for tenant in lease.tenant_set.all %}
+                        <p class="card-text">Name: {{ tenant }}</p>
+                        {% if tenant.phone %}
                         <p class="card-text">Phone: {{ tenant.phone }}</p>
+                        {% endif %}
                         <p class="card-text">Email: {{ tenant.userEmail }}</p>
-
+                        <hr />
+                        {% endfor %}
                         <p class="card-text">
-                          Balance: {{ tenant.linkToLease.currentBalance }}
+                          Balance: {{ lease.currentBalance }}
                         </p>
                         <p class="card-text">
-                          Date Created: {{ tenant.dateCreated }}
+                          Date Created: {{ lease.dateCreated }}
                         </p>
                       </div>
                       <div class="modal-footer bg-warning">
@@ -158,6 +158,52 @@
         <div>
           <a href="{% url 'create_lease' %}" class="btn btn-warning"
             >Create Lease</a
+          >
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12 col-xl-6 mb-2 overflow-auto">
+      <div class="card card-body">
+        <input type="search" class="form-control" id="datatable-search-input" />
+        <label class="form-label" for="datatable-search-input"
+          >Search Construction Jobs</label
+        >
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <tr>
+              <th>Title</th>
+              <th>Completed</th>
+              <th>Start Date</th>
+            </tr>
+            {% for job in construction %}
+            <tr>
+              <td>{{ job.title }}</td>
+              <td>{{ job.isComplete }}</td>
+              <td>{{ job.dateCreated }}</td>
+              <td>
+                <a href="{% url 'update_construction' job.id %}"
+                  ><i class="bi bi-pencil-square"></i
+                ></a>
+              </td>
+              {% if job.isFeaturedConstruction == False %}
+              <td>
+                <a href="{% url 'delete_construction' job.id %}">
+                  <i class="bi bi-trash3-fill text-danger"></i
+                ></a>
+              </td>
+              <td>
+                <a href="{% url 'feature_construction' job.id %}"
+                  ><i class="bi bi-bookmark-star-fill text-warning"></i
+                ></a>
+              </td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+        <div>
+          <a href="{% url 'create_construction' %}" class="btn btn-warning"
+            >Add Construction Job</a
           >
         </div>
       </div>

@@ -8,7 +8,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("login/", loginPage, name="login"),
     path("logout/", logoutUser, name="logout"),
-    path("contract/", contractView, name="contract"),
     path("contact/", contact_view, name="contact"),
     path("payment-portal/", PaymentPortal, name="payment_portal"),
     path("payment_success/", PaymentSuccess, name="payment_success"),
@@ -19,9 +18,15 @@ urlpatterns = [
     path("register/", registerPage, name="register"),
     path("properties/create/", CreatePropertyView.as_view(), name="create_property"),
     path("lease/create/", CreateLease, name="create_lease"),
+    path(
+        "construction/create/",
+        CreateConstructionView.as_view(),
+        name="create_construction",
+    ),
     # -------------READ---------------
     path("", HomePageView.as_view(), name="home"),
     path("properties/", PropertyView.as_view(), name="properties"),
+    path("construction/", ConstructionView.as_view(), name="construction"),
     path(
         "profile/<int:pk>/", UserProfileDetailView.as_view(), name="user_profile_detail"
     ),
@@ -36,6 +41,16 @@ urlpatterns = [
         SetPropertyToFeaturedView.as_view(),
         name="feature_property",
     ),
+    path(
+        "construction/<int:pk>/update/",
+        UpdateConstructionView.as_view(),
+        name="update_construction",
+    ),
+    path(
+        "construction/<int:pk>/feature/",
+        SetConstructionToFeaturedView.as_view(),
+        name="feature_construction",
+    ),
     # -------------DELETE---------------
     path(
         "properties/<int:pk>/delete/",
@@ -46,6 +61,16 @@ urlpatterns = [
         "photos/<int:pk>/delete/",
         PhotoDeleteView.as_view(),
         name="delete_photo",
+    ),
+    path(
+        "construction/<int:pk>/delete/",
+        ConstructionDeleteView.as_view(),
+        name="delete_construction",
+    ),
+    path(
+        "construction/photos/<int:pk>/delete/",
+        ConstructionPhotoDeleteView.as_view(),
+        name="delete_construction_photo",
     ),
 ]
 

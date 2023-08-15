@@ -14,7 +14,7 @@ class Tenant(models.Model):
     userEmail = models.EmailField(max_length=254, verbose_name="Email")
     dateCreated = models.DateTimeField(auto_now_add=True)
     linkToLease = models.ForeignKey(
-        "Lease", on_delete=models.CASCADE, blank=True, null=True
+        "Lease", on_delete=models.SET_NULL, blank=True, null=True
     )
 
     def save(self, *args, **kwargs):
@@ -29,6 +29,7 @@ class Lease(models.Model):
     slug = models.SlugField(blank=True, null=True)
     pricePerMonth = models.FloatField(default=0, verbose_name="Price")
     dateCreated = models.DateTimeField(auto_now_add=True)
+    numOfMonths = models.IntegerField(default=12)
     currentBalance = models.FloatField(default=0, verbose_name="Balance")
     linkToProperty = models.OneToOneField(
         "RentalProperty", on_delete=models.CASCADE, blank=True, null=True
@@ -80,10 +81,14 @@ class PropertyPhoto(models.Model):
         return f"{self.propertyOfImage}"
 
 
-class ConstructionTicket(models.Model):
+class ConstructionJob(models.Model):
     slug = models.SlugField(blank=True, null=True)
     title = models.CharField(max_length=50)
+    isFeaturedConstruction = models.BooleanField(
+        default=False, verbose_name="Featured Construction"
+    )
     dateCreated = models.DateField(auto_now_add=True)
+    isComplete = models.BooleanField(default=False)
     description = models.TextField()
 
     def save(self, *args, **kwargs):
@@ -93,15 +98,18 @@ class ConstructionTicket(models.Model):
         return self.title
 
 
-class ConstructionTicketPhoto(models.Model):
+class ConstructionJobPhoto(models.Model):
     picture = models.ImageField(upload_to="images/")
-    ConstructionOfImage = models.ForeignKey(
-        "ConstructionTicket", on_delete=models.PROTECT, null=True, blank=True
+    constructionOfImage = models.ForeignKey(
+        "ConstructionJob", on_delete=models.CASCADE, null=True, blank=True
     )
+
+    def __str__(self):
+        return f"{self.constructionOfImage}"
 
 
 class TenantPayment(models.Model):
-    app_user = models.ForeignKey("Tenant", on_delete=models.CASCADE)
+    app_user = models.ForeignKey("Tenant", on_delete=models.PROTECT)
     payment_bool = models.BooleanField(default=False)
     stripe_checkout_id = models.CharField(max_length=500)
     payment_amount = models.FloatField(default=0)

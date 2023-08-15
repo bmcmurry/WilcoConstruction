@@ -253,6 +253,8 @@ class PropertyDeleteView(View):
         return redirect("manager_interface")
 
 
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
 class PhotoDeleteView(View):
     def get(self, request, pk):
         photo = get_object_or_404(PropertyPhoto, pk=pk)
@@ -267,6 +269,8 @@ class PhotoDeleteView(View):
         return redirect("manager_interface")
 
 
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
 class SetPropertyToFeaturedView(View):
     def get(self, request, pk):
         property = get_object_or_404(RentalProperty, pk=pk)
@@ -290,20 +294,19 @@ class SetPropertyToFeaturedView(View):
         return redirect("manager_interface")
 
 
+# @method_decorator(login_required, name="dispatch")
+# @method_decorator(staff_member_required, name="dispatch")
 def CreateLease(request):
     if request.method == "POST":
         form = LeaseForm(request.POST)
 
         if form.is_valid():
             lease = form.save()
-            # Assuming you have a field named 'selected_tenant' in the form
             selected_tenants = form.cleaned_data["selected_tenant"]
-            selected_tenant_ids = [tenant.id for tenant in selected_tenants]
-
-            # Associate the selected tenant with the created lease
-            tenant = Tenant.objects.get(id=selected_tenant_ids)
-            tenant.linkToLease = lease
-            tenant.save()
+            # Loop through the selected tenants and link each one to the lease
+            for tenant in selected_tenants:
+                tenant.linkToLease = lease
+                tenant.save()
 
             return redirect("manager_interface")
     else:
@@ -348,6 +351,7 @@ class ManagerInterfaceView(TemplateView):
         context["leases"] = Lease.objects.all()
         context["latest_tenants"] = Tenant.objects.all()
         context["properties"] = RentalProperty.objects.all()
+        context["construction"] = ConstructionJob.objects.all()
         context["tenants"] = Tenant.objects.filter(linkToLease__isnull=False)
         return context
 
@@ -368,13 +372,204 @@ class HomePageView(TemplateView):
             context["property_photo"] = PropertyPhoto.objects.filter(
                 propertyOfImage=featured_property
             ).first()
-        # context["latest_properties"] = RentalProperty.objects.all()[:5]
+        featured_construction = ConstructionJob.objects.filter(
+            isFeaturedConstruction=True
+        ).first()
+        if featured_construction:
+            context["featured_construction"] = featured_construction
+            context["construction_photo"] = ConstructionJobPhoto.objects.filter(
+                constructionOfImage=featured_construction
+            ).first()
         return context
 
 
-def contractView(request):
-    context = {}
-    return render(request, "contract.html", context)
+class ConstructionView(TemplateView):
+    template_name = "construction.html"
+    ITEMS_PER_PAGE = 12
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        construction_jobs = ConstructionJob.objects.all()
+        construction_images = ConstructionJobPhoto.objects.all()
+
+        # SEARCH BAR
+        search_query = self.request.GET.get("search")
+        if search_query:
+            construction_jobs = construction_jobs.filter(
+                Q(title__icontains=search_query)
+                | Q(description__icontains=search_query)
+            )
+            construction_images = construction_images.filter(
+                constructionOfImage__in=construction_jobs
+            )
+
+        # SORT BY
+        category = self.request.GET.get("category")
+        sort_order = self.request.GET.get("sort")
+
+        if category and sort_order:
+            construction_images = ConstructionJobPhoto.objects.all()
+            if sort_order == "asc":
+                construction_jobs = construction_jobs.order_by(f"{category}")
+            elif sort_order == "desc":
+                construction_jobs = construction_jobs.order_by(f"-{category}")
+
+        # Pagination
+        page_number = self.request.GET.get("page")
+        p = Paginator(construction_jobs, self.ITEMS_PER_PAGE)
+        p_images = Paginator(construction_images, self.ITEMS_PER_PAGE)
+
+        context["construction_jobs"] = p.get_page(page_number)
+        context["construction_images"] = p_images.get_page(page_number)
+
+        return context
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
+class CreateConstructionView(View):
+    template_name = "create_construction.html"
+
+    def get(self, request, *args, **kwargs):
+        ConstructionPhotoFormSet = formset_factory(ConstructionPhotoForm, extra=5)
+        construction_form = CreateConstructionForm()
+        construction_photo_formset = ConstructionPhotoFormSet()
+
+        context = {
+            "construction_form": construction_form,
+            "construction_photo_formset": construction_photo_formset,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        ConstructionPhotoFormSet = formset_factory(ConstructionPhotoForm, extra=1)
+
+        construction_form = CreateConstructionForm(request.POST)
+        construction_photo_formset = ConstructionPhotoFormSet(
+            request.POST, request.FILES
+        )
+
+        if construction_form.is_valid() and construction_photo_formset.is_valid():
+            construction_job = construction_form.save()
+
+            for form in construction_photo_formset:
+                if form.is_valid() and form.cleaned_data.get("picture"):
+                    construction_photo_instance = form.save(commit=False)
+                    construction_photo_instance.constructionOfImage = construction_job
+                    construction_photo_instance.save()
+
+            return redirect("manager_interface")
+
+        context = {
+            "construction_form": construction_form,
+            "construction_photo_formset": construction_photo_formset,
+        }
+        return render(request, self.template_name, context)
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
+class UpdateConstructionView(UpdateView):
+    template_name = "update_construction.html"
+    success_url = "manager_interface"
+
+    def get(self, request, pk):
+        construction = ConstructionJob.objects.get(id=pk)
+        construction_form = CreateConstructionForm(instance=construction)
+        photos = ConstructionJobPhoto.objects.filter(constructionOfImage=construction)
+
+        # Get existing photos associated with the RentalProperty
+        construction_photo_form = ConstructionPhotoForm()
+
+        context = {
+            "construction_form": construction_form,
+            "construction_photo_form": construction_photo_form,
+            "photos": photos,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk):
+        construction = ConstructionJob.objects.get(id=pk)
+        construction_form = CreateConstructionForm(request.POST, instance=construction)
+        photos = ConstructionJobPhoto.objects.filter(constructionOfImage=construction)
+        construction_photo_form = PropertyPhotoForm(request.POST, request.FILES)
+
+        if construction_form.is_valid() and construction_photo_form.is_valid():
+            construction_form.save()
+
+            construction_photo = construction_photo_form.save(commit=False)
+            construction_photo.constructionOfImage = construction
+            if construction_photo.picture != "":
+                construction_photo.save()
+
+            return redirect("manager_interface")
+        context = {
+            "construction_form": construction_form,
+            "construction_photo_form": construction_photo_form,
+            "photos": photos,
+        }
+        return render(request, self.template_name, context)
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
+class ConstructionDeleteView(View):
+    def get(self, request, pk):
+        construction = get_object_or_404(ConstructionJob, pk=pk)
+        return render(
+            request, "delete_construction.html", {"construction": construction}
+        )
+
+    def post(self, request, pk):
+        construction = get_object_or_404(ConstructionJob, pk=pk)
+
+        if "confirm" in request.POST:
+            construction.delete()
+        return redirect("manager_interface")
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
+class ConstructionPhotoDeleteView(View):
+    def get(self, request, pk):
+        photo = get_object_or_404(ConstructionJobPhoto, pk=pk)
+        if "confirm" in request.POST:
+            photo.delete()
+        return render(request, "delete_construction_photo.html", {"photo": photo})
+
+    def post(self, request, pk):
+        photo = get_object_or_404(ConstructionJobPhoto, pk=pk)
+        if "confirm" in request.POST:
+            photo.delete()
+        return redirect("manager_interface")
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
+class SetConstructionToFeaturedView(View):
+    def get(self, request, pk):
+        construction = get_object_or_404(ConstructionJob, pk=pk)
+        return render(
+            request, "feature_construction.html", {"construction": construction}
+        )
+
+    def post(self, request, pk):
+        # Retrieve all rental properties
+        if "confirm" in request.POST:
+            all_construction_jobs = ConstructionJob.objects.all()
+
+            # Set 'isFeaturedProperty' to False for all RentalProperty objects
+            for each in all_construction_jobs:
+                each.isFeaturedConstruction = False
+                each.save()
+
+            # Get the selected property and set its 'isFeaturedProperty' to True
+            obj = get_object_or_404(ConstructionJob, pk=pk)
+            obj.isFeaturedConstruction = True
+            obj.save()
+
+        return redirect("manager_interface")
 
 
 def contact_view(request):
@@ -448,7 +643,7 @@ def quote_view(request):
     else:
         form = QuoteForm()
 
-    return render(request, "contract.html", {"form": form})
+    return render(request, "construction.html", {"form": form})
 
 
 ##===============below is the payment views for stripe============================##

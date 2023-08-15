@@ -1,0 +1,20 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<section>
+  <br />
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card card-body">
+        <p>Are you sure you want to delete "{{ construction }}"</p>
+        <form
+          action="{% url 'delete_construction' construction.id %}"
+          method="POST"
+        >
+          {% csrf_token %}
+          <input class="btn btn-danger" type="submit" name="confirm" />
+          <a class="btn btn-warning" href="{% url 'home' %}">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

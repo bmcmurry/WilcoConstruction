@@ -1,7 +1,7 @@
 {% extends 'base.html' %}{% load static %}{% block content %}
 <section class="container-fluid" id="main">
   <!-- about company text -->
-  <h1 class="text-center display-2">Contracts</h1>
+  <h1 class="text-center display-2">Construction</h1>
   <p class="lh-base text-center ms-5 me-5">
     Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, omnis
     perspiciatis sint voluptatum tempore sunt iusto ab at aspernatur illo!
@@ -11,7 +11,7 @@
     praesentium voluptatum error aspernatur odio tempora corporis perferendis
     quasi iure non assumenda repellat!
   </p>
-  <!-- contract cards -->
+  <!-- contruction cards -->
   <div class="row mb-3">
     <div class="col-md-6 mb-3 mb-sm-0">
       <div class="card">
@@ -24,7 +24,7 @@
             to additional content. This content is a little bit longer.
           </p>
           <p class="card-text">
-            <a href="contact.html"
+            <a href="{% url 'contact' %}"
               ><button type="button" class="btn btn-warning">
                 Contact Us
               </button></a

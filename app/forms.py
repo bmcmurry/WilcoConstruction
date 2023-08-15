@@ -85,13 +85,31 @@ class PropertyPhotoForm(ModelForm):
         self.fields["picture"].required = False
 
 
+class CreateConstructionForm(ModelForm):
+    class Meta:
+        model = ConstructionJob
+        fields = "__all__"
+        exclude = ["dateCreated", "isFeaturedConstruction", "slug", "isComplete"]
+
+
+class ConstructionPhotoForm(ModelForm):
+    class Meta:
+        model = ConstructionJobPhoto
+        fields = "__all__"
+        exclude = ["constructionOfImage", "slug"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["picture"].required = False
+
+
 class ContactForm(forms.Form):
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
     email = forms.EmailField(widget=forms.EmailInput(attrs={"type": "email"}))
     CHOICES = (
         ("Rentals", "Rentals"),
-        ("Contracts", "Contracts"),
+        ("Construction", "Construction"),
         ("Other", "Other"),
     )
 
@@ -117,37 +135,3 @@ class QuoteForm(forms.Form):
     subject = forms.CharField(max_length=100)
 
     message = forms.CharField(widget=forms.Textarea)
-
-
-class QuoteForm(forms.Form):
-    first_name = forms.CharField(max_length=100)
-    last_name = forms.CharField(max_length=100)
-    email = forms.EmailField(widget=forms.EmailInput(attrs={"type": "email"}))
-    CHOICES = (
-        ("Residential", "Residential"),
-        ("Commercial", "Commercial"),
-        ("Other", "Other"),
-    )
-
-    categories = forms.Select(choices=CHOICES)
-
-    phone = forms.CharField(max_length=20)
-    subject = forms.CharField(max_length=100)
-
-    message = forms.CharField(widget=forms.Textarea)
-
-
-# class PropertySearchForm(forms.Form):
-#     SEARCH_CHOICES = [
-#         ("address", "Address"),
-#         ("city", "City"),
-#         ("isRented", "isRented"),
-#         ("price", "price"),
-#         ("squareFoot", "squareFoot"),
-#         ("bedrooms", "bedrooms"),
-#         ("bathrooms", "bathrooms"),
-#         ("isPetFriendly", "isPetFriendly"),
-#     ]
-
-#     search_field = forms.ChoiceField(choices=SEARCH_CHOICES, label="Search Field")
-#     search_query = forms.CharField(label="Search Query", max_length=100)

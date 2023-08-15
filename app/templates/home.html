@@ -124,15 +124,11 @@
       <div class="row g-0">
         <div class="col-md-8">
           <div class="card-body">
-            <h3 class="card-title mt-2">Featured Contract</h5>
-            <p class="card-text">
-              This is a wider card with supporting text below as a natural
-              lead-in to additional content. This content is a little bit
-              longer.
-            </p>
+            <h3 class="card-title mt-2">Featured Construction</h5>
+              <p class="card-text">{{ featured_construction.description }}</p>
             <p class="card-text">
               <small class="text-body-secondary"
-                ><a href="contract.html" class="btn btn-warning position-absolute bottom-0 start-0 m-2"
+                ><a href="{% url 'construction' %}" class="btn btn-warning position-absolute bottom-0 start-0 m-2"
                   >View All</a
                 ></small
               >
@@ -140,8 +136,14 @@
           </div>
         </div>
         <div class="col-md-4">
-          <img src="{% static "images\construction-hero@2x.jpg"%}"
-          class="img-fluid rounded-end" alt="" style="" />
+          {% if construction_photo %}
+          <img
+            src="{{ construction_photo.picture.url }}"
+            class="img-fluid rounded-start"
+            alt="{{ feature_construction.title }}"
+            style=""
+          />
+          {% endif %}
         </div>
       </div>
     </div>
