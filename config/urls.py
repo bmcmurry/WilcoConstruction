@@ -13,11 +13,10 @@ urlpatterns = [
     path("payment_success/", PaymentSuccess, name="payment_success"),
     path("payment_fail/", PaymentFail, name="payment_fail"),
     path("stripe_webhook/", stripe_webhook, name="stripe_webhook"),
-    path("manager/", ManagerInterfaceView.as_view(), name="manager_interface"),
     # -------------CREATE---------------
     path("register/", registerPage, name="register"),
     path("properties/create/", CreatePropertyView.as_view(), name="create_property"),
-    path("lease/create/", CreateLease, name="create_lease"),
+    path("lease/create/", CreateLeaseView.as_view(), name="create_lease"),
     path(
         "construction/create/",
         CreateConstructionView.as_view(),
@@ -27,6 +26,7 @@ urlpatterns = [
     path("", HomePageView.as_view(), name="home"),
     path("properties/", PropertyView.as_view(), name="properties"),
     path("construction/", ConstructionView.as_view(), name="construction"),
+    path("manager/", ManagerInterfaceView.as_view(), name="manager_interface"),
     path(
         "profile/<int:pk>/", UserProfileDetailView.as_view(), name="user_profile_detail"
     ),
@@ -51,6 +51,11 @@ urlpatterns = [
         SetConstructionToFeaturedView.as_view(),
         name="feature_construction",
     ),
+    path(
+        "lease/<int:pk>/update/",
+        UpdateLeaseView.as_view(),
+        name="update_lease",
+    ),
     # -------------DELETE---------------
     path(
         "properties/<int:pk>/delete/",
@@ -71,6 +76,11 @@ urlpatterns = [
         "construction/photos/<int:pk>/delete/",
         ConstructionPhotoDeleteView.as_view(),
         name="delete_construction_photo",
+    ),
+    path(
+        "lease/<int:pk>/delete/",
+        LeaseDeleteView.as_view(),
+        name="delete_lease",
     ),
 ]
 

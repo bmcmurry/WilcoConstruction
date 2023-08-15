@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.utils.text import slugify
+from django.utils import timezone
+import calendar
 
 
 class Tenant(models.Model):
@@ -28,15 +30,33 @@ class Tenant(models.Model):
 class Lease(models.Model):
     slug = models.SlugField(blank=True, null=True)
     pricePerMonth = models.FloatField(default=0, verbose_name="Price")
-    dateCreated = models.DateTimeField(auto_now_add=True)
-    numOfMonths = models.IntegerField(default=12)
+    isLate = models.BooleanField(default=False, verbose_name="Rent is Late")
+    lateFee = models.FloatField(default=0, verbose_name="Late Fee")
+    startDate = models.DateField(verbose_name="Lease Start Date")
+    dueDate = models.DateField(verbose_name="Rent Due Date")
+    endDate = models.DateField(blank=True, null=True, verbose_name="Lease End Date")
+    monthsLeft = models.IntegerField(verbose_name="Months Remaining on Lease")
     currentBalance = models.FloatField(default=0, verbose_name="Balance")
     linkToProperty = models.OneToOneField(
-        "RentalProperty", on_delete=models.CASCADE, blank=True, null=True
+        "RentalProperty",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        verbose_name="Address",
     )
 
     def __str__(self):
         return f"{self.linkToProperty}"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            today = timezone.now().date()
+            next_month = today.replace(day=1) + timezone.timedelta(days=32)
+            next_due_day = min(
+                5, calendar.monthrange(next_month.year, next_month.month)[1]
+            )
+            self.dueDate = next_month.replace(day=next_due_day)
+        super(Lease, self).save(*args, **kwargs)
 
 
 class RentalProperty(models.Model):
@@ -113,9 +133,13 @@ class TenantPayment(models.Model):
     payment_bool = models.BooleanField(default=False)
     stripe_checkout_id = models.CharField(max_length=500)
     payment_amount = models.FloatField(default=0)
+    dateCreated = models.DateField(auto_now_add=True)
     linked_lease = models.ForeignKey(
         "Lease", on_delete=models.SET_NULL, null=True, blank=True
     )
+
+    def __str__(self):
+        return f"{self.app_user}: {self.payment_amount} @ {self.dateCreated}"
 
 
 @receiver(post_save, sender=Tenant)

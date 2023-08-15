@@ -294,25 +294,71 @@ class SetPropertyToFeaturedView(View):
         return redirect("manager_interface")
 
 
-# @method_decorator(login_required, name="dispatch")
-# @method_decorator(staff_member_required, name="dispatch")
-def CreateLease(request):
-    if request.method == "POST":
-        form = LeaseForm(request.POST)
+# --------------------LEASE----------------
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
+class CreateLeaseView(CreateView):
+    template_name = "create_lease.html"
+    form_class = LeaseForm
+    success_url = reverse_lazy("manager_interface")
 
-        if form.is_valid():
-            lease = form.save()
-            selected_tenants = form.cleaned_data["selected_tenant"]
-            # Loop through the selected tenants and link each one to the lease
-            for tenant in selected_tenants:
-                tenant.linkToLease = lease
-                tenant.save()
+    def form_valid(self, form):
+        lease = form.save()
+        selected_tenants = form.cleaned_data["selected_tenant"]
+
+        # Loop through the selected tenants and link each one to the lease
+        for tenant in selected_tenants:
+            tenant.linkToLease = lease
+            tenant.save()
+
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
+class UpdateLeaseView(UpdateView):
+    template_name = "update_lease.html"
+    success_url = reverse_lazy("manager_interface")
+
+    def get(self, request, pk):
+        lease = Lease.objects.get(id=pk)
+        lease_form = LeaseForm(instance=lease)
+
+        context = {
+            "lease_form": lease_form,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk):
+        lease = Lease.objects.get(id=pk)
+        lease_form = LeaseForm(request.POST, instance=lease)
+
+        if lease_form.is_valid():
+            lease_form.save()
 
             return redirect("manager_interface")
-    else:
-        form = LeaseForm()
+        context = {
+            "lease_form": lease_form,
+        }
+        return render(request, self.template_name, context)
 
-    return render(request, "create_lease.html", {"form": form})
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(staff_member_required, name="dispatch")
+class LeaseDeleteView(View):
+    def get(self, request, pk):
+        lease = get_object_or_404(Lease, pk=pk)
+        tenants = Tenant.objects.filter(linkToLease=lease)
+        return render(
+            request, "delete_lease.html", {"lease": lease, "tenants": tenants}
+        )
+
+    def post(self, request, pk):
+        lease = get_object_or_404(Lease, pk=pk)
+        tenants = Tenant.objects.filter(linkToLease=lease)
+        if "confirm" in request.POST:
+            lease.delete()
+        return redirect("manager_interface")
 
 
 # --------------------TENANTS/USERS----------------
@@ -353,6 +399,19 @@ class ManagerInterfaceView(TemplateView):
         context["properties"] = RentalProperty.objects.all()
         context["construction"] = ConstructionJob.objects.all()
         context["tenants"] = Tenant.objects.filter(linkToLease__isnull=False)
+
+        for lease in context["leases"]:
+            balance = lease.currentBalance
+            lease.monthsLeft = (lease.endDate - lease.startDate).days // 30
+            if lease.dueDate < timezone.now().date() and balance < 0:
+                lease.isLate = True
+                late_fee = 20  # Example late fee amount
+                lease.lateFee += late_fee
+                balance -= late_fee
+            else:
+                lease.isLate = False
+                lease.lateFee = 0  # Reset late fee if not late
+
         return context
 
 
@@ -383,6 +442,7 @@ class HomePageView(TemplateView):
         return context
 
 
+# ----------------CONSTRUCTION---------------
 class ConstructionView(TemplateView):
     template_name = "construction.html"
     ITEMS_PER_PAGE = 12
@@ -572,6 +632,7 @@ class SetConstructionToFeaturedView(View):
         return redirect("manager_interface")
 
 
+# ----------------EMAIL---------------
 def contact_view(request):
     if request.method == "POST":
         contact_view = ContactForm(request.POST)
@@ -592,12 +653,12 @@ def contact_view(request):
                     f"Name: {first_name} {last_name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}",
                     email,
                     [
-                        "ashleybglasz@gmail.com",
+                        "bryanmcmurry7@gmail.com",
                     ],  # Replace with the actual recipient email address
                     fail_silently=False,
                 )
                 # Add success message or redirect to a success page
-                return redirect("home")
+                return render(request, "home")
             except Exception as e:
                 # Handle the email sending error, add error message or redirect to an error page
                 return redirect("properties")
@@ -648,18 +709,55 @@ def quote_view(request):
 
 ##===============below is the payment views for stripe============================##
 def PaymentPortal(request):
+    user_id = request.user.id
+    try:
+        tenant = Tenant.objects.get(linkToBuiltinUser__id=user_id)
+    except Tenant.DoesNotExist:
+        tenant = None
+
+    if tenant:
+        payment_history = TenantPayment.objects.filter(app_user=tenant)
+        lease = None
+        if tenant.linkToLease:
+            lease = Lease.objects.get(id=tenant.linkToLease.id)
+
+        if lease:
+            # Tenant has a lease
+            print(lease)
+        else:
+            # Tenant does not have a lease
+            properties = RentalProperty.objects.all()
+            search_query = request.GET.get("search")
+            if search_query:
+                properties = properties.filter(
+                    Q(address__icontains=search_query) | Q(city__icontains=search_query)
+                )
+
+            print(tenant)
+            print(payment_history)
+
     stripe.api_key = settings.STRIPE_SECRET_KEY
     if request.method == "POST":
-        custom_amount = float(request.POST.get("payment_amount"))
+        payment_amount = float(request.POST.get("payment_amount"))
+        # Create a product dynamically if not already created
+        product = stripe.Product.create(
+            name="Rent",
+            description="A dynamically created product for custom payments",
+        )
+
+        # Create a Price object with dynamic price using line_items.price_data
+        price = stripe.Price.create(
+            unit_amount=int(payment_amount * 100),  # Convert to cents
+            currency="usd",
+            product=product.id,
+        )
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=[
                 {
-                    "amount": int(custom_amount * 100),  # Convert to cents
-                    "currency": "usd",
-                    "name": "Rent Payment",
+                    "price": price.id,
                     "quantity": 1,
-                },
+                }
             ],
             mode="payment",
             customer_creation="always",

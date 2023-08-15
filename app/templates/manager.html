@@ -1,5 +1,11 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <! ignore prettier ->
+<style>
+  .negative {
+    color: red;
+    font-weight: bold;
+  }
+</style>
 <section class="overflow-hidden">
   {% comment %} {% include 'create_property.html' %}
 
@@ -18,22 +24,19 @@
           <table class="table table-sm">
             <tr>
               <th>Address</th>
+              <th>City</th>
               <th>Occupied</th>
-              <th>Tenant</th>
               <th>Bedrooms</th>
               <th>Bathrooms</th>
             </tr>
             {% for property in properties %}
             <tr>
               <td>{{ property.address }}</td>
-              <td>{{ property.isRented }}</td>
-              {% if property.isRented %} {% for tenant in tenants %}
-              <! ignore prettier ->
-              {% if tenant.linkToLease.linkToProperty == property %}
-              <td>{{ tenant }}</td>
-              <! ignore prettier ->
-              {% endif %} {% endfor %} {% else %}
-              <td>N/A</td>
+              <td>{{ property.city }}</td>
+              {% if property.isRented %}
+              <td style="color: green">Yes</td>
+              {% else %}
+              <td style="color: red">No</td>
               {% endif %}
               <td>{{ property.bedrooms }}</td>
               <td>{{ property.bathrooms }}</td>
@@ -78,8 +81,8 @@
               <th>Property</th>
               <th>Monthly Price</th>
               <th>Balance</th>
-              <th>Length</th>
-              <th>More Info</th>
+              <th>Late</th>
+              <th>Expires In</th>
             </tr>
             {% for lease in leases %}
             <tr>
@@ -89,9 +92,43 @@
                 {% endfor %}
               </td>
               <td>{{ lease.linkToProperty }}</td>
-              <td>{{ lease.pricePerMonth }}</td>
-              <td>{{ lease.currentBalance }}</td>
-              <td>{{ lease.numOfMonths }} Months</td>
+              <td>
+                {% if lease.pricePerMonth < 0 %}
+                <! ignore prettier ->
+                <span class="negative"
+                  >(${{ lease.pricePerMonth|floatformat:2 }})</span
+                >
+                {% else %}
+                <! ignore prettier ->
+                ${{ lease.pricePerMonth|floatformat:2 }} {% endif %}
+              </td>
+              <td>
+                {% if lease.currentBalance < 0 %}
+                <! ignore prettier ->
+                <span class="negative"
+                  >(${{ lease.currentBalance|floatformat:2 }})</span
+                >
+                {% else %}
+                <! ignore prettier ->
+                ${{ lease.currentBalance|floatformat:2 }} {% endif %}
+              </td>
+
+              {% if lease.isLate %}
+              <td style="color: red">Yes</td>
+              {% else %}
+              <td style="color: green">No</td>
+              {% endif %}
+              <td>{{ lease.monthsLeft }} Months</td>
+              <td>
+                <a href="{% url 'update_lease' lease.id %}"
+                  ><i class="bi bi-pencil-square"></i
+                ></a>
+              </td>
+              <td>
+                <a href="{% url 'delete_lease' lease.id %}">
+                  <i class="bi bi-trash3-fill text-danger"></i
+                ></a>
+              </td>
 
               <!-- Button trigger modal -->
               <td>
@@ -120,9 +157,6 @@
                         ></button>
                       </div>
                       <div class="modal-body">
-                        <p class="card-text">
-                          Address: {{ lease.linkToProperty }}
-                        </p>
                         {% for tenant in lease.tenant_set.all %}
                         <p class="card-text">Name: {{ tenant }}</p>
                         {% if tenant.phone %}
@@ -135,7 +169,18 @@
                           Balance: {{ lease.currentBalance }}
                         </p>
                         <p class="card-text">
-                          Date Created: {{ lease.dateCreated }}
+                          Late: {% if lease.isLate %}
+                          <span style="color: red">Yes</span>
+                          {% else %}
+                          <span style="color: green">No</span>
+                          {% endif %}
+                        </p>
+                        <p class="card-text">Late Fee: {{ lease.lateFee }}</p>
+                        <p class="card-text">
+                          Start of Lease: {{ lease.startDate }}
+                        </p>
+                        <p class="card-text">
+                          End of Lease: {{ lease.endDate }}
                         </p>
                       </div>
                       <div class="modal-footer bg-warning">
@@ -178,7 +223,11 @@
             {% for job in construction %}
             <tr>
               <td>{{ job.title }}</td>
-              <td>{{ job.isComplete }}</td>
+              {% if job.isCompleted %}
+              <td style="color: green">Yes</td>
+              {% else %}
+              <td style="color: red">No</td>
+              {% endif %}
               <td>{{ job.dateCreated }}</td>
               <td>
                 <a href="{% url 'update_construction' job.id %}"

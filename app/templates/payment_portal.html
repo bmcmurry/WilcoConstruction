@@ -10,6 +10,24 @@
           <div class="card-header bg-warning">{{ user }}</div>
           <div class="card-body">
             <h5 class="card-title">Special title treatment</h5>
+            <form
+              class="d-flex col mt-3"
+              role="search"
+              method="get"
+              action="{% url 'properties' %}"
+            >
+              {% csrf_token %}
+              <input
+                class="form-control me-2"
+                type="search"
+                name="search"
+                value="{{ search_query }}"
+                placeholder="Search..."
+                aria-label="Search"
+              />
+              <button class="btn btn-warning me-2" type="submit">Search</button>
+            </form>
+            <br />
             <p class="card-text">
               With supporting text below as a natural lead-in to additional
               content. With supporting text below as a natural lead-in to
@@ -66,15 +84,16 @@
               {% csrf_token %}
               <h5 class="card-title">
                 Hi {{ user }}! To pay, click on this button
-                <button
-                  type="submit"
-                  class="btn btn-success mt-2"
-                  href="{% url 'payment_portal' %}"
-                  data-bind-href="pricing"
-                >
-                  Payment
-                </button>
               </h5>
+              <label for="payment_amount">Payment Amount:</label>
+              <input type="number" name="payment_amount" required /><button
+                type="submit"
+                class="btn btn-success mt-2"
+                href="{% url 'payment_portal' %}"
+                data-bind-href="pricing"
+              >
+                Payment
+              </button>
             </form>
           </div>
         </div>

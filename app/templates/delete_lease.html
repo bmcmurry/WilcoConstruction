@@ -1,0 +1,23 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<section>
+  <br />
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card card-body">
+        <h3>
+          Are you sure you want to delete the lease for
+          <strong>{{lease}}?</strong>
+        </h3>
+        <p>Current Tenants include:</p>
+        {% for tenant in tenants %}
+        <p>{{tenant}} {% endfor %}</p>
+        <form action="{% url 'delete_lease' lease.id %}" method="POST">
+          {% csrf_token %}
+          <input class="btn btn-danger" type="submit" name="confirm" />
+          <a class="btn btn-warning" href="{% url 'home' %}">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
