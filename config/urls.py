@@ -3,6 +3,7 @@ from app.views import *
 from django.conf import settings
 from django.urls import path, include
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -13,6 +14,33 @@ urlpatterns = [
     path("payment_success/", PaymentSuccess, name="payment_success"),
     path("payment_fail/", PaymentFail, name="payment_fail"),
     path("stripe_webhook/", stripe_webhook, name="stripe_webhook"),
+    # -------------PASSWORD/RESET-------------
+    path(
+        "reset_password/",
+        auth_views.PasswordResetView.as_view(template_name="password_reset.html"),
+        name="reset_password",
+    ),
+    path(
+        "reset_password_sent/",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="password_reset_sent.html"
+        ),
+        name="password_reset_done",
+    ),
+    path(
+        "reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="password_reset_form.html"
+        ),
+        name="password_reset_confirm",
+    ),
+    path(
+        "reset_password_complete/",
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="password_reset_done.html"
+        ),
+        name="password_reset_complete",
+    ),
     # -------------CREATE---------------
     path("register/", registerPage, name="register"),
     path("properties/create/", CreatePropertyView.as_view(), name="create_property"),

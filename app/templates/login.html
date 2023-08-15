@@ -41,10 +41,17 @@
             >Register</a
           >
         </button>
-        {% for message in messages %}
-        <p>{{message}}</p>
-        {% endfor %}
+        <button class="btn btn-warning">
+          <a
+            href="{% url 'reset_password' %}"
+            class="btn-warning link-body-emphasis link-offset-2 link-underline link-underline-opacity-0"
+            >Forgot Password</a
+          >
+        </button>
       </form>
+      {% for message in messages %}
+      <p>{{message}}</p>
+      {% endfor %}
     </div>
   </div>
 </section>
