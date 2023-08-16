@@ -126,12 +126,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "app/static/"
-MEDIA_URL = "images/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR / "static")]
-MEDIA_ROOT = os.path.join(BASE_DIR, "app/static/")
-
-
+# MEDIA_URL = "images/"
 # STATICFILES_DIRS = [os.path.join(BASE_DIR / "static")]
+# MEDIA_ROOT = os.path.join(BASE_DIR, "app/static/")
 
 
 # Default primary key field type
@@ -139,10 +136,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "app/static/")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# STATICFILES_DIRS = [BASE_DIR / "static", "media"]
-# MEDIA_ROOT = BASE_DIR / "media"
+STATICFILES_DIRS = [BASE_DIR / "static", "media"]
+MEDIA_ROOT = BASE_DIR / "media"
 
-# MEDIA_URL = "/media/"
+MEDIA_URL = "/media/"
 
 # Add your email host, port, username, and password here if you're using a SMTP backend for sending emails.
 # For example, if you're using Gmail SMTP to send emails, you'd configure it like this:
