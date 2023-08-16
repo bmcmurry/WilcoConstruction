@@ -764,8 +764,8 @@ def PaymentPortal(request):
             mode="payment",
             customer_creation="always",
             success_url=settings.REDIRECT_DOMAIN
-            + "/payment_success?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=settings.REDIRECT_DOMAIN + "/payment_fail",
+            + "payment_success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=settings.REDIRECT_DOMAIN + "payment_fail",
         )
         return redirect(checkout_session.url, code=303)
     return render(request, "payment_portal.html")
