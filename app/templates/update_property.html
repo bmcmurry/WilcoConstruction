@@ -77,14 +77,14 @@
             {% render_field property_form.description class="form-control" %}
           </div>
           {% for photo in photos %}
-      <img
-        src="{{ photo.picture.url }}"
-        class="card-img-top m-2" style="max-width: 275px;"
-        alt="{{ photo }}"
-      />
-      <a class="btn btn-danger mt-2" href="{% url 'delete_photo' photo.id %}">delete</a>
-      {% endfor %}
-      {{ property_photo_form.as_p }}
+            <img
+              src="{{ photo.picture.url }}"
+              class="card-img-top m-2" style="max-width: 275px;"
+              alt="{{ photo }}"
+            />
+            <a class="btn btn-danger mt-2" href="{% url 'delete_photo' photo.id %}">delete</a>
+          {% endfor %}
+        {{ property_photo_form.as_p }}
         <button class="btn btn-success mt-2" type="submit">Update</button>
         <a class="btn btn-warning mt-2" href="{% url 'manager_interface' %}">Cancel</a>
       </form>

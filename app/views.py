@@ -217,19 +217,23 @@ class UpdatePropertyView(UpdateView):
 
     def post(self, request, pk):
         property = RentalProperty.objects.get(id=pk)
-        property_form = CreatePropertyForm(request.POST, instance=property)
+        property_form = UpdatePropertyForm(request.POST, instance=property)
         photos = PropertyPhoto.objects.filter(propertyOfImage=property)
         property_photo_form = PropertyPhotoForm(request.POST, request.FILES)
 
         if property_form.is_valid() and property_photo_form.is_valid():
-            property_form.save()
-
+            property = property_form.save(commit=False)
+            property.pk = pk
+            property.save()
             property_photo = property_photo_form.save(commit=False)
             property_photo.propertyOfImage = property
             if property_photo.picture != "":
                 property_photo.save()
 
             return redirect("manager_interface")
+        else:
+            print(property_form.errors)
+            print(property_photo_form.errors)
         context = {
             "property_form": property_form,
             "property_photo_form": property_photo_form,
@@ -637,13 +641,11 @@ def contact_view(request):
     if request.method == "POST":
         contact_view = ContactForm(request.POST)
         if contact_view.is_valid():
-            # if request.POST["choices"] == "rentals":
-
             first_name = request.POST["first_name"]
             last_name = request.POST["last_name"]
             email = request.POST["email"]
             phone = request.POST["phone"]
-            subject = request.POST["categories"]
+            subject = request.POST["subject"]
             message = request.POST["message"]
 
             # Send the email here
