@@ -47,7 +47,7 @@ class LeaseForm(forms.ModelForm):
     class Meta:
         model = Lease
         fields = "__all__"
-        exclude = ["slug", "dueDate"]
+        exclude = ["slug", "dueDate", "monthsLeft"]
         widgets = {
             "startDate": forms.DateInput(attrs={"type": "date"}),
             "endDate": forms.DateInput(attrs={"type": "date"}),
