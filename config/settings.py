@@ -125,22 +125,21 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
 STATIC_URL = "app/static/"
-MEDIA_URL = "images/"
+# MEDIA_URL = "images/"
+# STATICFILES_DIRS = [os.path.join(BASE_DIR / "static")]
+# MEDIA_ROOT = os.path.join(BASE_DIR, "app/static/")
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR / "static")]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "app/static/")
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# STATICFILES_DIRS = [BASE_DIR / "static", "media"]
-# MEDIA_ROOT = BASE_DIR / "media"
+STATICFILES_DIRS = [BASE_DIR / "static", "media"]
+MEDIA_ROOT = BASE_DIR / "media"
 
-# MEDIA_URL = "/media/"
+MEDIA_URL = "/media/"
 
 # Add your email host, port, username, and password here if you're using a SMTP backend for sending emails.
 # For example, if you're using Gmail SMTP to send emails, you'd configure it like this:
@@ -187,4 +186,4 @@ DEBUG = True
 REDIRECT_DOMAIN = "https://wilco-app-c6223eb282aa.herokuapp.com/"
 STRIPE_PUBLIC_KEY = "pk_test_51NbRsdCffthPIRLKv0yaJi2mlLwitUqqcipZYX3mdsreLqTrHy0SmO7scfqmercaOfWZQcLObh7uzKyUjUFsVj3r00mBVR5D9z"
 STRIPE_SECRET_KEY = "sk_test_51NbRsdCffthPIRLKsKEjqXGQo3H7zcpoulRxnXo0Wrj46cpkhVmysuZ4lmhDDOc0dd7Uk1mfolG1HIYHqFjoVWbw00jj6IpQCL"
-STRIPE_WEBHOOK_SECRET = ""
+STRIPE_WEBHOOK_SECRET = "whsec_DeI7ADiOqIcDdWHLhGlETJP0audtpDCH"

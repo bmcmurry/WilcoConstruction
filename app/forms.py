@@ -47,7 +47,7 @@ class LeaseForm(forms.ModelForm):
     class Meta:
         model = Lease
         fields = "__all__"
-        exclude = ["slug", "dueDate"]
+        exclude = ["slug", "dueDate", "monthsLeft"]
         widgets = {
             "startDate": forms.DateInput(attrs={"type": "date"}),
             "endDate": forms.DateInput(attrs={"type": "date"}),
@@ -76,6 +76,13 @@ class CreatePropertyForm(ModelForm):
                 )
 
         return cleaned_data
+
+
+class UpdatePropertyForm(ModelForm):
+    class Meta:
+        model = RentalProperty
+        fields = "__all__"
+        exclude = ["isRented", "isFeaturedProperty", "slug"]
 
 
 class PropertyPhotoForm(ModelForm):
@@ -111,13 +118,13 @@ class ContactForm(forms.Form):
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
     email = forms.EmailField(widget=forms.EmailInput(attrs={"type": "email"}))
-    CHOICES = (
-        ("Rentals", "Rentals"),
-        ("Construction", "Construction"),
-        ("Other", "Other"),
-    )
+    # CHOICES = (
+    #     ("Rentals", "Rentals"),
+    #     ("Construction", "Construction"),
+    #     ("Other", "Other"),
+    # )
 
-    categories = forms.ChoiceField(choices=CHOICES)
+    # categories = forms.ChoiceField(choices=CHOICES)
     phone = forms.CharField(max_length=20)
     subject = forms.CharField(max_length=100)
     message = forms.CharField(widget=forms.Textarea)

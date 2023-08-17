@@ -56,17 +56,13 @@
           </div>
         </div>
       </div>
-      <label for="exampleFormControlInput1" class="form-label"
-        >Catagories</label
-      >
-      <select class="form-select">
-        {% render_field contact_view.subject class="custom-select form-select"
-        %}
-        <option val="Rentals">Rentals</option>
-        <option val="Construction">Construction</option>
-        <option val="Other">Other</option>
+      <label for="exampleFormControlInput1" class="form-label">Categories</label>
+      <select name="subject" class="form-select">
+          <option value="" selected disabled>Select a category</option>
+          <option value="Rentals">Rentals</option>
+          <option value="Construction">Construction</option>
+          <option value="Other">Other</option>
       </select>
-
       <div class="mb-3">
         <label for="exampleFormControlTextarea1" class="form-label"
           >How can we help?</label
