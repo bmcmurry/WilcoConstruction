@@ -674,8 +674,8 @@ def contact_view(request):
 
 def quote_view(request):
     if request.method == "POST":
-        form = QuoteForm(request.POST)
-        if form.is_valid():
+        quote_view = QuoteForm(request.POST)
+        if quote_view.is_valid():
             # if request.POST["choices"] == "rentals":
 
             first_name = request.POST["first_name"]
@@ -692,21 +692,21 @@ def quote_view(request):
                     f"Name: {first_name} {last_name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}",
                     email,
                     [
-                        settings.EMAIL_HOST_USER,
+                        "bryanmcmurry7@gmail.com",
                     ],  # Replace with the actual recipient email address
                     fail_silently=False,
                 )
                 # Add success message or redirect to a success page
-                return redirect("home")
+                return render(request, "home")
             except Exception as e:
                 # Handle the email sending error, add error message or redirect to an error page
-                return redirect("properties")
+                return redirect("construction")
         else:
-            print(form.errors)
+            print(quote_view.errors)
     else:
-        form = QuoteForm()
+        quote_view = QuoteForm()
 
-    return render(request, "construction.html", {"form": form})
+    return render(request, "construction.html", {"quote_view": quote_view})
 
 
 ##===============below is the payment views for stripe============================##
