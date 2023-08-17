@@ -49,7 +49,9 @@ class Lease(models.Model):
     startDate = models.DateField(verbose_name="Lease Start Date")
     dueDate = models.DateField(verbose_name="Rent Due Date")
     endDate = models.DateField(blank=True, null=True, verbose_name="Lease End Date")
-    monthsLeft = models.IntegerField(verbose_name="Months Remaining on Lease")
+    monthsLeft = models.IntegerField(
+        blank=True, null=True, verbose_name="Months Remaining on Lease"
+    )
     currentBalance = models.FloatField(default=0, verbose_name="Balance")
     linkToProperty = models.OneToOneField(
         "RentalProperty",
