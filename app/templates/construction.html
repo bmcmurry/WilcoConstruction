@@ -1,6 +1,8 @@
-{% extends 'base.html' %}{% load static %}{% block content %}
+{% extends 'base.html' %} {% load static %} {% load widget_tweaks %}
+<! ignore prettier ->{% block content %}
 <section class="container-fluid" id="main">
   <!-- about company text -->
+  {% comment %}
   <h1 class="text-center display-2">Construction</h1>
   <p class="lh-base text-center ms-5 me-5">
     Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, omnis
@@ -170,10 +172,16 @@
       </div>
     </div>
   </div>
+  {% endcomment %}
 
   <!-- quotes -->
 
-  <form class="bg-warning-subtle" action="" id="quoteform" method="post">
+  <form
+    class="bg-warning-subtle"
+    action=""
+    method="post"
+    enctype="multipart/form-data"
+  >
     {%csrf_token%}
     <div class="container-fluid w-75 p-3">
       <h1 class="text-center display-2">Get a Quote</h1>
@@ -189,27 +197,15 @@
 
       <div class="mb-3">
         <div class="row mb-2">
-          <div class="col">
-            <label for="exampleFormControlInput1" class="form-label"
-              >First Name</label
-            >
-            <input
-              type="text"
-              class="form-control"
-              placeholder="First name"
-              aria-label="First name"
-            />
+          <div class="col form-field">
+            <label for="first_name" class="form-label">First Name</label>
+            {% render_field quote_view.first_name class="form-control" %}
           </div>
           <div class="col">
             <label for="exampleFormControlInput1" class="form-label"
               >Last Name</label
             >
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Last name"
-              aria-label="Last name"
-            />
+            {% render_field quote_view.last_name class="form-control" %}
           </div>
         </div>
         <div class="row">
@@ -217,45 +213,33 @@
             <label for="exampleFormControlInput1" class="form-label"
               >Phone</label
             >
-            <input
-              type="text"
-              class="form-control"
-              placeholder="555-555-5555"
-              aria-label="Phone"
-            />
+            {% render_field quote_view.phone class="form-control" %}
           </div>
           <div class="col">
             <label for="exampleFormControlInput1" class="form-label"
               >Email</label
             >
-            <input
-              type="text"
-              class="form-control"
-              placeholder="email@emailprovider.com"
-              aria-label="email"
-            />
+            {% render_field quote_view.email class="form-control" %}
           </div>
         </div>
       </div>
       <label for="exampleFormControlInput1" class="form-label"
         >Catagories</label
       >
-      <select class="form-select mb-2" aria-label="Default select example">
-        <option selected>Please select an area we can help you with</option>
-        <option value="1">Residential</option>
-        <option value="2">Commercial</option>
-        <option value="3">Other</option>
+      <select class="form-select">
+        {% render_field quote_view.subject class="custom-select form-select" %}
+        <option val="Residential">Residential</option>
+        <option val="Commercial">Commercial</option>
+        <option val="Other">Other</option>
       </select>
+
       <div class="mb-3">
         <label for="exampleFormControlTextarea1" class="form-label"
           >Explain the work needed in as much detail as possible.</label
         >
-        <textarea
-          class="form-control"
-          id="exampleFormControlTextarea1"
-          rows="3"
-        ></textarea>
+        {% render_field quote_view.message class="form-control" %}
       </div>
+
       <button type="submit" class="btn btn-warning mb-3">Submit</button>
     </div>
   </form>

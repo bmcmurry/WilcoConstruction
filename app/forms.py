@@ -133,9 +133,7 @@ class QuoteForm(forms.Form):
         ("Other", "Other"),
     )
 
-    categories = forms.Select(choices=CHOICES)
-
+    categories = forms.ChoiceField(choices=CHOICES)
     phone = forms.CharField(max_length=20)
     subject = forms.CharField(max_length=100)
-
     message = forms.CharField(widget=forms.Textarea)
