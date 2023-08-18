@@ -53,6 +53,10 @@ class LeaseForm(forms.ModelForm):
             "endDate": forms.DateInput(attrs={"type": "date"}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["monthsLeft"].required = False
+
 
 class CreatePropertyForm(ModelForm):
     class Meta:
