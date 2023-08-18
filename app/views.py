@@ -1,3 +1,4 @@
+from django.http.response import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect
 from django.forms import modelformset_factory, formset_factory
 from django.views.generic import (
@@ -710,6 +711,7 @@ def quote_view(request):
 
 
 ##===============below is the payment views for stripe============================##
+@csrf_exempt
 class PaymentPortalView(View):
     template_name = "payment_portal.html"
 
@@ -787,44 +789,63 @@ class PaymentPortalView(View):
         return redirect(checkout_session.url, code=303)
 
 
-def PaymentSuccess(request):
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    checkout_session_id = request.GET.get("session_id", None)
-    session = stripe.checkout.Session.retrieve(checkout_session_id)
+class PaymentSuccessView(TemplateView):
+    template_name = "payments/payment_success.html"
 
-    customer = stripe.Customer.retrieve(session.customer)
-    user = request.user  # Fix: Removed duplicated line
+    def get(self, request, *args, **kwargs):
+        session_id = request.GET.get("session_id")
+        if session_id is None:
+            return HttpResponseNotFound()
 
-    # Retrieve the logged-in tenant
-    logged_in_tenant = Tenant.objects.get(linkToBuiltinUser=user)
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        session = stripe.checkout.Session.retrieve(session_id)
 
-    custom_amount = None
-    print(session)
-    print(session.line_items)
-    for line_item in session.line_items.data:
-        if line_item.price:
-            custom_amount = (
-                float(line_item.price.unit_amount) / 100
-            )  # Convert from cents
-            # break
+        payment = get_object_or_404(
+            TenantPayment, stripe_payment_intent=session.payment_intent
+        )
+        payment.payment_bool = True
+        payment.save()
+        return render(request, self.template_name)
 
-    if custom_amount is not None:
-        lease = logged_in_tenant.linkToLease
 
-        if lease:
-            user_payment, created = TenantPayment.objects.get_or_create(
-                app_user=logged_in_tenant
-            )
-            user_payment.payment_bool = True
-            user_payment.payment_amount = custom_amount
-            user_payment.linked_lease = lease
-            user_payment.stripe_checkout_id = checkout_session_id
-            user_payment.save()
+# def PaymentSuccess(request):
+#     stripe.api_key = settings.STRIPE_SECRET_KEY
+#     checkout_session_id = request.GET.get("session_id", None)
+#     session = stripe.checkout.Session.retrieve(checkout_session_id)
 
-            lease.currentBalance += custom_amount
-            lease.save()
+#     customer = stripe.Customer.retrieve(session.customer)
+#     user = request.user  # Fix: Removed duplicated line
 
-    return render(request, "payment_success.html", {"customer": customer})
+#     # Retrieve the logged-in tenant
+#     logged_in_tenant = Tenant.objects.get(linkToBuiltinUser=user)
+
+#     custom_amount = None
+#     print(session)
+#     print(session.line_items)
+#     for line_item in session.line_items.data:
+#         if line_item.price:
+#             custom_amount = (
+#                 float(line_item.price.unit_amount) / 100
+#             )  # Convert from cents
+#             # break
+
+#     if custom_amount is not None:
+#         lease = logged_in_tenant.linkToLease
+
+#         if lease:
+#             user_payment, created = TenantPayment.objects.get_or_create(
+#                 app_user=logged_in_tenant
+#             )
+#             user_payment.payment_bool = True
+#             user_payment.payment_amount = custom_amount
+#             user_payment.linked_lease = lease
+#             user_payment.stripe_checkout_id = checkout_session_id
+#             user_payment.save()
+
+#             lease.currentBalance += custom_amount
+#             lease.save()
+
+#     return render(request, "payment_success.html", {"customer": customer})
 
 
 def PaymentFail(request):
