@@ -711,7 +711,8 @@ def quote_view(request):
 
 
 ##===============below is the payment views for stripe============================##
-@csrf_exempt
+
+
 class PaymentPortalView(View):
     template_name = "payment_portal.html"
 
