@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.utils.text import slugify
 import calendar
 from .utils import *
+from datetime import datetime, timedelta
+from django.db.models.signals import pre_delete
 
 
 class Tenant(models.Model):
@@ -65,6 +67,10 @@ class Lease(models.Model):
         return f"{self.linkToProperty}"
 
     def save(self, *args, **kwargs):
+        if self.startDate and self.endDate:
+            today = datetime.now().date()
+            difference = self.endDate - today
+            self.monthsLeft = max(difference.days // 30, 0)
         if not self.pk:
             today = timezone.now().date()
             next_month = today.replace(day=1) + timezone.timedelta(days=32)
@@ -145,7 +151,7 @@ class ConstructionJobPhoto(models.Model):
 
 
 class TenantPayment(models.Model):
-    app_user = models.ForeignKey("Tenant", on_delete=models.PROTECT)
+    app_user = models.ForeignKey("Tenant", on_delete=models.CASCADE)
     payment_bool = models.BooleanField(default=False)
     stripe_checkout_id = models.CharField(max_length=500)
     payment_amount = models.FloatField(default=0)

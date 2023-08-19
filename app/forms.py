@@ -46,16 +46,19 @@ class LeaseForm(forms.ModelForm):
 
     class Meta:
         model = Lease
-        fields = "__all__"
-        exclude = ["slug", "dueDate", "monthsLeft"]
+        fields = [
+            "pricePerMonth",
+            "isLate",
+            "lateFee",
+            "startDate",
+            "endDate",
+            "linkToProperty",
+        ]
+        exclude = ["slug", "dueDate"]
         widgets = {
             "startDate": forms.DateInput(attrs={"type": "date"}),
             "endDate": forms.DateInput(attrs={"type": "date"}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["monthsLeft"].required = False
 
 
 class CreatePropertyForm(ModelForm):

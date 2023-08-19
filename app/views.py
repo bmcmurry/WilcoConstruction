@@ -31,6 +31,7 @@ from .forms import *
 from .models import *
 from .decorators import *
 from django.db.models import Q
+from django.utils import timezone
 
 # Your code implementation goes here...
 
@@ -311,6 +312,10 @@ class CreateLeaseView(CreateView):
         lease = form.save()
         selected_tenants = form.cleaned_data["selected_tenant"]
 
+        if lease.linkToProperty:
+            lease.linkToProperty.isRented = True
+            lease.linkToProperty.save()
+
         # Loop through the selected tenants and link each one to the lease
         for tenant in selected_tenants:
             tenant.linkToLease = lease
@@ -340,6 +345,10 @@ class UpdateLeaseView(UpdateView):
 
         if lease_form.is_valid():
             lease_form.save()
+
+            if lease.linkToProperty:
+                lease.linkToProperty.isRented = True
+                lease.linkToProperty.save()
 
             return redirect("manager_interface")
         context = {
@@ -399,23 +408,22 @@ class ManagerInterfaceView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        current_month = timezone.now().month
         context["leases"] = Lease.objects.all()
         context["latest_tenants"] = Tenant.objects.all()
         context["properties"] = RentalProperty.objects.all()
         context["construction"] = ConstructionJob.objects.all()
         context["tenants"] = Tenant.objects.filter(linkToLease__isnull=False)
+        context["date"] = current_month
 
-        for lease in context["leases"]:
-            balance = lease.currentBalance
-            lease.monthsLeft = (lease.endDate - lease.startDate).days // 30
-            if lease.dueDate < timezone.now().date() and balance < 0:
-                lease.isLate = True
-                late_fee = 20  # Example late fee amount
-                lease.lateFee += late_fee
-                balance -= late_fee
-            else:
-                lease.isLate = False
-                lease.lateFee = 0  # Reset late fee if not late
+        # Create a dictionary to track associated properties
+        associated_properties = {
+            lease.linkToProperty for lease in context["leases"] if lease.linkToProperty
+        }
+
+        # Update isRented status for properties based on the dictionary
+        for property in context["properties"]:
+            property.isRented = property in associated_properties
 
         return context
 
