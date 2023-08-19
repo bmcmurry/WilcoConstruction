@@ -12,7 +12,7 @@ urlpatterns = [
     path("contact/", contact_view, name="contact"),
     path("payment-portal/", PaymentPortalView.as_view(), name="payment_portal"),
     path(
-        "payment_success/<session_id>/",
+        "payment_success/",
         PaymentSuccessView.as_view(),
         name="payment_success",
     ),
