@@ -884,8 +884,6 @@ class PaymentSuccessView(View):  # Use the View class
 
         user = request.user
         tenant = Tenant.objects.get(linkToBuiltinUser=user)
-        linked_lease = tenant.linkToLease
-        lease = Lease.objects.get(linked_lease)
         payment = TenantPayment.objects.create(
             app_user=tenant,
             stripe_checkout_id=session.payment_intent,
@@ -893,7 +891,8 @@ class PaymentSuccessView(View):  # Use the View class
             payment_amount=session.amount_total / 100,
             linked_lease=tenant.linkToLease,
         )
-        lease.currentBalance += session.amount_total
+        lease = payment.linked_lease
+        lease.currentBalance += session.amount_total / 100
         lease.save()
 
         return render(request, self.template_name)
