@@ -799,8 +799,8 @@ class PaymentPortalView(View):
         return redirect(checkout_session.url, code=303)
 
 
-class PaymentSuccessView(TemplateView):
-    template_name = "payments/payment_success.html"
+class PaymentSuccessView(View):  # Use the View class
+    template_name = "payment_success.html"
 
     def get(self, request, *args, **kwargs):
         session_id = request.GET.get("session_id")
@@ -810,11 +810,24 @@ class PaymentSuccessView(TemplateView):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         session = stripe.checkout.Session.retrieve(session_id)
 
-        payment = get_object_or_404(
-            TenantPayment, stripe_payment_intent=session.payment_intent
-        )
+        # Retrieve the TenantPayment object based on stripe_checkout_id
+        try:
+            payment = TenantPayment.objects.get(
+                stripe_checkout_id=session.payment_intent
+            )
+        except TenantPayment.DoesNotExist:
+            return HttpResponseNotFound()
+
+        # Update the fields and save the payment object
         payment.payment_bool = True
+        payment.payment_amount = (
+            session.amount_total
+        )  # Replace with the actual field name
+        payment.linked_lease = (
+            payment.app_user.linkToLease
+        )  # Or however you retrieve the linked lease
         payment.save()
+
         return render(request, self.template_name)
 
 
