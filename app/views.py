@@ -816,7 +816,7 @@ class PaymentSuccessView(View):  # Use the View class
             app_user=tenant,
             stripe_checkout_id=session.payment_intent,
             payment_bool=True,
-            payment_amount=session.amount_total,  # Replace with the actual field name
+            payment_amount=session.amount_paid,  # Replace with the actual field name
             linked_lease=tenant.linkToLease,
         )
 
