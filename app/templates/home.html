@@ -2,7 +2,7 @@
 <! ignore prettier ->
 {% block content %}
 
-<section id="main">
+
   <!-- image carousel -->
    <div
     id="carouselExampleCaptions"
@@ -77,7 +77,7 @@
     </button>
   </div> 
   <!-- about company text -->
- 
+  <section id="main">
   <div class="container-fluid p-3  ">
     <h1 class="text-center display-2 mt-3">Welcome</h1><br>
     <div class="d-flex justify-content-center">
@@ -140,7 +140,7 @@
           {% if construction_photo %}
           <img
             src="{{ construction_photo.picture.url }}"
-            class="img-fluid rounded-start"
+            class="img-fluid rounded-end"
             alt="{{ feature_construction.title }}"
             style=""
           />

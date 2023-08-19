@@ -1,6 +1,15 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <section>
-  <div class="container home_msg"><h1>Your payment didn't go through.</h1></div>
+  <div class="container-fluid w-75 p-3">
+    <div class="card p-2 bg-warning-subtle shadow">
+      <div>
+        <p class="display-6">Your payment didn't go through.</p>
+        <br /><a href="{% url 'home' %}"
+          ><button type="button" class="btn btn-warning">Home</button></a
+        >
+      </div>
+    </div>
+  </div>
 </section>
 
 {% endblock content %}
