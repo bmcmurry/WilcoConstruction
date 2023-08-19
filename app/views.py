@@ -809,6 +809,16 @@ class PaymentSuccessView(View):  # Use the View class
 
         stripe.api_key = settings.STRIPE_SECRET_KEY
         session = stripe.checkout.Session.retrieve(session_id)
+
+        payment_item = None
+        for item in session.display_items:
+            if item.custom is not None and item.custom.startswith("Payment for"):
+                payment_item = item
+                break
+
+        if payment_item is None:
+            return HttpResponseNotFound()
+
         user = request.user
         tenant = Tenant.objects.get(linkToBuiltinUser=user)
 
@@ -816,7 +826,7 @@ class PaymentSuccessView(View):  # Use the View class
             app_user=tenant,
             stripe_checkout_id=session.payment_intent,
             payment_bool=True,
-            payment_amount=session.amount_paid,  # Replace with the actual field name
+            payment_amount=payment_item.amount / 100,
             linked_lease=tenant.linkToLease,
         )
 
