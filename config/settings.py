@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "widget_tweaks",
     "phonenumber_field",
+    "storages",
 ]
 
 
@@ -187,3 +188,11 @@ REDIRECT_DOMAIN = "https://wilco-app-c6223eb282aa.herokuapp.com/"
 STRIPE_PUBLIC_KEY = "pk_test_51NbRsdCffthPIRLKv0yaJi2mlLwitUqqcipZYX3mdsreLqTrHy0SmO7scfqmercaOfWZQcLObh7uzKyUjUFsVj3r00mBVR5D9z"
 STRIPE_SECRET_KEY = "sk_test_51NbRsdCffthPIRLKsKEjqXGQo3H7zcpoulRxnXo0Wrj46cpkhVmysuZ4lmhDDOc0dd7Uk1mfolG1HIYHqFjoVWbw00jj6IpQCL"
 STRIPE_WEBHOOK_SECRET = "whsec_DeI7ADiOqIcDdWHLhGlETJP0audtpDCH"
+
+# ------------------S3-----------------
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")

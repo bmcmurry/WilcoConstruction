@@ -1,3 +1,4 @@
+from django.http.response import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect
 from django.forms import modelformset_factory, formset_factory
 from django.views.generic import (
@@ -30,6 +31,7 @@ from .forms import *
 from .models import *
 from .decorators import *
 from django.db.models import Q
+from django.utils import timezone
 
 # Your code implementation goes here...
 
@@ -310,6 +312,10 @@ class CreateLeaseView(CreateView):
         lease = form.save()
         selected_tenants = form.cleaned_data["selected_tenant"]
 
+        # if lease.linkToProperty:
+        #     lease.linkToProperty.isRented = True
+        #     lease.linkToProperty.save()
+
         # Loop through the selected tenants and link each one to the lease
         for tenant in selected_tenants:
             tenant.linkToLease = lease
@@ -339,6 +345,10 @@ class UpdateLeaseView(UpdateView):
 
         if lease_form.is_valid():
             lease_form.save()
+
+            # if lease.linkToProperty:
+            #     lease.linkToProperty.isRented = True
+            #     lease.linkToProperty.save()
 
             return redirect("manager_interface")
         context = {
@@ -398,23 +408,23 @@ class ManagerInterfaceView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        current_month = timezone.now().month
         context["leases"] = Lease.objects.all()
         context["latest_tenants"] = Tenant.objects.all()
         context["properties"] = RentalProperty.objects.all()
         context["construction"] = ConstructionJob.objects.all()
         context["tenants"] = Tenant.objects.filter(linkToLease__isnull=False)
+        context["date"] = current_month
 
-        for lease in context["leases"]:
-            balance = lease.currentBalance
-            lease.monthsLeft = (lease.endDate - lease.startDate).days // 30
-            if lease.dueDate < timezone.now().date() and balance < 0:
-                lease.isLate = True
-                late_fee = 20  # Example late fee amount
-                lease.lateFee += late_fee
-                balance -= late_fee
-            else:
-                lease.isLate = False
-                lease.lateFee = 0  # Reset late fee if not late
+        # Create a dictionary to track associated properties
+        associated_properties = {
+            lease.linkToProperty for lease in context["leases"] if lease.linkToProperty
+        }
+
+        # Update isRented status for properties based on the dictionary
+        for property in context["properties"]:
+            property.isRented = property in associated_properties
+            property.save()
 
         return context
 
@@ -557,7 +567,7 @@ class UpdateConstructionView(UpdateView):
         construction = ConstructionJob.objects.get(id=pk)
         construction_form = CreateConstructionForm(request.POST, instance=construction)
         photos = ConstructionJobPhoto.objects.filter(constructionOfImage=construction)
-        construction_photo_form = PropertyPhotoForm(request.POST, request.FILES)
+        construction_photo_form = ConstructionPhotoForm(request.POST, request.FILES)
 
         if construction_form.is_valid() and construction_photo_form.is_valid():
             construction_form.save()
@@ -710,49 +720,67 @@ def quote_view(request):
 
 
 ##===============below is the payment views for stripe============================##
-def PaymentPortal(request):
-    user_id = request.user.id
-    try:
-        tenant = Tenant.objects.get(linkToBuiltinUser__id=user_id)
-    except Tenant.DoesNotExist:
-        tenant = None
 
-    if tenant:
-        payment_history = TenantPayment.objects.filter(app_user=tenant)
+
+class PaymentPortalView(View):
+    template_name = "payment_portal.html"
+
+    def get(self, request, *args, **kwargs):
+        user_id = request.user.id
+        try:
+            tenant = Tenant.objects.get(linkToBuiltinUser__id=user_id)
+        except Tenant.DoesNotExist:
+            tenant = None
+
+        payment_history = None
         lease = None
-        if tenant.linkToLease:
-            lease = Lease.objects.get(id=tenant.linkToLease.id)
 
-        if lease:
-            # Tenant has a lease
-            print(lease)
+        if tenant:
+            payment_history = TenantPayment.objects.filter(app_user=tenant)
+
+            if tenant.linkToLease:
+                lease = Lease.objects.get(id=tenant.linkToLease.id)
+
+        properties = RentalProperty.objects.all()
+        search_query = request.GET.get("search")
+        if search_query:
+            properties = properties.filter(
+                Q(address__icontains=search_query) | Q(city__icontains=search_query)
+            )
+
+        context = {
+            "tenant": tenant,
+            "payment_history": payment_history,
+            "lease": lease,
+            "properties": properties,
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+
+        payment_option = request.POST.get("payment_option")
+        if payment_option == "full":
+            # Handle full payment
+            user = request.user
+            tenant = Tenant.objects.get(linkToBuiltinUser=user)
+            lease = tenant.linkToLease
+            payment_amount = lease.pricePerMonth
         else:
-            # Tenant does not have a lease
-            properties = RentalProperty.objects.all()
-            search_query = request.GET.get("search")
-            if search_query:
-                properties = properties.filter(
-                    Q(address__icontains=search_query) | Q(city__icontains=search_query)
-                )
+            payment_amount = float(request.POST.get("payment_amount"))
 
-            print(tenant)
-            print(payment_history)
-
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    if request.method == "POST":
-        payment_amount = float(request.POST.get("payment_amount"))
-        # Create a product dynamically if not already created
         product = stripe.Product.create(
             name="Rent",
             description="A dynamically created product for custom payments",
         )
 
-        # Create a Price object with dynamic price using line_items.price_data
         price = stripe.Price.create(
-            unit_amount=int(payment_amount * 100),  # Convert to cents
+            unit_amount=int(payment_amount * 100),
             currency="usd",
             product=product.id,
         )
+
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=[
@@ -767,46 +795,73 @@ def PaymentPortal(request):
             + "payment_success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=settings.REDIRECT_DOMAIN + "payment_fail",
         )
+
         return redirect(checkout_session.url, code=303)
-    return render(request, "payment_portal.html")
 
 
-def PaymentSuccess(request):
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    checkout_session_id = request.GET.get("session_id", None)
-    session = stripe.checkout.Session.retrieve(checkout_session_id)
+class PaymentSuccessView(View):  # Use the View class
+    template_name = "payment_success.html"
 
-    customer = stripe.Customer.retrieve(session.customer)
-    user = request.user  # Fix: Removed duplicated line
+    def get(self, request, *args, **kwargs):
+        session_id = request.GET.get("session_id")
+        if session_id is None:
+            return HttpResponseNotFound()
 
-    # Retrieve the logged-in tenant
-    logged_in_tenant = Tenant.objects.get(linkToBuiltinUser=user)
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        session = stripe.checkout.Session.retrieve(session_id)
 
-    custom_amount = None
-    for line_item in session.line_items.data:
-        if line_item.price:
-            custom_amount = (
-                float(line_item.price.unit_amount) / 100
-            )  # Convert from cents
-            break  # Assuming you only need the first item, otherwise adjust accordingly
+        user = request.user
+        tenant = Tenant.objects.get(linkToBuiltinUser=user)
 
-    if custom_amount is not None:
-        lease = logged_in_tenant.linkToLease
+        payment = TenantPayment.objects.create(
+            app_user=tenant,
+            stripe_checkout_id=session.payment_intent,
+            payment_bool=True,
+            payment_amount=session.amount_total / 100,
+            linked_lease=tenant.linkToLease,
+        )
 
-        if lease:
-            user_payment, created = TenantPayment.objects.get_or_create(
-                app_user=logged_in_tenant
-            )
-            user_payment.payment_bool = True
-            user_payment.payment_amount = custom_amount
-            user_payment.linked_lease = lease
-            user_payment.stripe_checkout_id = checkout_session_id
-            user_payment.save()
+        return render(request, self.template_name)
 
-            lease.currentBalance += custom_amount
-            lease.save()
 
-    return render(request, "payment_success.html", {"customer": customer})
+# def PaymentSuccess(request):
+#     stripe.api_key = settings.STRIPE_SECRET_KEY
+#     checkout_session_id = request.GET.get("session_id", None)
+#     session = stripe.checkout.Session.retrieve(checkout_session_id)
+
+#     customer = stripe.Customer.retrieve(session.customer)
+#     user = request.user  # Fix: Removed duplicated line
+
+#     # Retrieve the logged-in tenant
+#     logged_in_tenant = Tenant.objects.get(linkToBuiltinUser=user)
+
+#     custom_amount = None
+#     print(session)
+#     print(session.line_items)
+#     for line_item in session.line_items.data:
+#         if line_item.price:
+#             custom_amount = (
+#                 float(line_item.price.unit_amount) / 100
+#             )  # Convert from cents
+#             # break
+
+#     if custom_amount is not None:
+#         lease = logged_in_tenant.linkToLease
+
+#         if lease:
+#             user_payment, created = TenantPayment.objects.get_or_create(
+#                 app_user=logged_in_tenant
+#             )
+#             user_payment.payment_bool = True
+#             user_payment.payment_amount = custom_amount
+#             user_payment.linked_lease = lease
+#             user_payment.stripe_checkout_id = checkout_session_id
+#             user_payment.save()
+
+#             lease.currentBalance += custom_amount
+#             lease.save()
+
+#     return render(request, "payment_success.html", {"customer": customer})
 
 
 def PaymentFail(request):
@@ -817,23 +872,25 @@ def PaymentFail(request):
 def stripe_webhook(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     payload = request.body
-    signature_header = request.META["HTTP_STRIPE_SIGNATURE"]
-    event = None
+    signature_header = request.META.get("HTTP_STRIPE_SIGNATURE", "")
 
     try:
         event = stripe.Webhook.construct_event(
             payload, signature_header, settings.STRIPE_WEBHOOK_SECRET
         )
-    except ValueError as e:
-        return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError as e:
+    except (ValueError, stripe.error.SignatureVerificationError):
         return HttpResponse(status=400)
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         session_id = session.get("id", None)
-        user_payment = TenantPayment.objects.get(stripe_checkout_id=session_id)
-        user_payment.payment_bool = True
-        user_payment.save()
+
+        try:
+            user_payment = TenantPayment.objects.get(stripe_checkout_id=session_id)
+            user_payment.payment_bool = True
+            user_payment.save()
+        except TenantPayment.DoesNotExist:
+            # Handle the case when the payment is not found
+            pass
 
     return HttpResponse(status=200)

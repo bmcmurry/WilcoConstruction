@@ -10,8 +10,12 @@ urlpatterns = [
     path("login/", loginPage, name="login"),
     path("logout/", logoutUser, name="logout"),
     path("contact/", contact_view, name="contact"),
-    path("payment-portal/", PaymentPortal, name="payment_portal"),
-    path("payment_success/", PaymentSuccess, name="payment_success"),
+    path("payment-portal/", PaymentPortalView.as_view(), name="payment_portal"),
+    path(
+        "payment_success/",
+        PaymentSuccessView.as_view(),
+        name="payment_success",
+    ),
     path("payment_fail/", PaymentFail, name="payment_fail"),
     path("stripe_webhook/", stripe_webhook, name="stripe_webhook"),
     # -------------PASSWORD/RESET-------------
