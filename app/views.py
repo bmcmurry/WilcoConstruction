@@ -312,9 +312,9 @@ class CreateLeaseView(CreateView):
         lease = form.save()
         selected_tenants = form.cleaned_data["selected_tenant"]
 
-        if lease.linkToProperty:
-            lease.linkToProperty.isRented = True
-            lease.linkToProperty.save()
+        # if lease.linkToProperty:
+        #     lease.linkToProperty.isRented = True
+        #     lease.linkToProperty.save()
 
         # Loop through the selected tenants and link each one to the lease
         for tenant in selected_tenants:
@@ -346,9 +346,9 @@ class UpdateLeaseView(UpdateView):
         if lease_form.is_valid():
             lease_form.save()
 
-            if lease.linkToProperty:
-                lease.linkToProperty.isRented = True
-                lease.linkToProperty.save()
+            # if lease.linkToProperty:
+            #     lease.linkToProperty.isRented = True
+            #     lease.linkToProperty.save()
 
             return redirect("manager_interface")
         context = {
@@ -424,6 +424,7 @@ class ManagerInterfaceView(TemplateView):
         # Update isRented status for properties based on the dictionary
         for property in context["properties"]:
             property.isRented = property in associated_properties
+            property.save()
 
         return context
 
