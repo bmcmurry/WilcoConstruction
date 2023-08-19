@@ -59,6 +59,42 @@
     <!-- Show all properties if search_query does not exist -->
     {% for property in properties %}
     {% if property.isRented == False %}
+    <div class="modal fade modal-lg" id="{{ property.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-warning">
+         
+            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ property.address }}</h1>
+         
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% with property_photo=property.propertyphoto_set.all %}
+            {% if property_photo %}
+      
+            <! ignore prettier ->
+            {% for photo in property_photo %}
+            <img
+              src="{{ photo.picture.url }}"
+              class="card-img-top p-2"
+              alt="{{ property.address }}"
+            />
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+          <br>
+            <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
+            <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
+            <p class="card-text">{{ property.description }}</p>
+
+          </div>
+          <div class="modal-footer bg-warning">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            
+          </div>
+        </div>
+      </div>
+    </div> 
     <div class="col-sm-12 col-md-3 mb-3 mb-sm-0 mx-auto rental-card" data-address="{{ property.address }}" data-city="{{ property.city }}" data-isRented="{{ property.isRented }}" data-price="{{ property.price }}" data-squarefoot="{{ property.squarefoot }}" data-bedrooms="{{ property.bedrooms }}" data-numOfBathrooms="{{ property.bathrooms }}" data-isPetFriendly="{{ property.isPetFriendly }}">
   
       <div class="card mt-3">

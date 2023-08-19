@@ -1,5 +1,18 @@
-{% extends 'base.html' %} {% load static %}
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 <section>
-<div class"container home_msg"><h1>Thanks for your email, we will get in touch with you soon!</h1></div></section>
+  <div class="container-fluid w-75 p-3">
+    <div class="card p-2 bg-warning-subtle shadow">
+      <div>
+        <p class="display-6">
+          Thank you for your interest in Wilco Real Estate and Construction, we
+          will get in touch with you soon!
+        </p>
+        <br /><a href="{% url 'home' %}"
+          ><button type="button" class="btn btn-warning">Home</button></a
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock content %}
