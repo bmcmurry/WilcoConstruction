@@ -810,7 +810,7 @@ class PaymentSuccessView(View):  # Use the View class
         stripe.api_key = settings.STRIPE_SECRET_KEY
         session = stripe.checkout.Session.retrieve(session_id)
         user = request.user
-        tenant = Tenant.objects.get(User=user)
+        tenant = Tenant.objects.get(linkToBuiltinUser=user)
 
         payment = TenantPayment.objects.create(
             app_user=tenant,
