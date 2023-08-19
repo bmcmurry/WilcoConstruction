@@ -493,6 +493,15 @@ class EmailSuccessView(TemplateView):
         return context
 
 
+class EmailFailView(TemplateView):
+    template_name = "email_fail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        return context
+
+
 # ----------------CONSTRUCTION---------------
 class ConstructionView(TemplateView):
     template_name = "construction.html"
@@ -705,10 +714,10 @@ def contact_view(request):
                     fail_silently=False,
                 )
                 # Add success message or redirect to a success page
-                return render(request, "home")
+                return render(request, "email_success.html")
             except Exception as e:
                 # Handle the email sending error, add error message or redirect to an error page
-                return redirect("properties")
+                return redirect("email_fail.html")
         else:
             print(contact_view.errors)
     else:
@@ -742,10 +751,10 @@ def quote_view(request):
                     fail_silently=False,
                 )
                 # Add success message or redirect to a success page
-                return render(request, "home")
+                return render(request, "email_success.html")
             except Exception as e:
                 # Handle the email sending error, add error message or redirect to an error page
-                return redirect("construction")
+                return redirect("email_fail.html")
         else:
             print(quote_view.errors)
     else:
