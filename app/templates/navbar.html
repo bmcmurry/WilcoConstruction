@@ -6,9 +6,7 @@
       width="200" />
     </a>
     {% if user.is_authenticated %}
-    <p
-      class="text-center d-none d-md-block display-6 position-absolute top-50 start-50 translate-middle"
-    >
+    <p class="text-center d-none d-md-block display-6">
       Welcome, {{ user.username }}!
     </p>
     {% endif %}
