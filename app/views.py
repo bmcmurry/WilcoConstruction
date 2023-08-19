@@ -503,8 +503,10 @@ class EmailFailView(TemplateView):
 
 
 # ----------------CONSTRUCTION---------------
-class ConstructionView(TemplateView):
+class ConstructionView(FormView, TemplateView):
     template_name = "construction.html"
+    form_class = ContactForm
+    success_url = "email_success"
     ITEMS_PER_PAGE = 12
 
     def get_context_data(self, **kwargs):
@@ -542,6 +544,32 @@ class ConstructionView(TemplateView):
 
         context["construction_jobs"] = p.get_page(page_number)
         context["construction_images"] = p_images.get_page(page_number)
+        return context
+
+    def form_valid(self, form):
+        first_name = form.cleaned_data["first_name"]
+        last_name = form.cleaned_data["last_name"]
+        email = form.cleaned_data["email"]
+        phone = form.cleaned_data["phone"]
+        subject = form.cleaned_data["subject"]
+        message = form.cleaned_data["message"]
+
+        # Send the email here
+        try:
+            send_mail(
+                subject,
+                f"Name: {first_name} {last_name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}",
+                email,
+                [
+                    "bryanmcmurry7@gmail.com",
+                ],  # Replace with the actual recipient email address
+                fail_silently=False,
+            )
+            # Add success message or redirect to a success page
+            return super().form_valid(form)
+        except Exception as e:
+            # Handle the email sending error, add error message or redirect to an error page
+            return self.form_invalid(form)
 
 
 @method_decorator(login_required, name="dispatch")

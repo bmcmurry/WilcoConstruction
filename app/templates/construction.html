@@ -1,311 +1,160 @@
 {% extends 'base.html' %} {% load static %} {% load widget_tweaks %}
 <! ignore prettier ->
-{% block content %}
-<section class="container-fluid" id="main">
-  <!-- about company text -->
-
-  <h1 class="text-center display-2">Construction</h1>
-  <h4 class="text-center display-6">Our Services:</h4>
-  <div class="d-flex justify-content-center">
-    <p class="lh-base text-center ms-5 me-5 w-50">
-      <b>Design and Planning:</b> Our expert team of architects and designers
-      work closely with you to bring your ideas to life. We create innovative
-      and functional designs that blend aesthetic appeal with practicality,
-      ensuring that your project stands out while meeting your specific
-      requirements. <br /><br /><b>Residential Construction:</b> From cozy homes
-      to luxurious estates, we specialize in crafting residential spaces that
-      reflect your unique style and comfort. Our skilled craftsmen ensure
-      top-notch quality in every aspect, from foundation to finishing touches.
-      <br /><br /><b>Commercial Construction:</b> Whether you're looking to
-      build an office space, retail outlet, or a large-scale commercial
-      facility, we have the expertise to deliver exceptional results. We
-      understand the importance of creating spaces that promote productivity,
-      engagement, and customer satisfaction. <br /><br /><b
-        >Renovation and Remodeling:</b
-      >
-      Transform your existing spaces into something fresh and inspiring with our
-      renovation and remodeling services. We breathe new life into outdated
-      structures, enhancing functionality and aesthetics to align with modern
-      standards. <br /><br /><b>Interior and Exterior Finishes:</b> Our
-      attention to detail extends to interior and exterior finishes. We offer a
-      wide range of options, from intricate woodwork and decorative stonework to
-      sleek modern finishes, ensuring your project is a true masterpiece.<br /><br /><b>
-        Project Management:</b
-      >
-      We take the stress out of construction by providing dedicated project
-      management services. Our experienced team ensures that timelines are met,
-      budgets are adhered to, and every aspect of the project progresses
-      smoothly. <br /><br /><b> Green Building Solutions:</b> As advocates of
-      sustainable construction, we incorporate eco-friendly practices and
-      materials to minimize environmental impact. We design and build
-      energy-efficient spaces that benefit both occupants and the planet.
-      <br /><br /><b>Structural Engineering:</b> Our in-house team of structural
-      engineers ensures the integrity and safety of every project. From
-      foundation analysis to seismic retrofitting, we ensure that your structure
-      stands strong for years to come. <br /><br /><b
-        >Consultation and Advisory:</b
-      >
-      Unsure about where to start? Our experts provide consultation and advisory
-      services, guiding you through the entire process. We help you make
-      informed decisions that align with your goals and budget. <br /><br /><b
-        >Quality Assurance:</b
-      >
-      We are committed to delivering the highest quality standards. Our
-      stringent quality control processes ensure that every phase of the
-      construction meets or exceeds industry norms. <br /><br />
-      At Wilco Real Estate and Construction, our passion for construction is
-      matched only by our commitment to client satisfaction. From residential to
-      commercial projects, we bring expertise, innovation, and integrity to
-      every endeavor. Let's build your dreams together. Contact us today to
-      embark on your construction journey with Wilco. Together, we'll shape a
-      future that's built on excellence.
-    </p>
-  </div>
-  <!-- contruction cards -->
-  <div class="row mb-3">
-    <div class="col-md-6 mb-3 mb-sm-0">
-      <div class="card">
-        <img src="{% static "images/const1.jpg" %}" class="card-img-top"
-        alt="..." />
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This content is a little bit longer.
-          </p>
-          <p class="card-text">
-            <a href="{% url 'contact' %}"
-              ><button type="button" class="btn btn-warning">
-                Contact Us
-              </button></a
-            >
-            <a href="#quoteform"
-              ><button type="button" class="btn btn-warning">
-                Get a Quote
-              </button></a
-            >
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 mb-3 mb-sm-0">
-      <div class="card">
-        <img src="{% static "images/const2.jpg" %}" class="card-img-top"
-        alt="..." />
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This content is a little bit longer.
-          </p>
-          <p class="card-text">
-            <a href="contact.html"
-              ><button type="button" class="btn btn-warning">
-                Contact Us
-              </button></a
-            >
-            <a href="#quoteform"
-              ><button type="button" class="btn btn-warning">
-                Get a Quote
-              </button></a
-            >
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row mb-3">
-    <div class="col-md-6 mb-3 mb-sm-0">
-      <div class="card">
-        <img src="{% static "images/const1.jpg" %}" class="card-img-top"
-        alt="..." />
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This content is a little bit longer.
-          </p>
-          <p class="card-text">
-            <a href="contact.html"
-              ><button type="button" class="btn btn-warning">
-                Contact Us
-              </button></a
-            >
-            <a href="#quoteform"
-              ><button type="button" class="btn btn-warning">
-                Get a Quote
-              </button></a
-            >
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 mb-3 mb-sm-0">
-      <div class="card">
-        <img src="{% static "images/const2.jpg" %}" class="card-img-top"
-        alt="..." />
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This content is a little bit longer.
-          </p>
-          <p class="card-text">
-            <a href="contact.html"
-              ><button type="button" class="btn btn-warning">
-                Contact Us
-              </button></a
-            >
-            <a href="#quoteform"
-              ><button type="button" class="btn btn-warning">
-                Get a Quote
-              </button></a
-            >
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row mb-3">
-    <div class="col-md-6 mb-3 mb-sm-0">
-      <div class="card">
-        <img src="{% static "images/const1.jpg" %}" class="card-img-top"
-        alt="..." />
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This content is a little bit longer.
-          </p>
-          <p class="card-text">
-            <a href="contact.html"
-              ><button type="button" class="btn btn-warning">
-                Contact Us
-              </button></a
-            >
-            <a href="#quoteform"
-              ><button type="button" class="btn btn-warning">
-                Get a Quote
-              </button></a
-            >
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 mb-3 mb-sm-0">
-      <div class="card">
-        <img src="{% static "images/const2.jpg" %}" class="card-img-top"
-        alt="..." />
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This content is a little bit longer.
-          </p>
-          <p class="card-text">
-            <a href="contact.html"
-              ><button type="button" class="btn btn-warning">
-                Contact Us
-              </button></a
-            >
-            <a href="#quoteform"
-              ><button type="button" class="btn btn-warning">
-                Get a Quote
-              </button></a
-            >
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- quotes -->
-
-  <form
-    class="bg-warning-subtle"
-    action=""
-    method="post"
-    enctype="multipart/form-data"
-  >
-    {%csrf_token%}
-    <div class="container-fluid w-75 p-3">
-      <h1 class="text-center display-2">Get a Quote</h1>
-      <p class="lh-base text-center ms-5 me-5">
-        Thank you for considering Wilco Real Estate and Construction for your
-        construction needs. Please take a few moments to provide us with some
-        details about your project, and we'll be happy to provide you with a
-        personalized quote. Your answers will help us understand the scope of
-        work and your specific requirements.
-        <br /><br />Please try to include:<br />
-        <br /><b> Project Type: </b>[New
-        Construction/Renovation/Remodeling/Other] <br /><b>Project Location:</b>
-        [Address/City/State] <br /><b>Project Timeline:</b> [Desired Start
-        Date/Completion Date] <br /><b>Budget (if available):</b> [Budget Range
-        or Specific Amount] <br /><b>Scope of Work: </b>Please provide a brief
-        description of the project. Include any specific details, requirements,
-        or special considerations that will help us understand your needs.
-        <br /><br /><b>Additional Information: </b>Please feel free to provide
-        any additional details or questions you might have about the project.<br /><br />
-        By submitting this form, you authorize Wilco Real Estate and
-        Construction to contact you regarding your construction project. We
-        respect your privacy and will not share your information with third
-        parties. Once we receive your information, our expert team will
-        carefully review your project details and provide you with a
-        comprehensive quote within 7 business days. We appreciate the
-        opportunity to work with you and look forward to making your
-        construction vision a reality. Thank you for choosing Wilco Real Estate
-        and Construction.
+  {% block content %}
+  <section class="container-fluid" id="main">
+    <!-- about company text -->
+    <h1 class="text-center display-2">Construction</h1>
+    <h4 class="text-center display-6">Our Services:</h4>
+    <div class="d-flex justify-content-center">
+      <p class="lh-base text-center ms-5 me-5 w-50">
+        <b>Design and Planning:</b> Our expert team of architects and designers
+        work closely with you to bring your ideas to life. We create innovative
+        and functional designs that blend aesthetic appeal with practicality,
+        ensuring that your project stands out while meeting your specific
+        requirements. <br /><b>Residential Construction:</b> From cozy homes to
+        luxurious estates, we specialize in crafting residential spaces that
+        reflect your unique style and comfort. Our skilled craftsmen ensure
+        top-notch quality in every aspect, from foundation to finishing touches.
+        <br /><b>Commercial Construction:</b> Whether you're looking to build an
+        office space, retail outlet, or a large-scale commercial facility, we have
+        the expertise to deliver exceptional results. We understand the importance
+        of creating spaces that promote productivity, engagement, and customer
+        satisfaction. <br /><b>Renovation and Remodeling:</b> Transform your
+        existing spaces into something fresh and inspiring with our renovation and
+        remodeling services. We breathe new life into outdated structures,
+        enhancing functionality and aesthetics to align with modern standards.
+        <br /><b>Interior and Exterior Finishes:</b> Our attention to detail
+        extends to interior and exterior finishes. We offer a wide range of
+        options, from intricate woodwork and decorative stonework to sleek modern
+        finishes, ensuring your project is a true masterpiece.<br /><b>
+          Project Management:</b>
+        We take the stress out of construction by providing dedicated project
+        management services. Our experienced team ensures that timelines are met,
+        budgets are adhered to, and every aspect of the project progresses
+        smoothly. <br /><b> Green Building Solutions:</b> As advocates of
+        sustainable construction, we incorporate eco-friendly practices and
+        materials to minimize environmental impact. We design and build
+        energy-efficient spaces that benefit both occupants and the planet.
+        <br /><b>Structural Engineering:</b> Our in-house team of structural
+        engineers ensures the integrity and safety of every project. From
+        foundation analysis to seismic retrofitting, we ensure that your structure
+        stands strong for years to come. <br /><b>Consultation and Advisory:</b>
+        Unsure about where to start? Our experts provide consultation and advisory
+        services, guiding you through the entire process. We help you make
+        informed decisions that align with your goals and budget. <br /><b>Quality Assurance:</b>
+        We are committed to delivering the highest quality standards. Our
+        stringent quality control processes ensure that every phase of the
+        construction meets or exceeds industry norms. <br /><br />
+        At Wilco Real Estate and Construction, our passion for construction is
+        matched only by our commitment to client satisfaction. From residential to
+        commercial projects, we bring expertise, innovation, and integrity to
+        every endeavor. Let's build your dreams together. Contact us today to
+        embark on your construction journey with Wilco. Together, we'll shape a
+        future that's built on excellence.
       </p>
-
-      <div class="mb-3">
-        <div class="row mb-2">
-          <div class="col form-field">
-            <label for="first_name" class="form-label">First Name</label>
-            {% render_field quote_view.first_name class="form-control" %}
-          </div>
-          <div class="col">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Last Name</label
-            >
-            {% render_field quote_view.last_name class="form-control" %}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Phone</label
-            >
-            {% render_field quote_view.phone class="form-control" %}
-          </div>
-          <div class="col">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Email</label
-            >
-            {% render_field quote_view.email class="form-control" %}
-          </div>
-        </div>
-      </div>
-      <label for="exampleFormControlInput1" class="form-label"
-        >Catagories</label
-      >
-      <select class="form-select">
-        {% render_field quote_view.subject class="custom-select form-select" %}
-        <option val="Residential">Residential</option>
-        <option val="Commercial">Commercial</option>
-        <option val="Other">Other</option>
-      </select>
-
-      <div class="mb-3">
-        <label for="exampleFormControlTextarea1" class="form-label"
-          >Explain the work needed in as much detail as possible.</label
-        >
-        {% render_field quote_view.message class="form-control" %}
-      </div>
-
-      <button type="submit" class="btn btn-warning mb-3">Submit</button>
     </div>
-  </form>
-</section>
-{% endblock content %}
+    <!-- quotes -->
+    <div class="row mb-3" id="rental-cards-container">
+      {% for job in construction_jobs %}
+      {% if job.isComplete == False %}
+      <div class="col-sm-12 col-md-3 mb-3 mb-sm-0 mx-auto rental-card" data-address="{{ job.address }}"
+        data-city="{{ job.city }}" data-price="{{ job.price }}">
+        <div class="card mt-3">
+          {% with construction_image=job.constructionjobphoto_set.first %}
+          {% if construction_image %}
+          <img src="{{ construction_image.picture.url }}" class="card-img-top" alt="{{ job.address }}" />
+          {% else %}
+          <p class="card-text">No Image Found</p>
+          {% endif %}
+          <h5 class="card-title">{{ job.address }}</h5>
+          <div class="overflow-y-scroll" style="height: 100px;">
+            <p class="card-text">{{ job.description }}</p>
+          </div>
+          <p class="card-text">
+            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal-{{ job.id }}">
+              Info
+            </button>
+          </p>
+          {% endwith %}
+        </div>
+        <div class="modal fade modal-lg" id="modal-{{ job.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-warning">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">{{ job.address }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                {% with construction_images=job.constructionjobphoto_set.all %}
+                {% if construction_images %}
+                {% for photo in construction_images %}
+                <img src="{{ photo.picture.url }}" class="card-img-top p-2" alt="{{ job.address }}" />
+                {% endfor %}
+                {% else %}
+                <p class="card-text">No Images Found</p>
+                {% endif %}
+                {% endwith %}
+                <p class="card-text">{{ job.description }}</p>
+              </div>
+              <div class="modal-footer bg-warning">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <form class="bg-warning-subtle" action="" method="post" enctype="multipart/form-data">
+      {%csrf_token%}
+      <div class="container-fluid w-75 p-3">
+        <h1 class="text-center display-2">Get a Quote</h1>
+        <p class="lh-base text-center ms-5 me-5">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, omnis
+          perspiciatis sint voluptatum tempore sunt iusto ab at aspernatur illo!
+          Possimus totam eligendi aliquid corrupti quis voluptas ipsum repellendus
+          nam? Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi,
+          natus adipisci aliquam unde voluptates incidunt repellendus culpa
+          praesentium voluptatum error aspernatur odio tempora corporis
+          perferendis quasi iure non assumenda repellat!
+        </p>
+        <div class="mb-3">
+          <div class="row mb-2">
+            <div class="col form-field">
+              <label for="first_name" class="form-label">First Name</label>
+              {% render_field form.first_name class="form-control" %}
+            </div>
+            <div class="col">
+              <label for="exampleFormControlInput1" class="form-label">Last Name</label>
+              {% render_field form.last_name class="form-control" %}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label for="exampleFormControlInput1" class="form-label">Phone</label>
+              {% render_field form.phone class="form-control" %}
+            </div>
+            <div class="col">
+              <label for="exampleFormControlInput1" class="form-label">Email</label>
+              {% render_field form.email class="form-control" %}
+            </div>
+          </div>
+        </div>
+        <label for="exampleFormControlInput1" class="form-label">Catagories</label>
+        <select class="form-select">
+          <option val="Residential">Residential</option>
+          <option val="Commercial">Commercial</option>
+          <option val="Other">Other</option>
+        </select>
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label">Explain the work needed in as much
+            detail as possible.</label>
+          {% render_field form.message class="form-control" %}
+        </div>
+        <button type="submit" class="btn btn-warning mb-3">Submit</button>
+      </div>
+    </form>
+  </section>
+  {% endblock %}
