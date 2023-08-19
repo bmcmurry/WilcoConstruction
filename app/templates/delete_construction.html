@@ -1,9 +1,9 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
+
 <section>
-  <br />
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card card-body">
+  <div class="container-fluid w-75 p-3">
+    <div class="card p-2 bg-warning-subtle shadow">
+      <div>
         <p>Are you sure you want to delete "{{ construction }}"</p>
         <form
           action="{% url 'delete_construction' construction.id %}"
