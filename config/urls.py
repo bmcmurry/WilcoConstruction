@@ -10,6 +10,8 @@ urlpatterns = [
     path("login/", loginPage, name="login"),
     path("logout/", logoutUser, name="logout"),
     path("contact/", contact_view, name="contact"),
+    path("email_success/", EmailSuccessView.as_view(), name="email_success"),
+    # ----------------Stripe-Payment------------------
     path("payment-portal/", PaymentPortalView.as_view(), name="payment_portal"),
     path(
         "payment_success/",
