@@ -809,24 +809,16 @@ class PaymentSuccessView(View):  # Use the View class
 
         stripe.api_key = settings.STRIPE_SECRET_KEY
         session = stripe.checkout.Session.retrieve(session_id)
+        user = request.user
+        tenant = Tenant.objects.get(User=user)
 
-        # Retrieve the TenantPayment object based on stripe_checkout_id
-        try:
-            payment = TenantPayment.objects.get(
-                stripe_checkout_id=session.payment_intent
-            )
-        except TenantPayment.DoesNotExist:
-            return HttpResponseNotFound()
-
-        # Update the fields and save the payment object
-        payment.payment_bool = True
-        payment.payment_amount = (
-            session.amount_total
-        )  # Replace with the actual field name
-        payment.linked_lease = (
-            payment.app_user.linkToLease
-        )  # Or however you retrieve the linked lease
-        payment.save()
+        payment = TenantPayment.objects.create(
+            app_user=tenant,
+            stripe_checkout_id=session.payment_intent,
+            payment_bool=True,
+            payment_amount=session.amount_total,  # Replace with the actual field name
+            linked_lease=tenant.linkToLease,
+        )
 
         return render(request, self.template_name)
 
@@ -879,23 +871,25 @@ def PaymentFail(request):
 def stripe_webhook(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     payload = request.body
-    signature_header = request.META["HTTP_STRIPE_SIGNATURE"]
-    event = None
+    signature_header = request.META.get("HTTP_STRIPE_SIGNATURE", "")
 
     try:
         event = stripe.Webhook.construct_event(
             payload, signature_header, settings.STRIPE_WEBHOOK_SECRET
         )
-    except ValueError as e:
-        return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError as e:
+    except (ValueError, stripe.error.SignatureVerificationError):
         return HttpResponse(status=400)
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         session_id = session.get("id", None)
-        user_payment = TenantPayment.objects.get(stripe_checkout_id=session_id)
-        user_payment.payment_bool = True
-        user_payment.save()
+
+        try:
+            user_payment = TenantPayment.objects.get(stripe_checkout_id=session_id)
+            user_payment.payment_bool = True
+            user_payment.save()
+        except TenantPayment.DoesNotExist:
+            # Handle the case when the payment is not found
+            pass
 
     return HttpResponse(status=200)
