@@ -25,19 +25,19 @@
             >
             {% render_field construction_form.description class="form-control" %}
           </div>
+          <div>
           {% for photo in photos %}
-      <img
-        src="{{ photo.picture.url }}"
-        class="card-img-top m-2" style="max-width: 275px;"
-        alt="{{ photo }}"
-      />
-      <a class="btn btn-danger mt-2" href="{% url 'delete_construction_photo' photo.id %}">delete</a>
-      {% endfor %}
-      {{ construction_photo_form.as_p }}
-        <button class="btn btn-success mt-2" type="submit">Update</button>
+            <img src="{{ photo.picture.url }}" class="card-img-top m-2" style="max-width: 275px;" alt="{{ photo }}"/>
+            <a class="btn btn-danger mt-2" href="{% url 'delete_construction_photo' photo.id %}">delete</a>
+          {% endfor %}
+          {{ construction_photo_form.as_p }}
+         
+        <button class="btn btn-success mt-2 " type="submit">Update</button>
         <a class="btn btn-warning mt-2" href="{% url 'manager_interface' %}">Cancel</a>
+      </div>
       </form>
     </div>
   </div>
 </section>
 {% endblock content %}
+
