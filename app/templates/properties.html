@@ -20,7 +20,7 @@
   </form>
 <br>
 
-  <div class="m-3 d-flex justify-content-evenly">
+  <div class="m-3 d-flex justify-content-evenly d-xs-none">
       <form class="d-flex ">
         <div class="form-floating me-3">
           <select class="form-select" id="category" aria-label="Floating label select example" name="category">
@@ -29,7 +29,7 @@
             <option value="bedrooms">Beds</option>
             
           </select>
-          <label for="sort-category" class="text-warning">Sort by Catagory:</label>
+          <label for="sort-category" class="text-warning ">Sort by Catagory:</label>
         </div>
         <div class="form-floating">
           <select class="form-select" id="sort-order" aria-label="Floating label select example" name="sort">
@@ -95,7 +95,7 @@
         </div>
       </div>
     </div> 
-    <div class="col-sm-12 col-md-3 mb-3 mb-sm-0 mx-auto rental-card" data-address="{{ property.address }}" data-city="{{ property.city }}" data-isRented="{{ property.isRented }}" data-price="{{ property.price }}" data-squarefoot="{{ property.squarefoot }}" data-bedrooms="{{ property.bedrooms }}" data-numOfBathrooms="{{ property.bathrooms }}" data-isPetFriendly="{{ property.isPetFriendly }}">
+    <div class="col-sm-12 col-md-4 mb-3 mb-sm-0 mx-auto rental-card" data-address="{{ property.address }}" data-city="{{ property.city }}" data-isRented="{{ property.isRented }}" data-price="{{ property.price }}" data-squarefoot="{{ property.squarefoot }}" data-bedrooms="{{ property.bedrooms }}" data-numOfBathrooms="{{ property.bathrooms }}" data-isPetFriendly="{{ property.isPetFriendly }}">
   
       <div class="card mt-3">
         {% with property_photo=property.propertyphoto_set.first %}
