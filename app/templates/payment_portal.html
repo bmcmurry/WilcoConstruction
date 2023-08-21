@@ -1,4 +1,15 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
+
+<style>
+  .negative {
+    color: red;
+    font-weight: bold;
+  }
+  .positive {
+    color: green;
+  }
+</style>
+
 <section class="container-fluid">
   <div class="text-center">
     <h1 class="text-center display-2 mt-3">Payment Portal</h1>
@@ -18,9 +29,8 @@
               </tr>
               <tr>
                 <th>Rent</th>
-                <td>{{lease.pricePerMonth}}</td>
+                <td>${{lease.pricePerMonth|floatformat:2}}</td>
               </tr>
-              <tr></tr>
               <tr>
                 <th>Due By</th>
                 <td>{{lease.dueDate}}</td>
@@ -28,16 +38,29 @@
               {% if lease.isLate %}
               <tr>
                 <th>Late Fee</th>
-                <td>{{lease.lateFee}}</td>
+                <td>
+                  <span class="negative"
+                    >(${{lease.lateFee|floatformat:2}})</span
+                  >
+                </td>
               </tr>
               {% endif %}
               <tr>
                 <th>Balance</th>
-                <td>{{lease.currentBalance}}</td>
+                {% if lease.currentBalance < 0 %}
+                <td>
+                  <span class="negative"
+                    >(${{ lease.currentBalance|floatformat:2 }})</span
+                  >{% else %}
+                  <! ignore prettier ->
+                  <span class="positive">
+                    ${{ lease.currentBalance|floatformat:2 }} </span
+                  >{% endif %}
+                </td>
               </tr>
               <tr>
                 <th>Amount Due</th>
-                <td>{{amount_owed}}</td>
+                <td>${{amount_owed|floatformat:2}}</td>
               </tr>
             </table>
             <p>tenant: {{tenant}}</p>
@@ -80,7 +103,7 @@
                       />
 
                       <label class="form-check-label" for="payFullAmount">
-                        Pay Full Rent: ${{amount_owed}}
+                        Pay Full Rent: ${{amount_owed|floatformat:2}}
                       </label>
                     </div>
                   </div>
@@ -141,7 +164,7 @@
               <tr>
                 <td>{{payment.dueDate}}</td>
                 <td>{{payment.dateCreated}}</td>
-                <td>{{payment.payment_amount}}</td>
+                <td>${{payment.payment_amount|floatformat:2}}</td>
               </tr>
               {% endfor %}
             </table>
