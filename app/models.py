@@ -156,6 +156,7 @@ class TenantPayment(models.Model):
     stripe_checkout_id = models.CharField(max_length=500)
     payment_amount = models.FloatField(default=0)
     dateCreated = models.DateField(auto_now_add=True)
+    dueDate = models.DateField(null=True, blank=True)
     linked_lease = models.ForeignKey(
         "Lease", on_delete=models.SET_NULL, null=True, blank=True
     )
@@ -167,4 +168,12 @@ class TenantPayment(models.Model):
 @receiver(post_save, sender=Tenant)
 def create_user_payment(sender, instance, created, **kwargs):
     if created:
-        TenantPayment.objects.create(app_user=instance)
+        lease = instance.linkToLease
+        if lease:
+            TenantPayment.objects.create(
+                app_user=instance,
+                linked_lease=lease,
+                dueDate=lease.dueDate,
+            )
+        else:
+            TenantPayment.objects.create(app_user=instance)

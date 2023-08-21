@@ -10,23 +10,6 @@
           <div class="card-header bg-warning">Current Rent</div>
           <div class="card-body">
             <h5 class="card-title">Special title treatment</h5>
-            <form
-              class="d-flex col mt-3"
-              role="search"
-              method="get"
-              action="{% url 'properties' %}"
-            >
-              {% csrf_token %}
-              <input
-                class="form-control me-2"
-                type="search"
-                name="search"
-                value="{{ search_query }}"
-                placeholder="Search..."
-                aria-label="Search"
-              />
-              <button class="btn btn-warning me-2" type="submit">Search</button>
-            </form>
             <br />
             <table class="table table-bordered">
               <tr>
@@ -51,6 +34,10 @@
               <tr>
                 <th>Balance</th>
                 <td>{{lease.currentBalance}}</td>
+              </tr>
+              <tr>
+                <th>Amount Due</th>
+                <td>{{amount_owed}}</td>
               </tr>
             </table>
             <p>tenant: {{tenant}}</p>
@@ -93,7 +80,7 @@
                       />
 
                       <label class="form-check-label" for="payFullAmount">
-                        Pay Full Rent: ${{lease.pricePerMonth}}
+                        Pay Full Rent: ${{amount_owed}}
                       </label>
                     </div>
                   </div>
@@ -146,11 +133,13 @@
             <br />
             <table class="table table-bordered">
               <tr>
-                <th>Date</th>
+                <th>Date Due</th>
+                <th>Date Paid</th>
                 <th>Amount Paid</th>
               </tr>
               {% for payment in payment_history %}
               <tr>
+                <td>{{payment.dueDate}}</td>
                 <td>{{payment.dateCreated}}</td>
                 <td>{{payment.payment_amount}}</td>
               </tr>

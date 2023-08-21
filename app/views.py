@@ -806,25 +806,20 @@ class PaymentPortalView(View):
 
         payment_history = None
         lease = None
-
+        amount_owed = 0
         if tenant:
             payment_history = TenantPayment.objects.filter(app_user=tenant)
 
             if tenant.linkToLease:
                 lease = Lease.objects.get(id=tenant.linkToLease.id)
-
-        properties = RentalProperty.objects.all()
-        search_query = request.GET.get("search")
-        if search_query:
-            properties = properties.filter(
-                Q(address__icontains=search_query) | Q(city__icontains=search_query)
-            )
-
+                amount_owed = float(
+                    lease.pricePerMonth - lease.currentBalance + lease.lateFee
+                )
         context = {
             "tenant": tenant,
             "payment_history": payment_history,
             "lease": lease,
-            "properties": properties,
+            "amount_owed": amount_owed,
         }
 
         return render(request, self.template_name, context)
@@ -833,17 +828,21 @@ class PaymentPortalView(View):
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
         payment_option = request.POST.get("payment_option")
+        user = request.user
+        tenant = Tenant.objects.get(linkToBuiltinUser=user)
+        lease = tenant.linkToLease
+
         if payment_option == "full":
-            # Handle full payment
-            user = request.user
-            tenant = Tenant.objects.get(linkToBuiltinUser=user)
-            lease = tenant.linkToLease
-            payment_amount = lease.pricePerMonth
+            if lease.isLate:
+                full_amount = lease.pricePerMonth + lease.lateFee - lease.currentBalance
+            else:
+                full_amount = lease.pricePerMonth - lease.currentBalance
+            payment_amount = full_amount
         else:
             payment_amount = float(request.POST.get("payment_amount"))
 
         product = stripe.Product.create(
-            name="Rent",
+            name=f"Rent for {lease.linkToProperty}",
             description="A dynamically created product for custom payments",
         )
 
@@ -891,7 +890,7 @@ class PaymentSuccessView(View):  # Use the View class
             payment_amount=session.amount_total / 100,
             linked_lease=tenant.linkToLease,
         )
-        lease = payment.linked_lease
+        lease = Lease.objects.get(instance=payment.linked_lease)
         lease.currentBalance += session.amount_total / 100
         lease.save()
 
