@@ -890,7 +890,7 @@ class PaymentSuccessView(View):  # Use the View class
             payment_amount=session.amount_total / 100,
             linked_lease=tenant.linkToLease,
         )
-        lease = Lease.objects.get(instance=payment.linked_lease)
+        lease = Lease.objects.get(id=payment.linked_lease.id)
         lease.currentBalance += session.amount_total / 100
         lease.save()
 
