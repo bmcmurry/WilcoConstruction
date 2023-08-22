@@ -107,7 +107,7 @@ class CreateConstructionForm(ModelForm):
     class Meta:
         model = ConstructionJob
         fields = "__all__"
-        exclude = ["dateCreated", "isFeaturedConstruction", "slug", "isComplete"]
+        exclude = ["dateCreated", "isFeaturedConstruction", "slug"]
 
 
 class ConstructionPhotoForm(ModelForm):

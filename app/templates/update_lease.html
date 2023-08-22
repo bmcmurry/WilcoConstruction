@@ -89,8 +89,13 @@
             </div>
           </div>
         </div>
-        <button class="btn btn-success mt-2" type="submit">Update</button>
-        <a class="btn btn-warning mt-2" href="{% url 'manager_interface' %}"
+        <button class="btn btn mt-2" id="button-green" type="submit">
+          Update
+        </button>
+        <a
+          class="btn btn mt-2"
+          id="button-yellow"
+          href="{% url 'manager_interface' %}"
           >Cancel</a
         >
       </form>

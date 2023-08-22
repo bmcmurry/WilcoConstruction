@@ -8,19 +8,32 @@
   }
 </style>
 <section class="overflow-hidden">
-  {% comment %} {% include 'create_property.html' %}
-
-  <a href="{% url 'search_property' %}">
-    <button type="button" class="btn btn-warning mb-3 ms-5">Search</button></a
-  >{% endcomment %}
   <h1 class="text-center display-2 mt-3">Manager Interface</h1>
   <div class="row p-2">
     <div class="col-lg-12 col-xl-6 mb-2 overflow-auto">
       <div class="card card-body overflow-scroll">
-        <input type="search" class="form-control" id="datatable-search-input" />
-        <label class="form-label" for="datatable-search-input"
-          >Search Properties</label
+        <form
+          class="d-flex col mt-3"
+          role="search"
+          method="get"
+          action="{% url 'properties' %}"
         >
+          {% csrf_token %}
+
+          <input
+            class="form-control me-2"
+            type="search"
+            name="search_property"
+            value="{{ search_query }}"
+            placeholder="Search..."
+            aria-label="Search"
+          />
+
+          <button class="btn btn me-2" id="button-yellow" type="submit">
+            Search
+          </button>
+        </form>
+        <br />
         <div class="table-responsive">
           <table class="table table-sm table-striped table-hover">
             <tr>
@@ -29,6 +42,9 @@
               <th>Occupied</th>
               <th>Bedrooms</th>
               <th>Bathrooms</th>
+              <th></th>
+              <th></th>
+              <th></th>
             </tr>
             {% for property in properties %}
             <tr>
@@ -63,7 +79,10 @@
           </table>
         </div>
         <div>
-          <a href="{% url 'create_property' %}" class="btn btn-warning"
+          <a
+            href="{% url 'create_property' %}"
+            class="btn btn"
+            id="button-yellow"
             >Add Property</a
           >
         </div>
@@ -84,6 +103,9 @@
               <th>Balance</th>
               <th>Late</th>
               <th>Expires In</th>
+              <th></th>
+              <th></th>
+              <th></th>
             </tr>
             {% for lease in leases %}
             <tr>
@@ -203,7 +225,7 @@
           </table>
         </div>
         <div>
-          <a href="{% url 'create_lease' %}" class="btn btn-warning"
+          <a href="{% url 'create_lease' %}" class="btn btn" id="button-yellow"
             >Create Lease</a
           >
         </div>
@@ -221,11 +243,12 @@
               <th>Title</th>
               <th>Completed</th>
               <th>Start Date</th>
+              <th></th>
             </tr>
             {% for job in construction %}
             <tr>
               <td>{{ job.title }}</td>
-              {% if job.isCompleted %}
+              {% if job.isComplete %}
               <td style="color: green">Yes</td>
               {% else %}
               <td style="color: red">No</td>
@@ -253,7 +276,10 @@
           </table>
         </div>
         <div>
-          <a href="{% url 'create_construction' %}" class="btn btn-warning"
+          <a
+            href="{% url 'create_construction' %}"
+            class="btn btn"
+            id="button-yellow"
             >Add Construction Job</a
           >
         </div>

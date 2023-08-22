@@ -35,20 +35,23 @@
                 <th>Due By</th>
                 <td>{{lease.dueDate}}</td>
               </tr>
-              {% if lease.isLate %}
               <tr>
                 <th>Late Fee</th>
+                {% if lease.isLate %}
                 <td>
                   <span class="negative"
                     >(${{lease.lateFee|floatformat:2}})</span
                   >
                 </td>
+                {% else %}
+                <td>No late Fee</td>
+                {% endif %}
               </tr>
-              {% endif %}
               <tr>
                 <th>Balance</th>
-                {% if lease.currentBalance < 0 %}
+
                 <td>
+                  {% if lease.currentBalance < 0 %}
                   <span class="negative"
                     >(${{ lease.currentBalance|floatformat:2 }})</span
                   >{% else %}
@@ -72,7 +75,9 @@
       </div>
       <div class="p-2 flex-shrink-1">
         <div class="card rounded-3">
-          <div class="card-header bg-success">Pay Rent</div>
+          <div class="card-header bg-success" id="pay-rent-header">
+            Pay Rent
+          </div>
 
           <div class="card-body mx-1 my-2">
             <div class="pt-3">
@@ -86,7 +91,9 @@
                 >
                   {% csrf_token %}
                   <h5 class="card-title">
-                    Hi {{ user }}! To pay, click on this button
+                    Hi {{ user }}! To pay, select either the pay full amount or
+                    choose a amount to pay a portion of your rent now and the
+                    rest later. Then click on the Pay Now button below
                   </h5>
 
                   <div
@@ -134,9 +141,10 @@
 
                   <button
                     type="submit"
-                    class="btn btn-success m-2"
+                    class="btn btn m-2"
                     href="{% url 'payment_portal' %}"
                     data-bind-href="pricing"
+                    id="button-green"
                   >
                     Pay Now
                   </button>

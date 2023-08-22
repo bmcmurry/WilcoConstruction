@@ -18,9 +18,10 @@
   <div class="d-flex justify-content-center">
     <button
       type="button"
-      class="btn btn-warning"
+      class="btn btn"
       data-bs-toggle="modal"
       data-bs-target="#services"
+      id="button-yellow"
     >
       Our Services
     </button>
@@ -192,14 +193,15 @@
         <p class="card-text">
           <button
             type="button"
-            class="btn btn-warning m-2"
+            class="btn btn m-2"
+            id="button-yellow"
             data-bs-toggle="modal"
             data-bs-target="#modal-{{ job.id }}"
           >
             Info
           </button>
           <a href="#quoteform">
-            <button type="button" class="btn btn-warning">
+            <button type="button" class="btn btn-" id="button-yellow">
               Get a Quote
             </button></a
           >
@@ -341,7 +343,9 @@
         {% render_field form.message class="form-control" %}
       </div>
 
-      <button type="submit" class="btn btn-warning mb-3">Submit</button>
+      <button type="submit" class="btn btn mb-3" id="button-yellow">
+        Submit
+      </button>
     </div>
   </form>
 </section>

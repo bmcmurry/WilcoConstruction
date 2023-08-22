@@ -10,8 +10,11 @@
           method="POST"
         >
           {% csrf_token %}
-          <input class="btn btn-danger" type="submit" name="confirm" />
-          <a class="btn btn-warning" href="{% url 'manager_interface' %}"
+          <input class="btn btn" id="button-red" type="submit" name="confirm" />
+          <a
+            class="btn btn"
+            id="button-yellow"
+            href="{% url 'manager_interface' %}"
             >Cancel</a
           >
         </form>

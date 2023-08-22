@@ -1,5 +1,28 @@
 {% extends 'base.html' %} {% load widget_tweaks %} {% load static %}
 <! ignore prettier ->
+<style>
+  /* Add custom styling for the toggle button */
+  .btn-group .btn {
+    cursor: pointer;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-group .btn.btn-success {
+    background-color: #28a745; /* Change to your desired color */
+    color: white;
+  }
+  
+  .btn-group .btn.btn-danger {
+    background-color: #dc3545; /* Change to your desired color */
+    color: white;
+  }
+  
+  .hidden-checkbox {
+    left: -9999px;
+    
+  }
+</style>
 
 {% block content %}
 <section class="container-fluid" id="main">
@@ -12,32 +35,73 @@
           <div class="row mb-2">
             <div class="col">
               <div class="form_field">
-                <label for="exampleFormControlInput1" class="form-label"
-                  >Title</label
-                >
+                <label for="exampleFormControlInput1" class="form-label">Title</label>
                 {% render_field construction_form.title class="form-control" %}
               </div>
             </div>
-            
+            <div class="col">
+              <div class="form_field pt-2">
+                
+                  <input type="checkbox"
+                    class="hidden-checkbox"
+                    name="{{ construction_form.isComplete.name }}"
+                    id="{{ construction_form.isComplete.id }}"
+                    {% if construction_form.isComplete.value %}checked{% endif %}>
+                  <button type="button" class="btn {% if construction_form.isComplete.value %}btn-success{% else %}btn-danger{% endif %} toggle-button">
+                    {% if construction_form.isComplete.value %}Completed{% else %}Not Completed{% endif %}
+                  </button>
+                
+              </div>
+            </div>
+          </div>
           <div class="form_field">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Description</label
-            >
+            <label for="exampleFormControlInput1" class="form-label">Description</label>
             {% render_field construction_form.description class="form-control" %}
           </div>
           <div>
           {% for photo in photos %}
             <img src="{{ photo.picture.url }}" class="card-img-top m-2" style="max-width: 275px;" alt="{{ photo }}"/>
-            <a class="btn btn-danger mt-2" href="{% url 'delete_construction_photo' photo.id %}">delete</a>
+            <a class="btn btn mt-2" id="button-red" href="{% url 'delete_construction_photo' photo.id %}">delete</a>
           {% endfor %}
           {{ construction_photo_form.as_p }}
-         
-        <button class="btn btn-success mt-2 " type="submit">Update</button>
-        <a class="btn btn-warning mt-2" href="{% url 'manager_interface' %}">Cancel</a>
+        <button class="btn btn mt-2" type="submit" id="button-green">Update</button>
+        <a class="btn btn mt-2" id="button-yellow" href="{% url 'manager_interface' %}">Cancel</a>
       </div>
       </form>
     </div>
   </div>
 </section>
-{% endblock content %}
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleButton = document.querySelector('.toggle-button');
+    const hiddenCheckbox = document.querySelector('.hidden-checkbox');
+    
+    toggleButton.addEventListener('click', function() {
+      hiddenCheckbox.checked = !hiddenCheckbox.checked;
+      toggleButton.classList.toggle('btn-success', hiddenCheckbox.checked);
+      toggleButton.classList.toggle('btn-danger', !hiddenCheckbox.checked);
+      toggleButton.textContent = hiddenCheckbox.checked ? 'Completed' : 'Not Completed';
+      
+      if (hiddenCheckbox.checked) {
+        toggleButton.id = 'button-green';
+      } else {
+        toggleButton.id = 'button-red';
+      }
+    });
+    
+    hiddenCheckbox.addEventListener('change', function() {
+      toggleButton.classList.toggle('btn-success', this.checked);
+      toggleButton.classList.toggle('btn-danger', !this.checked);
+      toggleButton.textContent = this.checked ? 'Completed' : 'Not Completed';
+      
+      if (this.checked) {
+        toggleButton.id = 'button-green';
+      } else {
+        toggleButton.id = 'button-red';
+      }
+    });
+  });
+</script>
+
+{% endblock content %}

@@ -9,8 +9,10 @@
         enctype="multipart/form-data"
       >
           {% csrf_token %} {{ form.as_p }}
-          <button class="btn btn-warning" type="submit">Create Lease</button>
-       
+          <button class="btn btn" type="submit" id="button-green">Create Lease</button>
+          <a class="btn btn" href="{% url 'manager_interface' %}" id="button-yellow"
+          >Cancel</a
+        >
         </form>
       </div>
     </div>
