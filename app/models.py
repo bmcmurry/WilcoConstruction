@@ -31,16 +31,16 @@ class Tenant(models.Model):
         return self.first_name + " " + self.last_name
 
 
-@receiver(pre_save, sender=Tenant)
-def tenant_pre_save(sender, instance, *args, **kwargs):
-    if instance.slug is None:
-        slugify_instance_tenant(instance, save=False)
+# @receiver(pre_save, sender=Tenant)
+# def tenant_pre_save(sender, instance, *args, **kwargs):
+#     if instance.slug is None:
+#         slugify_instance_tenant(instance, save=False)
 
 
-@receiver(post_save, sender=Tenant)
-def tenant_post_save(sender, instance, created, *args, **kwargs):
-    if created:
-        slugify_instance_tenant(instance, save=True)
+# @receiver(post_save, sender=Tenant)
+# def tenant_post_save(sender, instance, created, *args, **kwargs):
+#     if created:
+#         slugify_instance_tenant(instance, save=True)
 
 
 class Lease(models.Model):

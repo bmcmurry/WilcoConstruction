@@ -17,7 +17,7 @@
 
     <div class="d-flex mt-4">
       <div class="p-2 w-75">
-        <div class="card">
+        <div class="card flex-grow-1 w-100">
           <div class="card-header bg-warning">Current Rent</div>
           <div class="card-body">
             <h5 class="card-title"></h5>
@@ -69,7 +69,8 @@
           </div>
         </div>
       </div>
-      <div class="p-2 flex-shrink-1">
+      {% if lease %}
+      <div class="p-2 flex-shrink-1" style="max-width: 600px;">
         <div class="card rounded-3">
           <div class="card-header bg-success" id="pay-rent-header">
             Pay Rent
@@ -134,7 +135,6 @@
                       />
                     </div>
                   </div>
-
                   <button
                     type="submit"
                     class="btn btn m-2"
@@ -150,6 +150,7 @@
           </div>
         </div>
       </div>
+      {% endif %}
     </div>
     <div class="d-flex mt-4">
       <div class="p-2 w-75">
@@ -175,7 +176,7 @@
           </div>
         </div>
       </div>
-      <div class="p-2 flex-shrink-1">
+      <div class="p-2 flex-shrink-1" style="max-width: 600px;">
         <div class="card">
           <div class="card-header bg-info-subtle">Extras</div>
           <div class="card-body">
