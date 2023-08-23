@@ -153,8 +153,13 @@
                     {% endif %}
                     {% endwith %}
                   <br>
-                    <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
-                    <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
+                  <div class="row mb-2">
+                    <div class="col">
+                  <p class="card-text">Bedrooms: {{ property.bedrooms }} </p></div>
+                  <div class="col">
+                  <p class="card-text">Bathrooms: {{ property.bathrooms }}</p></div>
+                  </div>
+                   
                     {% if property.isPetFriendly %}
                     <p class="card-text">Pets Allowed</p>
                     {% endif %}
