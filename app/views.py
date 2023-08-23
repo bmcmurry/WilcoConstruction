@@ -843,7 +843,7 @@ class PaymentPortalView(View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        stripe.api_key = settings.STRIPE_SECRET_KEY
+        stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
         payment_option = request.POST.get("payment_option")
         user = request.user
