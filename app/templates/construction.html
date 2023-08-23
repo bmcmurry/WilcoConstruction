@@ -169,7 +169,7 @@
   <div class="row mb-3" id="rental-cards-container">
     {% for job in construction_jobs %} {% if job.isComplete == False %}
     <div
-      class="col-sm-12 col-md-3 mb-3 mb-sm-0 mx-auto rental-card"
+      class="col-sm-12 col-md-4 mb-3 mb-sm-0 mx-auto rental-card"
       data-address="{{ job.address }}"
       data-city="{{ job.city }}"
       data-price="{{ job.price }}"
