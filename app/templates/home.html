@@ -103,6 +103,8 @@
             alt="{{ feature_property.address }}"
             style=""
           />
+          {% else %}
+          <img src="{% static "images\no-image.png" %}" alt="unable to load image">
           {% endif %}
         </div>
         <div class="col-md-8">
@@ -144,6 +146,8 @@
             alt="{{ feature_construction.title }}"
             style=""
           />
+          {% else %}
+          <img src="{% static "images\no-image.png" %}" alt="unable to load image">
           {% endif %}
         </div>
       </div> 

@@ -12,27 +12,6 @@
   <div class="row p-2">
     <div class="col-lg-12 col-xl-6 mb-2 overflow-auto">
       <div class="card card-body overflow-scroll">
-        <form
-          class="d-flex col mt-3"
-          role="search"
-          method="get"
-          action="{% url 'properties' %}"
-        >
-          {% csrf_token %}
-
-          <input
-            class="form-control me-2"
-            type="search"
-            name="search_property"
-            value="{{ search_query }}"
-            placeholder="Search..."
-            aria-label="Search"
-          />
-
-          <button class="btn btn me-2" id="button-yellow" type="submit">
-            Search
-          </button>
-        </form>
         <br />
         <div class="table-responsive">
           <table class="table table-sm table-striped table-hover">
@@ -90,10 +69,6 @@
     </div>
     <div class="col-lg-12 col-xl-6 overflow-auto">
       <div class="card card-body">
-        <input type="search" class="form-control" id="datatable-search-input" />
-        <label class="form-label" for="datatable-search-input"
-          >Search Leases</label
-        >
         <div class="table-responsive">
           <table class="table table-sm table-striped table-hover">
             <tr>
@@ -190,7 +165,7 @@
                         <hr />
                         {% endfor %}
                         <p class="card-text">
-                          Balance: {{ lease.currentBalance }}
+                          Balance: ${{ lease.currentBalance|floatformat:2 }}
                         </p>
                         <p class="card-text">
                           Late: {% if lease.isLate %}
@@ -199,7 +174,9 @@
                           <span style="color: green">No</span>
                           {% endif %}
                         </p>
-                        <p class="card-text">Late Fee: {{ lease.lateFee }}</p>
+                        <p class="card-text">
+                          Late Fee: ${{ lease.lateFee|floatformat:2 }}
+                        </p>
                         <p class="card-text">
                           Start of Lease: {{ lease.startDate }}
                         </p>
@@ -233,10 +210,6 @@
     </div>
     <div class="col-lg-12 col-xl-6 mb-2 overflow-auto">
       <div class="card card-body">
-        <input type="search" class="form-control" id="datatable-search-input" />
-        <label class="form-label" for="datatable-search-input"
-          >Search Construction Jobs</label
-        >
         <div class="table-responsive">
           <table class="table table-sm table-striped table-hover">
             <tr>

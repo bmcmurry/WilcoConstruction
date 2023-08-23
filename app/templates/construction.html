@@ -183,9 +183,8 @@
           class="card-img-top"
           alt="{{ job.address }}"
         />
-        {% else %}
-        <p class="card-text">No Image Found</p>
-        {% endif %}
+        {% else %} <img src="{% static "images\no-image.png" %}" alt="unable to
+        load image"> {% endif %}
         <h5 class="card-title">{{ job.address }}</h5>
         <div class="overflow-y-scroll" style="height: 100px">
           <p class="card-text">{{ job.description }}</p>
@@ -239,9 +238,8 @@
                 class="card-img-top p-2"
                 alt="{{ job.address }}"
               />
-              {% endfor %} {% else %}
-              <p class="card-text">No Images Found</p>
-              {% endif %} {% endwith %}
+              {% endfor %} {% else %} <img src="{% static "images\no-image.png"
+              %}" alt="unable to load image"> {% endif %} {% endwith %}
               <p class="card-text">{{ job.description }}</p>
             </div>
             <div class="modal-footer bg-warning">

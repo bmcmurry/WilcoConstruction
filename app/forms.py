@@ -53,6 +53,7 @@ class LeaseForm(forms.ModelForm):
             "startDate",
             "endDate",
             "linkToProperty",
+            "currentBalance",
         ]
         exclude = ["slug", "dueDate"]
         widgets = {

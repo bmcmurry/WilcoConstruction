@@ -20,7 +20,7 @@
         <div class="card">
           <div class="card-header bg-warning">Current Rent</div>
           <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
+            <h5 class="card-title"></h5>
             <br />
             <table class="table table-bordered">
               <tr>
@@ -66,10 +66,6 @@
                 <td>${{amount_owed|floatformat:2}}</td>
               </tr>
             </table>
-            <p>tenant: {{tenant}}</p>
-            <p>payment history: {{payment_history}}</p>
-            <p>lease: {{lease}}</p>
-            <p>properties: {{properties}}</p>
           </div>
         </div>
       </div>
@@ -160,7 +156,7 @@
         <div class="card">
           <div class="card-header bg-warning">Payment History</div>
           <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
+            <h5 class="card-title"></h5>
             <br />
             <table class="table table-bordered">
               <tr>
@@ -176,10 +172,6 @@
               </tr>
               {% endfor %}
             </table>
-            <p>tenant: {{tenant}}</p>
-            <p>payment history: {{payment_history}}</p>
-            <p>lease: {{lease}}</p>
-            <p>properties: {{properties}}</p>
           </div>
         </div>
       </div>
@@ -189,8 +181,14 @@
           <div class="card-body">
             <h5 class="card-title">How To Use This Page</h5>
             <p class="card-text">
-              With supporting text below as a natural lead-in to additional
-              content.
+              The Current Rent table will display your address and the next day
+              that your rent is due. Then if you have a late fee it will be
+              added and the amount you owe will be displayed at the bottom.
+              <br />
+              <hr>
+              If you are not seeing your address then contact us and notify the
+              manager, because you might need to be added to the lease in our
+              system.
             </p>
           </div>
         </div>
