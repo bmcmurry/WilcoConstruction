@@ -16,7 +16,7 @@
   <form class="d-flex col mt-3" role="search" method="get" action="{% url 'properties' %}">
     {% csrf_token %}
     <input class="form-control me-2" type="search" name="search" value="{{ search_query }}" placeholder="Search..." aria-label="Search">
-    <button class="btn btn-warning me-2" type="submit">Search</button>
+    <button class="btn btn me-2" type="submit"id="button-yellow">Search</button>
   </form>
 <br>
 
@@ -42,8 +42,8 @@
           <label for="sort-order" class="text-warning">Sort Order:</label>
         </div>
        
-          <button class="btn btn-warning ms-3" type="submit">Sort</button>
-          <button class="btn btn-warning ms-3" type="reset">Reset</button>
+          <button class="btn btn ms-3" type="submit"id="button-yellow">Sort</button>
+          <button class="btn btn ms-3" type="reset"id="button-yellow">Reset</button>
       </form>
   </div>
 </div>
@@ -83,14 +83,11 @@
             {% endif %}
             {% endwith %}
           <br>
-          <div class="d-flex justify-content-evenly">
-            <div class="col">
-            Bedrooms: {{ property.bedrooms }}
-            </div>
-            <div class="col">
-            Bathrooms: {{ property.bathrooms }}
-            </div>
-          </div>
+            <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
+            <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
+            {% if property.isPetFriendly %}
+          <p class="card-text">Pets Allowed</p>
+          {% endif %}
             <p class="card-text">{{ property.description }}</p>
 
           </div>
@@ -114,21 +111,20 @@
           alt="{{ property.address }}"
         />
         {% else %}
-        <p class="card-text">No Image Found</p>
+        <img src="{% static "images\no-image.png" %}" alt="unable to load image">
         {% endif %}
         <div class="card-body">
           <h5 class="card-title">{{ property.address }}</h5>
-          <div class="row mb-2">
-            <div class="col">
-          <p class="card-text">Bedrooms: {{ property.bedrooms }} </p></div>
-          <div class="col">
-          <p class="card-text">Bathrooms: {{ property.bathrooms }}</p></div>
-          </div>
+          <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
+          <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
+          {% if property.isPetFriendly %}
+          <p class="card-text">Pets Allowed</p>
+          {% endif %}
           <div class="overflow-y-scroll" style="height: 100px;"><p class="card-text">{{ property.description }}</p></div>
           
           <p class="card-text">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#{{ property.id }}">
+            <button type="button" class="btn btn" id="button-yellow" data-bs-toggle="modal" data-bs-target="#{{ property.id }}">
               Info
             </button>
 
@@ -157,8 +153,16 @@
                     {% endif %}
                     {% endwith %}
                   <br>
-                    <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
-                    <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
+                  <div class="row mb-2">
+                    <div class="col">
+                  <p class="card-text">Bedrooms: {{ property.bedrooms }} </p></div>
+                  <div class="col">
+                  <p class="card-text">Bathrooms: {{ property.bathrooms }}</p></div>
+                  </div>
+                   
+                    {% if property.isPetFriendly %}
+                    <p class="card-text">Pets Allowed</p>
+                    {% endif %}
                     <p class="card-text">{{ property.description }}</p>
 
                   </div>
@@ -174,7 +178,7 @@
             {% if user.is_staff %}
 
             <a href="{% url 'update_property' property.id %}"
-                ><button type="button" class="btn btn-primary">Edit</button></a
+                ><button type="button" class="btn btn" id="button-blue">Edit</button></a
               >
             {% endif %}
           </p>

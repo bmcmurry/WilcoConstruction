@@ -625,7 +625,6 @@ class UpdateConstructionView(UpdateView):
         construction_form = CreateConstructionForm(instance=construction)
         photos = ConstructionJobPhoto.objects.filter(constructionOfImage=construction)
 
-        # Get existing photos associated with the RentalProperty
         construction_photo_form = ConstructionPhotoForm()
 
         context = {
@@ -737,7 +736,7 @@ def contact_view(request):
                     f"Name: {first_name} {last_name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}",
                     email,
                     [
-                        "bryanmcmurry7@gmail.com",
+                        settings.EMAIL_HOST_USER,
                     ],  # Replace with the actual recipient email address
                     fail_silently=False,
                 )
@@ -774,7 +773,7 @@ def quote_view(request):
                     f"Name: {first_name} {last_name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}",
                     email,
                     [
-                        "bryanmcmurry7@gmail.com",
+                        settings.EMAIL_HOST_USER,
                     ],  # Replace with the actual recipient email address
                     fail_silently=False,
                 )
@@ -806,25 +805,39 @@ class PaymentPortalView(View):
 
         payment_history = None
         lease = None
-
+        amount_owed = 0
         if tenant:
-            payment_history = TenantPayment.objects.filter(app_user=tenant)
-
+            payment_history = TenantPayment.objects.filter(app_user=tenant).order_by(
+                "dateCreated"
+            )
             if tenant.linkToLease:
                 lease = Lease.objects.get(id=tenant.linkToLease.id)
+                if lease.isLate:
+                    amount_owed = float(
+                        lease.pricePerMonth + lease.lateFee - lease.currentBalance
+                    )
+                else:
+                    amount_owed = float(lease.pricePerMonth - lease.currentBalance)
 
-        properties = RentalProperty.objects.all()
-        search_query = request.GET.get("search")
-        if search_query:
-            properties = properties.filter(
-                Q(address__icontains=search_query) | Q(city__icontains=search_query)
-            )
+                today = datetime.now().date()
+                difference = today - lease.dueDate
+                months_overdue = difference.days // 30
+
+                if months_overdue > 0:
+                    # Calculate the additional amount due
+                    additional_amount_due = months_overdue * (
+                        lease.pricePerMonth + lease.lateFee
+                    )
+
+                    # Update the currentBalance and save the lease
+                    lease.currentBalance += additional_amount_due
+                    lease.save()
 
         context = {
             "tenant": tenant,
             "payment_history": payment_history,
             "lease": lease,
-            "properties": properties,
+            "amount_owed": amount_owed,
         }
 
         return render(request, self.template_name, context)
@@ -833,18 +846,25 @@ class PaymentPortalView(View):
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
         payment_option = request.POST.get("payment_option")
+        user = request.user
+        tenant = Tenant.objects.get(linkToBuiltinUser=user)
+        lease = tenant.linkToLease
+
         if payment_option == "full":
-            # Handle full payment
-            user = request.user
-            tenant = Tenant.objects.get(linkToBuiltinUser=user)
-            lease = tenant.linkToLease
-            payment_amount = lease.pricePerMonth
+            if lease.isLate:
+                full_amount = lease.pricePerMonth + lease.lateFee - lease.currentBalance
+            else:
+                full_amount = lease.pricePerMonth - lease.currentBalance
+            payment_amount = full_amount
         else:
             payment_amount = float(request.POST.get("payment_amount"))
+            if payment_amount < 0:
+                return redirect("payment_fail")
 
         product = stripe.Product.create(
-            name="Rent",
-            description="A dynamically created product for custom payments",
+            name=f"{lease.linkToProperty}",
+            description=f"""Thank you {tenant},
+              We appreciate your business""",
         )
 
         price = stripe.Price.create(
@@ -884,15 +904,21 @@ class PaymentSuccessView(View):  # Use the View class
 
         user = request.user
         tenant = Tenant.objects.get(linkToBuiltinUser=user)
+        lease = Lease.objects.get(id=tenant.linkToLease.id)
         payment = TenantPayment.objects.create(
             app_user=tenant,
             stripe_checkout_id=session.payment_intent,
             payment_bool=True,
             payment_amount=session.amount_total / 100,
             linked_lease=tenant.linkToLease,
+            dueDate=lease.dueDate,
         )
-        lease = payment.linked_lease
+
         lease.currentBalance += session.amount_total / 100
+        if lease.isLate:
+            if lease.currentBalance >= lease.pricePerMonth + lease.lateFee:
+                lease.isLate = False
+
         lease.save()
 
         return render(request, self.template_name)

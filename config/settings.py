@@ -186,7 +186,7 @@ PRODUCT_PRICE = "price_1NdxTFCffthPIRLKUftoF4Wz"
 DEBUG = True
 REDIRECT_DOMAIN = "https://wilco-app-c6223eb282aa.herokuapp.com/"
 STRIPE_PUBLIC_KEY = "pk_test_51NbRsdCffthPIRLKv0yaJi2mlLwitUqqcipZYX3mdsreLqTrHy0SmO7scfqmercaOfWZQcLObh7uzKyUjUFsVj3r00mBVR5D9z"
-STRIPE_SECRET_KEY = "sk_test_51NbRsdCffthPIRLKsKEjqXGQo3H7zcpoulRxnXo0Wrj46cpkhVmysuZ4lmhDDOc0dd7Uk1mfolG1HIYHqFjoVWbw00jj6IpQCL"
+STRIPE_TEST_SECRET_KEY = "sk_test_51NbRsdCffthPIRLKsKEjqXGQo3H7zcpoulRxnXo0Wrj46cpkhVmysuZ4lmhDDOc0dd7Uk1mfolG1HIYHqFjoVWbw00jj6IpQCL"
 STRIPE_WEBHOOK_SECRET = "whsec_DeI7ADiOqIcDdWHLhGlETJP0audtpDCH"
 
 # ------------------S3-----------------
