@@ -83,8 +83,14 @@
             {% endif %}
             {% endwith %}
           <br>
-            <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
-            <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
+          <div class="d-flex justify-content-evenly">
+            <div class="col">
+            Bedrooms: {{ property.bedrooms }}
+            </div>
+            <div class="col">
+            Bathrooms: {{ property.bathrooms }}
+            </div>
+          </div>
             <p class="card-text">{{ property.description }}</p>
 
           </div>
@@ -112,8 +118,12 @@
         {% endif %}
         <div class="card-body">
           <h5 class="card-title">{{ property.address }}</h5>
-          <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
-          <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
+          <div class="row mb-2">
+            <div class="col">
+          <p class="card-text">Bedrooms: {{ property.bedrooms }} </p></div>
+          <div class="col">
+          <p class="card-text">Bathrooms: {{ property.bathrooms }}</p></div>
+          </div>
           <div class="overflow-y-scroll" style="height: 100px;"><p class="card-text">{{ property.description }}</p></div>
           
           <p class="card-text">
