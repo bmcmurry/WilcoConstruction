@@ -856,6 +856,8 @@ class PaymentPortalView(View):
             else:
                 full_amount = lease.pricePerMonth - lease.currentBalance
             payment_amount = full_amount
+            if payment_amount < 0:
+                return redirect("payment_fail")
         else:
             payment_amount = float(request.POST.get("payment_amount"))
             if payment_amount < 0:
