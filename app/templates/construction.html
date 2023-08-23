@@ -185,26 +185,28 @@
         />
         {% else %} <img src="{% static "images\no-image.png" %}" alt="unable to
         load image"> {% endif %}
-        <h5 class="card-title">{{ job.address }}</h5>
-        <div class="overflow-y-scroll" style="height: 100px">
-          <p class="card-text">{{ job.description }}</p>
+        <div class="card-body">
+          <h5 class="card-title">{{ job.address }}</h5>
+          <div class="overflow-y-scroll" style="height: 100px">
+            <p class="card-text">{{ job.description }}</p>
+          </div>
+          <p class="card-text">
+            <button
+              type="button"
+              class="btn btn m-2"
+              id="button-yellow"
+              data-bs-toggle="modal"
+              data-bs-target="#modal-{{ job.id }}"
+            >
+              Info
+            </button>
+            <a href="#quoteform">
+              <button type="button" class="btn btn-" id="button-yellow">
+                Get a Quote
+              </button></a
+            >
+          </p>
         </div>
-        <p class="card-text">
-          <button
-            type="button"
-            class="btn btn m-2"
-            id="button-yellow"
-            data-bs-toggle="modal"
-            data-bs-target="#modal-{{ job.id }}"
-          >
-            Info
-          </button>
-          <a href="#quoteform">
-            <button type="button" class="btn btn-" id="button-yellow">
-              Get a Quote
-            </button></a
-          >
-        </p>
         {% endwith %}
       </div>
       <div
