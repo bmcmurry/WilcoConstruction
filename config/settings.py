@@ -145,25 +145,27 @@ MEDIA_URL = "/media/"
 # Add your email host, port, username, and password here if you're using a SMTP backend for sending emails.
 # For example, if you're using Gmail SMTP to send emails, you'd configure it like this:
 
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "bryanmcmurry7@gmail.com"
-EMAIL_HOST_PASSWORD = "urbedxlmfsslymho"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS")
+EMAIL_BACKEND = env("EMAIL_BACKEND")
 
 ALLOWED_HOSTS = [
+    "www.wilcoconstructions.com",
     "wilco-app-c6223eb282aa.herokuapp.com",
     "127.0.0.1",
     "localhost",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    "www.wilcoconstructions.com",
     "https://wilco-app-c6223eb282aa.herokuapp.com",
     "https://buy.stripe.com/test_28o2aAafGeRCcPC5kk",
 ]
 
-PRODUCT_PRICE = "price_1NdxTFCffthPIRLKUftoF4Wz"
+PRODUCT_PRICE = env("PRODUCT_PRICE")
 
 # settings.py
 
@@ -184,13 +186,14 @@ PRODUCT_PRICE = "price_1NdxTFCffthPIRLKUftoF4Wz"
 
 # # Set DEBUG to False in production
 DEBUG = True
-REDIRECT_DOMAIN = "https://wilco-app-c6223eb282aa.herokuapp.com/"
-STRIPE_PUBLIC_KEY = "pk_test_51NbRsdCffthPIRLKv0yaJi2mlLwitUqqcipZYX3mdsreLqTrHy0SmO7scfqmercaOfWZQcLObh7uzKyUjUFsVj3r00mBVR5D9z"
-STRIPE_TEST_SECRET_KEY = "sk_test_51NbRsdCffthPIRLKsKEjqXGQo3H7zcpoulRxnXo0Wrj46cpkhVmysuZ4lmhDDOc0dd7Uk1mfolG1HIYHqFjoVWbw00jj6IpQCL"
-STRIPE_WEBHOOK_SECRET = "whsec_DeI7ADiOqIcDdWHLhGlETJP0audtpDCH"
-
+REDIRECT_DOMAIN = env("REDIRECT_DOMAIN")
+STRIPE_TEST_PUBLIC_KEY = env("STRIPE_TEST_PUBLIC_KEY")
+STRIPE_TEST_SECRET_KEY = env("STRIPE_TEST_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
+STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 # ------------------S3-----------------
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+DEFAULT_FILE_STORAGE = env("DEFAULT_FILE_STORAGE")
 
 AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")

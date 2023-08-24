@@ -901,7 +901,7 @@ class PaymentSuccessView(View):  # Use the View class
         if session_id is None:
             return HttpResponseNotFound()
 
-        stripe.api_key = settings.STRIPE_SECRET_KEY
+        stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
         session = stripe.checkout.Session.retrieve(session_id)
 
         user = request.user
@@ -932,7 +932,7 @@ def PaymentFail(request):
 
 @csrf_exempt
 def stripe_webhook(request):
-    stripe.api_key = settings.STRIPE_SECRET_KEY
+    stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
     payload = request.body
     signature_header = request.META.get("HTTP_STRIPE_SIGNATURE", "")
 
