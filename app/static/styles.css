@@ -1,6 +1,14 @@
 
 
 /* everything below is bryans css */
+
+
+#table {
+  max-height: 35em !important;
+  overflow-y: auto !important;
+
+}
+
     #bcca-link {
     color: #010101;
     text-decoration: none;

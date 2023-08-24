@@ -160,7 +160,7 @@ ALLOWED_HOSTS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "www.wilcoconstructions.com",
+    "https://www.wilcoconstructions.com",
     "https://wilco-app-c6223eb282aa.herokuapp.com",
     "https://buy.stripe.com/test_28o2aAafGeRCcPC5kk",
 ]
