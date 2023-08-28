@@ -58,7 +58,7 @@
     
     <!-- Show all properties if search_query does not exist -->
     {% for property in properties %}
-    {% if property.isRented == False %}
+    
     <div class="modal fade modal-lg" id="{{ property.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -185,7 +185,7 @@
         </div>
       </div>
     </div> {% endwith %}
-    {% endif %}
+    
     {% endfor %}
   </div>
 <!--PAGINATION-->

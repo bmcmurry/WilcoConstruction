@@ -122,7 +122,7 @@ class PropertyView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        properties = RentalProperty.objects.all()
+        properties = RentalProperty.objects.filter(isRented=False)
         property_images = PropertyPhoto.objects.all()
 
         # SEARCH BAR
