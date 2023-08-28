@@ -1,2 +1,2 @@
 
-gunicorn app.wsgi:application --static /static/
+gunicorn wilco-app.wsgi:application --static /static/
