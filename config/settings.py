@@ -134,7 +134,6 @@ STATIC_URL = "/static/"
 if DEBUG:
     STATICFILES_DIRS = [os.path.join(BASE_DIR, "staticfiles")]
 if not DEBUG:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
     STATIC_ROOT = os.path.join(BASE_DIR, "app/staticfiles")
 
 
