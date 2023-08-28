@@ -133,8 +133,10 @@ DEBUG = False
 STATIC_URL = "/static/"
 if DEBUG:
     STATICFILES_DIRS = [os.path.join(BASE_DIR, "staticfiles")]
-else:
-    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+if not DEBUG:
+    # Add this line to use WhiteNoise for serving static files
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 # Default primary key field types
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
