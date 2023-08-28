@@ -2,7 +2,6 @@ import environ
 import os
 from dotenv import load_dotenv
 import dj_database_url
-from whitenoise import WhiteNoise
 
 load_dotenv()
 
