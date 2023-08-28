@@ -115,12 +115,12 @@
         {% endif %}
         <div class="card-body">
           <h5 class="card-title">{{ property.address }}, {{ property.city }}</h5>
-          <div class="row">
-          <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
-          <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
+          
+          <p class="card-text">Bedrooms: {{ property.bedrooms }}
+          Bathrooms: {{ property.bathrooms }}
           {% if property.isPetFriendly %}
-          <p class="card-text">Pets Allowed</p>
-          {% endif %}</div>
+          Pets Allowed</p>
+          {% endif %}
           <div class="overflow-y-scroll" style="height: 100px;"><p class="card-text">{{ property.description }}</p></div>
           
           <p class="card-text">
