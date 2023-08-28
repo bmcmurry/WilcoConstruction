@@ -126,9 +126,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATIC_URL = "app/static/"
+STATIC_URL = "/static/"
 # MEDIA_URL = "images/"
-# STATICFILES_DIRS = [os.path.join(BASE_DIR / "static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR / "static")]
 # MEDIA_ROOT = os.path.join(BASE_DIR, "app/static/")
 
 
@@ -137,7 +137,7 @@ STATIC_URL = "app/static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-STATICFILES_DIRS = [BASE_DIR / "static", "media"]
+# STATICFILES_DIRS = [BASE_DIR / "static", "media"]
 MEDIA_ROOT = BASE_DIR / "media"
 
 MEDIA_URL = "/media/"
@@ -153,6 +153,7 @@ EMAIL_USE_TLS = env("EMAIL_USE_TLS")
 EMAIL_BACKEND = env("EMAIL_BACKEND")
 
 ALLOWED_HOSTS = [
+    "wilcoconstructions.com",
     "www.wilcoconstructions.com",
     "wilco-app-c6223eb282aa.herokuapp.com",
     "127.0.0.1",
