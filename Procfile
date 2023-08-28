@@ -1,1 +1,1 @@
-web: gunicorn wilco-app.wsgi:application
+web: gunicorn config.wsgi:application
