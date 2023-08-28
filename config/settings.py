@@ -2,6 +2,7 @@ import environ
 import os
 from dotenv import load_dotenv
 import dj_database_url
+from whitenoise import WhiteNoise
 
 load_dotenv()
 
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -131,10 +133,10 @@ USE_TZ = True
 DEBUG = False
 STATIC_URL = "/static/"
 if DEBUG:
-    STATICFILES_DIRS = [os.path.join(BASE_DIR, "app/static")]
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, "staticfiles")]
 else:
-    STATIC_ROOT = os.path.join(BASE_DIR, "static")
-# Default primary key field type
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+# Default primary key field types
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
