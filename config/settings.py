@@ -79,18 +79,18 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # =================local database======================
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": os.getenv("DB_NAME"),
-#         "USER": os.getenv("DB_USER"),
-#         "PASSWORD": os.getenv("DB_PASSWORD"),
-#         "HOST": os.getenv("DB_HOST"),
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+    }
+}
 
 # =========heroku database==================
-DATABASES = {"default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))}
+# DATABASES = {"default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -122,16 +122,18 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATIC_URL = "/static/"
+
 # MEDIA_URL = "images/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR / "static")]
+
 # MEDIA_ROOT = os.path.join(BASE_DIR, "app/static/")
-
-
+DEBUG = False
+STATIC_URL = "/static/"
+if DEBUG:
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, "app/static")]
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -187,7 +189,6 @@ PRODUCT_PRICE = env("PRODUCT_PRICE")
 # CSRF_COOKIE_SECURE = True
 
 # # Set DEBUG to False in production
-DEBUG = False
 REDIRECT_DOMAIN = env("REDIRECT_DOMAIN")
 STRIPE_TEST_PUBLIC_KEY = env("STRIPE_TEST_PUBLIC_KEY")
 STRIPE_TEST_SECRET_KEY = env("STRIPE_TEST_SECRET_KEY")
